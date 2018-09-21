@@ -48,7 +48,7 @@ class ResistanceHeuristic extends Const{
         val cell1 = model.board(node1.id / model.N)((node1.id-1) % model.N)
         val cell2 = model.board(node2.id / model.N)((node2.id-1) % model.N)
         val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2)
-        if(strongCarriers.nonEmpty){
+        if(strongCarriers.nonEmpty > 0){
 
         }
       }
