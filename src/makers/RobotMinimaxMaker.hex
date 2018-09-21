@@ -1,0 +1,113 @@
+import hexagony._
+
+new RobotMaker {
+
+override def robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour): Robot = new RobotMinimax(model, timelimit, pierule, colour)
+
+import hexagony._
+
+class RobotMinimax(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
+  extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
+  
+// ------------------------------------------------------------------------------------------------
+  
+  // Your method for deciding which move to make
+  private def myMove(): Cell = {
+    move = null
+    val mod = model.copy()
+    val open = mod.myCells(O)
+    while (!stop) {
+      for (cell <- open) {
+        val mod2 = result(mod, cell, colour)
+        if (!stop && min(mod2)) { // cell is a winning move
+          move = cell; stop = true
+        }
+      }
+      stop = true // no moves are winning; stop computation
+    }
+    return move
+  } 
+  
+  // Returns true iff mod represents a winning position for this player
+  private def min(mod: Model): Boolean = {
+    if (mod.solution(colour)) return true
+    else for (cell <- mod.myCells(O))
+      if (!max(result(mod, cell, othercolour))) return false
+    return true
+  }
+  
+  // Returns false iff mod represents a winning position for the other player
+  private def max(mod: Model): Boolean = {
+    if (mod.solution(othercolour)) return false
+    else for (cell <- mod.myCells(O))
+      if (min(result(mod, cell, colour))) return true
+    return false
+  }
+  
+  // Returns a copy of the model after playing the move (cell, colour)
+  private def result(mod: Model, cell: Cell, col: Colour): Model = {
+    val mod2 = mod.copy()
+    mod2.playMove(cell, col)
+    return mod2
+  }
+  
+  // Your method for deciding whether to play the pie rule
+  private def myPie(firstmove: Cell): Boolean = false
+  
+// ------------------------------------------------------------------------------------------------
+  /* The parameters passed to the robot are:
+   * model - a blank copy of the game board model, complete with useful methods, updated by the controller
+   * timelimit - the time (in milliseconds) that your robot has to complete their move
+   * pierule - whether or not the pie rule is available to use after the first move
+   * colour - the colour of your robot (R or B)
+   * 
+   * Other values that are accessible to the robot include:
+   * board - the game board in its current state
+   * N - the size of the board
+   * count - the number of tokens on the board
+   * piePlayed - whether or not the pie rule has been played in this game
+   * lastCell - the Cell on which the last move was played
+   * othercolour - the colour of the other player
+   * 
+   * You should reference the cell at coordinate (i, j) by the expression board(i)(j).
+   * This value represents the cell at the given location on the board.
+   * Coordinates are zero-indexed, meaning that they range from 0 to N - 1 in each direction.
+   * board(i)(j) has attribute colour; model.colour(cell) also returns the colour of cell.
+   * Many other helpful methods are available in the model.
+   * 
+   */  
+// ------------------------------------------------------------------------------------------------
+  
+  var move: Cell = null // this should hold the move that will be returned
+  var pie = false // this should hold the pie rule decision
+  var stop = false // used to end computation at completion of turn
+  val lag = 50 // used for self-imposed time limit
+    
+  def makeMove(): Cell = {
+    stop = false
+    // Execute your move method with the given time restriction
+    try { move = timedRun[Cell](timelimit - lag)(myMove()) }
+    catch { case ex: Exception => } // something has gone wrong, such as a timeout
+    stop = true // stop the computation within the method
+    if (!model.legal(move)) move = randomMove(model)
+    return move
+  }         
+  
+  def pieRule(firstmove: Cell): Boolean = {
+    stop = false
+    // Execute your pie method with the given time restriction
+    try { pie = timedRun[Boolean](timelimit - lag)(myPie(firstmove)) }
+    catch { case ex: Exception => } // something has gone wrong, such as a timeout
+    stop = true // stop the computation within the method
+    return pie
+  }
+  
+  private def randomMove(mod: Model): Cell = {
+    val open = mod.myCells(O)
+    val randmove = open((Math.random() * open.length).toInt)
+    println("Move chosen randomly: " + randmove.toString())
+    randmove
+  }
+  
+}
+}
