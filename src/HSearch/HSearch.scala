@@ -2,11 +2,17 @@ package HSearch
 
 import hexagony._
 
-class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
+class HSearch(val model: Model, colour: Colour) extends Const{
+  val M = 2
+  val X = 2
   val boundaryRed1 : Cell = new Cell(0, -1)
   val boundaryRed2 : Cell = new Cell(0, model.N)
   val boundaryBlue1 : Cell = new Cell(-1, 0)
   val boundaryBlue2 : Cell = new Cell(model.N, 0)
+  boundaryRed1.colour = R
+  boundaryRed2.colour = R
+  boundaryBlue1.colour = B
+  boundaryBlue2.colour = B
 
   var Gtemp : Set[Cell] = Set()
   for(cell <- model.myCells(colour)){
@@ -25,11 +31,15 @@ class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
   }
   var G : DisjointSets[Cell] = new DisjointSets[Cell]()
   for(g <- Gtemp){
+
     G.add(g)
   }
+
   for(g1 <- Gtemp){
+
     for(g2 <- Gtemp){
-      if(g1.colour == colour && g2.colour == colour && areNearestNeighbours(g1, g2)){
+      if(g1.colour.equals(colour) && g2.colour.equals(colour) && areNearestNeighbours(g1, g2)){
+
         G.union(g1, g2)
       }
     }
@@ -38,8 +48,11 @@ class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
   var C : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
   var SC : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
   var oldC : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
+
   for(g1 <- G.getReps){
+
     for(g2 <- G.getReps){
+
       if(!areNearestNeighbours(g1,g2)){
         C((g1, g2)) = Set()
       }
@@ -52,34 +65,42 @@ class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
   }
 
 
-
   def search : Unit = {
 
     var currentNewVC = false
     var previousNewVC = true
-    var depth = 0
-    while ((currentNewVC || previousNewVC) && depth < maxDepth) {
-      //println("GOING")
+
+
+    var i = 1
+    var j = 1
+    var k = 1
+    while (currentNewVC || previousNewVC) {
+
       val tempC = C
       previousNewVC = currentNewVC
       currentNewVC = false
       for (g <- G.getReps) {
+
+
         for (g1 <- G.getReps; g2 <- G.getReps) {
-          //println((newCarrier(oldC, g1, g) || newCarrier(oldC, g2, g)))
+
+
           if (g1 != g2 && (newCarrier(oldC, g1, g) || newCarrier(oldC, g2, g)) && (!(g.colour == colour) || (g1.colour == O && g2.colour == O))) {
 
             for (c1 <- C((g1, g)); c2 <- C((g2, g))) {
 
               if ((!oldC((g1, g)).contains(c1) || !oldC((g2, g)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
+
                 currentNewVC = true
-                if (g.colour == colour) {
+                if (g.colour == colour && (c1.size + c2.size) <= M) {
                   C((g1, g2)) = C((g1, g2)) + (c1 ++ c2)
 
                 }
                 else {
                   val sc = c1 ++ Set(g) ++ c2
                   SC((g1, g2)) = SC((g1, g2)) + sc
-                  C((g1, g2)) = apply(C((g1, g2)), SC((g1, g2)) - sc, sc, sc)
+
+                  C((g1, g2)) = apply(C((g1, g2)), (SC((g1, g2)) - sc).take(X), sc, sc)
                 }
               }
             }
@@ -87,24 +108,38 @@ class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
         }
       }
       oldC = tempC
-      depth += 1
+
     }
   }
 
   def getStrongCarriers(cell1 : Cell, cell2 : Cell) :Set[Cell] = {
+
     var minSet : Set[Cell] = Set()
     var minSize = Int.MaxValue
+
+
+
+    if(!(cell1.colour.equals(colour) && cell2.colour.equals(colour))){
+
+      return Set()
+    }
+
     for(set <- C((G.find(cell1).get, G.find(cell2).get))){
+
       if(minSize > set.size){
         minSet = set
         minSize = set.size
       }
     }
+
     minSet
   }
   def getWeakCarriers(cell1 : Cell, cell2 : Cell) :Set[Cell] = {
     var minSet : Set[Cell] = Set()
     var minSize = Int.MaxValue
+    if(!(cell1.colour.equals(colour) && cell2.colour.equals(colour))){
+      return Set()
+    }
     for(set <- SC((G.find(cell1).get, G.find(cell2).get))){
       if(minSize > set.size){
         minSet = set
@@ -134,10 +169,12 @@ class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
   }
   def apply(C_set : Set[Set[Cell]], SC_set : Set[Set[Cell]], union : Set[Cell], intersection: Set[Cell]) : Set[Set[Cell]] = {
     var C_clone = C_set
+
     for(scl <- SC_set){
+
       val ul = scl ++ union
       val il = scl & intersection
-      if(il.isEmpty){
+      if(il.isEmpty && ul.size <= M){
         C_clone += ul
       }
       else{
@@ -147,6 +184,11 @@ class HSearch(val model: Model, colour: Colour, maxDepth : Int) extends Const{
     }
     return C_clone
   }
+
+
+
+
+
   def areNearestNeighbours(g1 : Cell, g2: Cell): Boolean ={
     val x1 = g1.i
     val x2 = g2.i

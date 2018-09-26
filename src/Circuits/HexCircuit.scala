@@ -31,10 +31,10 @@ class HexCircuit(size :Int, colour : Colour) extends Circuit with Const{
     }
   }
   for(i <- 1 to size*size){
-    if(isValid(i+1)){
+    if(isValid(i+1) && i % size != 0){
       nodes(i).addAdjacencies(Set(nodes(i+1)))
     }
-    if(isValid(i-1)){
+    if(isValid(i-1) && i % size != 1){
       nodes(i).addAdjacencies(Set(nodes(i+1)))
     }
     if(isValid(i+size)){
@@ -43,10 +43,10 @@ class HexCircuit(size :Int, colour : Colour) extends Circuit with Const{
     if(isValid(i-size)){
       nodes(i).addAdjacencies(Set(nodes(i+1)))
     }
-    if(isValid(i+size+1)){
+    if(isValid(i+size+1) && i % size != 0){
       nodes(i).addAdjacencies(Set(nodes(i+1)))
     }
-    if(isValid(i-size-1)){
+    if(isValid(i-size-1) && i % size != 1){
       nodes(i).addAdjacencies(Set(nodes(i+1)))
     }
   }

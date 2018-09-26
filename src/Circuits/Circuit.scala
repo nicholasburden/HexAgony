@@ -6,6 +6,13 @@ abstract class Circuit {
     resistance((node1, node2)) = res
     resistance((node2, node1)) = res
   }
+  def deleteNode(id: Int) = {
+    nodes = nodes.filterNot(elm => elm.id == id)
+    for(i <- 0 until nodes.size){
+      nodes(i).id = i
+    }
+
+  }
   def getResistance(node1: Node, node2 : Node) : Float = {
     try {
       resistance((node1, node2))

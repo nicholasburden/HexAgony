@@ -1,6 +1,6 @@
 package Graph
 //may not need id
-class Node(val id : Int){
+class Node(var id : Int){
   private var adjacencies : Set[Node] = Set()
   def addAdjacent(node : Node) = {
     adjacencies += node

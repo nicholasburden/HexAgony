@@ -1,9 +1,28 @@
 package Circuits
+import util.control.Breaks._
 
 class CircuitSolver {
 
   def getResistance(circuit : Circuit) : Float = {
-    val N = circuit.getNodes.size
+    def notIsolated(n : Node):Boolean = {
+
+      for(n2 <- n.getAdjacencies){
+        if(!circuit.getResistance(n, n2).isInfinite){
+          return true
+        }
+      }
+      return false
+    }
+
+    var N = circuit.nodes.size
+    for(i <- N-1 to 0 by -1){
+      if(!notIsolated(circuit.getNodes(i))){
+        circuit.deleteNode(i)
+      }
+    }
+    N = circuit.nodes.size
+
+
     val mat : Array[Array[Float]] = Array.ofDim(N)
     for(i <- 0 until N){
       mat(i) = Array.ofDim(N)
@@ -46,12 +65,12 @@ class CircuitSolver {
 
         }
       }
-
     }
 
 
 
     val inverted_mat = invert(mat)
+
 
     val result : Array[Array[Float]] = Array.ofDim[Float](N,1)
     for(i <- 0 until N){
@@ -62,46 +81,45 @@ class CircuitSolver {
       }
     }
 
-
-
     var current = 0.0
     val lastNode = circuit.getNodes(N-1)
     for(node <- lastNode.getAdjacencies){
-      current += (result(node.id)(0) / circuit.getResistance(lastNode, node))
-      println(current)
+      if(!circuit.getResistance(lastNode, node).isInfinite){
+        current += (result(node.id)(0)/circuit.getResistance(lastNode, node))
+      }
+
     }
 
     Math.abs(1f/current).toFloat
   }
 
 
-  def invert(m : Array[Array[Float]]) : Array[Array[Float]] = {
-    var mat = m
-    val n = mat.length
+  def invert(mat2 : Array[Array[Float]]) : Array[Array[Float]] = {
+    val n = mat2.length
     val x  = Array.ofDim[Float](n,n)
     val b  = Array.ofDim[Float](n,n)
     var index = Array.ofDim[Int](n)
     for(i <- 0 until n){
       b(i)(i) = 1
     }
-    val tmp = gaussian(mat, index)
-    mat = tmp._1
+    val tmp = gaussian(mat2, index)
+    val m = tmp._1
     index = tmp._2
     for(i <- 0 until n-1){
       for(j <- i+1 until n){
         for(k <- 0 until n){
-          b(index(j))(k) -= mat(index(j))(i)*b(index(i))(k)
+          b(index(j))(k) -= m(index(j))(i)*b(index(i))(k)
         }
       }
     }
     for(i <- 0 until n){
-      x(n-1)(i) = b(index(n-1))(i)/mat(index(n-1))(n-1)
+      x(n-1)(i) = b(index(n-1))(i)/m(index(n-1))(n-1)
       for(j <- n-2 to 0 by -1){
         x(j)(i) = b(index(j))(i)
         for( k <- j+1 until n){
-          x(j)(i) -= mat(index(j))(k)*x(k)(i)
+          x(j)(i) -= m(index(j))(k)*x(k)(i)
         }
-        x(j)(i) /= mat(index(j))(j)
+        x(j)(i) /= m(index(j))(j)
       }
 
     }
