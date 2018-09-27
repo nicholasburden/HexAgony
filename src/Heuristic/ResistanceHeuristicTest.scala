@@ -16,6 +16,5 @@ class ResistanceHeuristicTest extends Const {
 
 
 
-    println(fh.evaluate(model, R))
   }
 }

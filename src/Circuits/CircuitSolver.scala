@@ -8,6 +8,7 @@ class CircuitSolver {
 
       for(n2 <- n.getAdjacencies){
         if(!circuit.getResistance(n, n2).isInfinite){
+
           return true
         }
       }
@@ -18,6 +19,7 @@ class CircuitSolver {
     for(i <- N-1 to 0 by -1){
       if(!notIsolated(circuit.getNodes(i))){
         circuit.deleteNode(i)
+
       }
     }
     N = circuit.nodes.size

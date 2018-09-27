@@ -6,21 +6,28 @@ class ResistanceHeuristic extends Const{
   def evaluate(model: Model, colour : Colour) : Float = {
 
     if(model.solution(colour)){
+
       return Float.PositiveInfinity
+
     }
     else if(model.solution()){
       return Float.NegativeInfinity
     }
+    var hSearchRed = new HSearch(model, colour)
+    var hSearchBlue = new HSearch(model, colour)
+
+
 
     val blueCircuit : HexCircuit = new HexCircuit(model.N, B)
     val redCircuit : HexCircuit = new HexCircuit(model.N, R)
 
-    val hSearchBlue = new HSearch(model, B)
-    val hSearchRed = new HSearch(model, R)
+    //val hSearchBlue = new HSearch(model, B)
+    //val hSearchRed = new HSearch(model, R)
 
-    hSearchBlue.search
-    hSearchRed.search
-    //println(model.board(2)(1) + " " + hSearchRed.boundaryRed2 + hSearchRed.getWeakCarriers(model.board(2)(1), hSearchRed.boundaryRed2))
+    //hSearchBlue.search
+    //hSearchRed.search
+
+
     val cellResistancesBlue : Array[Float] = Array.ofDim(model.N * model.N + 2)
     val cellResistancesRed : Array[Float] = Array.ofDim(model.N * model.N + 2)
 
@@ -197,7 +204,7 @@ class ResistanceHeuristic extends Const{
           }
 
 
-          val weakCarriers = hSearchBlue.getStrongCarriers(cell1, cell2)
+          val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2)
 
           if(weakCarriers.nonEmpty){
             blueCircuit.addLink(node1.id, node2.id)
@@ -238,6 +245,8 @@ class ResistanceHeuristic extends Const{
         }
       }
     }
+
+
     val circuitSolver = new CircuitSolver
 
     val redResistance = circuitSolver.getResistance(redCircuit)
@@ -254,8 +263,7 @@ class ResistanceHeuristic extends Const{
     }
 
 
-    println("RED " + redResistance)
-    println("BLUE " + blueResistance)
+
 
     return result
   }

@@ -7,10 +7,11 @@ override def robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colo
 
 import hexagony._
 import Heuristic._
+import HSearch._
 
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 0
+  val DEPTH = 2
 
   private def myMove(): Cell = {
     move = null
@@ -18,8 +19,9 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     val open = mod.myCells(O)
     val alpha = Float.NegativeInfinity
     val beta = Float.PositiveInfinity
-
     var topScore = Float.NegativeInfinity
+
+
 
     for (cell <- open) {
       val mod2 = result(mod, cell, colour)
@@ -42,7 +44,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
     val alpha = _alpha
     var beta = _beta
-   // println("Start next" + depth)
+    // println("Start next" + depth)
     if(model.solution(colour)){
       return Int.MaxValue
     }
@@ -61,7 +63,9 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       //println("Finished checking if leaf")
       var bestVal = Float.PositiveInfinity
       for (cell <- model.myCells(O)){
+
         val value = max(result(model, cell, othercolour), depth - 1, alpha, beta)
+
         bestVal = Math.min(bestVal, value)
         beta = Math.min(beta, bestVal)
         if (beta <= alpha){
@@ -76,7 +80,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   def max(model : Model, depth : Int, _alpha : Float, _beta : Float) : Float = {
     var alpha = _alpha
     val beta = _beta
-   // println("Start next" + depth)
+    // println("Start next" + depth)
     if(model.solution(colour)){
       return Int.MaxValue
     }
@@ -90,7 +94,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
     }
     else{
-     // println("Finished checking if leaf")
+      // println("Finished checking if leaf")
       var bestVal = Float.NegativeInfinity
       for (cell <- model.myCells(O)){
         val value = min(result(model, cell, colour), depth - 1, alpha, beta)

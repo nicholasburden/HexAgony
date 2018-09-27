@@ -3,8 +3,8 @@ package HSearch
 import hexagony._
 
 class HSearch(val model: Model, colour: Colour) extends Const{
-  val M = 2
-  val X = 2
+  val M = 4
+  val X = 4
   val boundaryRed1 : Cell = new Cell(0, -1)
   val boundaryRed2 : Cell = new Cell(0, model.N)
   val boundaryBlue1 : Cell = new Cell(-1, 0)
@@ -179,7 +179,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
       }
       else{
 
-       C_clone = apply(C_clone, SC_set - scl, ul, il)
+        C_clone = apply(C_clone, SC_set - scl, ul, il)
       }
     }
     return C_clone

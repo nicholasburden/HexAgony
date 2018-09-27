@@ -35,19 +35,19 @@ class HexCircuit(size :Int, colour : Colour) extends Circuit with Const{
       nodes(i).addAdjacencies(Set(nodes(i+1)))
     }
     if(isValid(i-1) && i % size != 1){
-      nodes(i).addAdjacencies(Set(nodes(i+1)))
+      nodes(i).addAdjacencies(Set(nodes(i-1)))
     }
     if(isValid(i+size)){
-      nodes(i).addAdjacencies(Set(nodes(i+1)))
+      nodes(i).addAdjacencies(Set(nodes(i+size)))
     }
     if(isValid(i-size)){
-      nodes(i).addAdjacencies(Set(nodes(i+1)))
+      nodes(i).addAdjacencies(Set(nodes(i-size)))
     }
     if(isValid(i+size+1) && i % size != 0){
-      nodes(i).addAdjacencies(Set(nodes(i+1)))
+      nodes(i).addAdjacencies(Set(nodes(i+size+1)))
     }
     if(isValid(i-size-1) && i % size != 1){
-      nodes(i).addAdjacencies(Set(nodes(i+1)))
+      nodes(i).addAdjacencies(Set(nodes(i-size-1)))
     }
   }
   def isValid(i : Int): Boolean = i <= size*size && i >= 1

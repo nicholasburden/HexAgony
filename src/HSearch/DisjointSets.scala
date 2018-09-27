@@ -79,6 +79,7 @@ class DisjointSets[T](initialElements : Seq[T] = Nil) {
     * <code>elem</code> is a member of.
     */
   def find(elem : T) : Option[T] = synchronized {
+
     nodes.get(elem) match {
       case Some(node) =>
         val rootNode = node.getRepresentative
@@ -88,6 +89,8 @@ class DisjointSets[T](initialElements : Seq[T] = Nil) {
       case None => None
     }
   }
+
+
 
   /**
     * Returns the number of disjoint-sets managed in this data structure.

@@ -1,70 +1,65 @@
 
 import hexagony._
 import Heuristic._
+import HSearch._
 
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 3
+  val DEPTH = 2
 
   private def myMove(): Cell = {
-
     move = null
     val mod = model.copy()
     val open = mod.myCells(O)
     val alpha = Float.NegativeInfinity
     val beta = Float.PositiveInfinity
-
     var topScore = Float.NegativeInfinity
-    println("GOING")
-    for (cell <- open) {
 
+
+
+    for (cell <- open) {
       val mod2 = result(mod, cell, colour)
-      println("GOING2")
       if (!stop) {
-        println("GOING3")
-        val score = min(mod2, DEPTH-1, alpha, beta)
-        println("GOING4")
+        val score = min(mod2, DEPTH, alpha, beta)
         println(cell + " score = " + score)
         if ((score >= topScore)) { // cell is a winning move
           topScore = score
           move = cell
         }
-        println("GOING5")
 
       }
     }
-    println(move.i + ", " + move.j)
 
 
     return move
 
   }
   def min(model : Model, depth : Int, _alpha : Float, _beta : Float) : Float = {
-    println(depth)
+
     val alpha = _alpha
     var beta = _beta
-   // println("Start next" + depth)
+    // println("Start next" + depth)
     if(model.solution(colour)){
-      return Float.PositiveInfinity
+      return Int.MaxValue
     }
     else if(model.solution(othercolour)){
-      return Float.NegativeInfinity
+      return Int.MinValue
     }
 
     else if(depth == 0){
-      println("Heuristic")
+      //println("Heuristic")
       val heuristic = new ResistanceHeuristic
 
       return heuristic.evaluate(model, colour)
 
     }
     else{
-
       //println("Finished checking if leaf")
       var bestVal = Float.PositiveInfinity
       for (cell <- model.myCells(O)){
 
         val value = max(result(model, cell, othercolour), depth - 1, alpha, beta)
+
         bestVal = Math.min(bestVal, value)
         beta = Math.min(beta, bestVal)
         if (beta <= alpha){
@@ -77,25 +72,23 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   }
 
   def max(model : Model, depth : Int, _alpha : Float, _beta : Float) : Float = {
-    println(depth)
     var alpha = _alpha
     val beta = _beta
-   // println("Start next" + depth)
+    // println("Start next" + depth)
     if(model.solution(colour)){
-      return Float.PositiveInfinity
+      return Int.MaxValue
     }
     else if(model.solution(othercolour)){
-      return Float.NegativeInfinity
+      return Int.MinValue
     }
     else if(depth == 0){
       val heuristic = new ResistanceHeuristic
 
-      val x = heuristic.evaluate(model, colour)
-      println("HELLO")
-      x
+      return heuristic.evaluate(model, colour)
+
     }
     else{
-     // println("Finished checking if leaf")
+      // println("Finished checking if leaf")
       var bestVal = Float.NegativeInfinity
       for (cell <- model.myCells(O)){
         val value = min(result(model, cell, colour), depth - 1, alpha, beta)
@@ -152,7 +145,6 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
 
   def makeMove(): Cell = {
-
     stop = false
     // Execute your move method with the given time restriction
     try { move = timedRun[Cell](timelimit - lag)(myMove()) }
