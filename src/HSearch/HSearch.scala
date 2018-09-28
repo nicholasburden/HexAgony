@@ -64,13 +64,23 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     }
   }
   def makeMove(i : Int, j : Int, c : Colour): HSearch = {
-    var cell = model.board(i)(j)
+    val cell = model.board(i)(j)
     val mod2 = result(model, cell, c)
     val hsearch = new HSearch(mod2, colour)
     val C_clone = clone(C, hsearch)
     val SC_clone = clone(SC, hsearch)
     hsearch.C = C_clone
     hsearch.SC = SC_clone
+    for(cell1 <- model.myCells(colour) ++ model.myCells(O)){
+      for(cell2 <- model.myCells(colour) ++ model.myCells(O)){
+        val strongCarriers = getStrongCarriers(cell1, cell2, true)
+        if(strongCarriers.contains(cell) && !c.equals(colour)){
+          hsearch.SC((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set(hsearch.getStrongCarriers(hsearch.model.board(cell1.i)(cell1.j), hsearch.model.board(cell2.i)(cell2.j), true) - hsearch.model.board(cell.i)(cell.j))
+          hsearch.C((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set()
+        }
+      }
+    }
+
 
     return hsearch
   }
@@ -78,45 +88,48 @@ class HSearch(val model: Model, colour: Colour) extends Const{
   def clone(X: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]], h : HSearch) : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = {
     val newX = collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]]()
     for((c1, c2) <- X.keys){
-      var cell1 = c1; var cell2 = c2
-      if(c1.i < h.model.N && c1.i >= 0 && c1.j < h.model.N && c1.j >= 0){
-        cell1 = h.model.board(c1.i)(c1.j)
-      }
-      else if(c1.i == -1){
-        cell1 = HSearch.boundaryBlue1
-      }
-      else if(c1.i == -2){
-        cell1 = HSearch.boundaryBlue2
-      }
-      else if(c1.j == -1){
-        cell1 = HSearch.boundaryRed1
-      }
-      else if(c1.j == -2){
-        cell1 = HSearch.boundaryRed2
+
+      var cell1 = getCell(c1.i, c1.j, h)
+      var cell2 = getCell(c2.i, c2.j, h)
+
+
+      if((cell1.colour == colour || cell1.colour == O) && (cell2.colour == colour || cell2.colour == O)){
+        var masterSet : Set[Set[Cell]] = Set()
+        for(set <- X((G.find(c1).get, G.find(c2).get))) {
+          var subset: Set[Cell] = Set()
+          for(cell <- set){
+            subset = subset + getCell(cell.i, cell.j, h)
+          }
+          masterSet = masterSet + subset
+        }
+        newX((h.G.find(cell1).get, h.G.find(cell2).get)) = masterSet
       }
 
-      if(c2.i < h.model.N && c2.i >= 0 && c2.j < h.model.N && c2.j >= 0){
-        cell2 = h.model.board(c2.i)(c2.j)
-      }
-      else if(c2.i == -1){
-        cell2 = HSearch.boundaryBlue1
-      }
-      else if(c2.i == -2){
-        cell2 = HSearch.boundaryBlue2
-      }
-      else if(c2.j == -1){
-        cell2 = HSearch.boundaryRed1
-      }
-      else if(c2.j == -2){
-        cell2 = HSearch.boundaryRed2
-      }
-      else{
-        println("SHOULDNT HAPPEN: HSEARCH CLONE")
-      }
 
-      newX((cell1, cell2)) = X((c1, c2))
+
+
     }
     return newX
+  }
+
+  def getCell(i : Int, j : Int, h : HSearch) : Cell = {
+    var cell = new Cell(-1,-1)
+    if(i < h.model.N && i >= 0 && j < h.model.N && j >= 0){
+      cell = h.model.board(i)(j)
+    }
+    else if(i == -1){
+      cell = HSearch.boundaryBlue1
+    }
+    else if(i == -2){
+      cell = HSearch.boundaryBlue2
+    }
+    else if(j == -1){
+      cell = HSearch.boundaryRed1
+    }
+    else if(j == -2){
+      cell = HSearch.boundaryRed2
+    }
+    return cell
   }
   def search : Unit = {
 
