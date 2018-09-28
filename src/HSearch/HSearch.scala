@@ -74,10 +74,24 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     for(cell1 <- model.myCells(colour) ++ model.myCells(O)){
       for(cell2 <- model.myCells(colour) ++ model.myCells(O)){
         val strongCarriers = getStrongCarriers(cell1, cell2, true)
+        val weakCarriers = getWeakCarriers(cell1, cell2, true)
         if(strongCarriers.contains(cell) && !c.equals(colour)){
           hsearch.SC((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set(hsearch.getStrongCarriers(hsearch.model.board(cell1.i)(cell1.j), hsearch.model.board(cell2.i)(cell2.j), true) - hsearch.model.board(cell.i)(cell.j))
           hsearch.C((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set()
         }
+        if(strongCarriers.contains(cell) && c.equals(colour)){
+
+          hsearch.C((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set(hsearch.getStrongCarriers(hsearch.model.board(cell1.i)(cell1.j), hsearch.model.board(cell2.i)(cell2.j), true) - hsearch.model.board(cell.i)(cell.j))
+        }
+        if(weakCarriers.contains(cell) && !c.equals(colour)){
+          hsearch.SC((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set()
+        }
+        if(weakCarriers.contains(cell) && c.equals(colour)){
+
+          hsearch.C((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set(hsearch.getWeakCarriers(hsearch.model.board(cell1.i)(cell1.j), hsearch.model.board(cell2.i)(cell2.j), true) - hsearch.model.board(cell.i)(cell.j))
+          hsearch.SC((hsearch.G.find(hsearch.model.board(cell1.i)(cell1.j)).get, hsearch.G.find(hsearch.model.board(cell2.i)(cell2.j)).get)) = Set()
+        }
+
       }
     }
 
