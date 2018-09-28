@@ -78,8 +78,43 @@ class HSearch(val model: Model, colour: Colour) extends Const{
   def clone(X: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]], h : HSearch) : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = {
     val newX = collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]]()
     for((c1, c2) <- X.keys){
+      var cell1 = c1; var cell2 = c2
+      if(c1.i < h.model.N && c1.i >= 0 && c1.j < h.model.N && c1.j >= 0){
+        cell1 = h.model.board(c1.i)(c1.j)
+      }
+      else if(c1.i == -1){
+        cell1 = HSearch.boundaryBlue1
+      }
+      else if(c1.i == -2){
+        cell1 = HSearch.boundaryBlue2
+      }
+      else if(c1.j == -1){
+        cell1 = HSearch.boundaryRed1
+      }
+      else if(c1.j == -2){
+        cell1 = HSearch.boundaryRed2
+      }
 
-      newX((h.model.board(c1.i)(c1.j), h.model.board(c2.i)(c2.j))) = X((c1, c2))
+      if(c2.i < h.model.N && c2.i >= 0 && c2.j < h.model.N && c2.j >= 0){
+        cell2 = h.model.board(c2.i)(c2.j)
+      }
+      else if(c2.i == -1){
+        cell2 = HSearch.boundaryBlue1
+      }
+      else if(c2.i == -2){
+        cell2 = HSearch.boundaryBlue2
+      }
+      else if(c2.j == -1){
+        cell2 = HSearch.boundaryRed1
+      }
+      else if(c2.j == -2){
+        cell2 = HSearch.boundaryRed2
+      }
+      else{
+        println("SHOULDNT HAPPEN: HSEARCH CLONE")
+      }
+
+      newX((cell1, cell2)) = X((c1, c2))
     }
     return newX
   }
