@@ -13,19 +13,19 @@ class ResistanceHeuristic extends Const{
     else if(model.solution()){
       return Float.NegativeInfinity
     }
-    var hSearchRed = new HSearch(model, colour)
-    var hSearchBlue = new HSearch(model, colour)
+
 
 
 
     val blueCircuit : HexCircuit = new HexCircuit(model.N, B)
     val redCircuit : HexCircuit = new HexCircuit(model.N, R)
 
-    //val hSearchBlue = new HSearch(model, B)
-    //val hSearchRed = new HSearch(model, R)
-
-    //hSearchBlue.search
-    //hSearchRed.search
+    val hSearchBlue = new HSearch(model, B)
+    val hSearchRed = new HSearch(model, R)
+    hSearchBlue.initial
+    hSearchRed.initial
+    hSearchBlue.search
+    hSearchRed.search
 
 
     val cellResistancesBlue : Array[Float] = Array.ofDim(model.N * model.N + 2)
@@ -59,19 +59,19 @@ class ResistanceHeuristic extends Const{
         var cell1, cell2 : Cell = new Cell(-1,-1)
 
         if(node1.id == 0){
-          cell1 = hSearchBlue.boundaryBlue1
+          cell1 = HSearch.boundaryBlue1
         }
         else if(node1.id == model.N * model.N + 1){
-          cell1 = hSearchBlue.boundaryBlue2
+          cell1 = HSearch.boundaryBlue2
         }
         else{
           cell1 = model.board((node1.id-1) / model.N)((node1.id-1) % model.N)
         }
         if(node2.id == 0){
-          cell2 = hSearchBlue.boundaryBlue1
+          cell2 = HSearch.boundaryBlue1
         }
         else if(node2.id == model.N * model.N + 1){
-          cell2 = hSearchBlue.boundaryBlue2
+          cell2 = HSearch.boundaryBlue2
         }
         else{
           cell2 = model.board((node2.id-1) / model.N)((node2.id-1) % model.N)
@@ -89,19 +89,19 @@ class ResistanceHeuristic extends Const{
         var cell1, cell2 : Cell = new Cell(-1,-1)
 
         if(node1.id == 0){
-          cell1 = hSearchRed.boundaryRed1
+          cell1 = HSearch.boundaryRed1
         }
         else if(node1.id == model.N * model.N + 1){
-          cell1 = hSearchRed.boundaryRed2
+          cell1 = HSearch.boundaryRed2
         }
         else{
           cell1 = model.board((node1.id-1) / model.N)((node1.id-1) % model.N)
         }
         if(node2.id == 0){
-          cell2 = hSearchRed.boundaryRed1
+          cell2 = HSearch.boundaryRed1
         }
         else if(node2.id == model.N * model.N + 1){
-          cell2 = hSearchRed.boundaryRed2
+          cell2 = HSearch.boundaryRed2
         }
         else{
           cell2 = model.board((node2.id-1) / model.N)((node2.id-1) % model.N)
@@ -118,26 +118,26 @@ class ResistanceHeuristic extends Const{
         var cell1, cell2 : Cell = new Cell(0,0)
 
         if(node1.id == 0){
-          cell1 = hSearchBlue.boundaryBlue1
+          cell1 = HSearch.boundaryBlue1
         }
         else if(node1.id == model.N * model.N + 1){
-          cell1 = hSearchBlue.boundaryBlue2
+          cell1 = HSearch.boundaryBlue2
         }
         else{
           cell1 = model.board((node1.id-1) / model.N)((node1.id-1) % model.N)
         }
         if(node2.id == 0){
-          cell2 = hSearchBlue.boundaryBlue1
+          cell2 = HSearch.boundaryBlue1
         }
         else if(node2.id == model.N * model.N + 1){
-          cell2 = hSearchBlue.boundaryBlue2
+          cell2 = HSearch.boundaryBlue2
         }
         else{
           cell2 = model.board((node2.id-1) / model.N)((node2.id-1) % model.N)
         }
 
 
-        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2)
+        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
 
         if(strongCarriers.nonEmpty){
           blueCircuit.addLink(node1.id, node2.id)
@@ -152,25 +152,25 @@ class ResistanceHeuristic extends Const{
         var cell1, cell2 : Cell = new Cell(-1,-1)
 
         if(node1.id == 0){
-          cell1 = hSearchRed.boundaryRed1
+          cell1 = HSearch.boundaryRed1
         }
         else if(node1.id == model.N * model.N + 1){
-          cell1 = hSearchRed.boundaryRed2
+          cell1 = HSearch.boundaryRed2
         }
         else{
           cell1 = model.board((node1.id-1) / model.N)((node1.id-1) % model.N)
         }
         if(node2.id == 0){
-          cell2 = hSearchRed.boundaryRed1
+          cell2 = HSearch.boundaryRed1
         }
         else if(node2.id == model.N * model.N + 1){
-          cell2 = hSearchRed.boundaryRed2
+          cell2 = HSearch.boundaryRed2
         }
         else{
           cell2 = model.board((node2.id-1) / model.N)((node2.id-1) % model.N)
         }
 
-        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2)
+        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, false)
         if(strongCarriers.nonEmpty){
           redCircuit.addLink(node1.id, node2.id)
           redCircuit.setResistance(node1, node2, (1f-(1f/strongCarriers.size))/3)
@@ -185,26 +185,26 @@ class ResistanceHeuristic extends Const{
           var cell1, cell2 : Cell = new Cell(0,0)
 
           if(node1.id == 0){
-            cell1 = hSearchBlue.boundaryBlue1
+            cell1 = HSearch.boundaryBlue1
           }
           else if(node1.id == model.N * model.N + 1){
-            cell1 = hSearchBlue.boundaryBlue2
+            cell1 = HSearch.boundaryBlue2
           }
           else{
             cell1 = model.board((node1.id-1) / model.N)((node1.id-1) % model.N)
           }
           if(node2.id == 0){
-            cell2 = hSearchBlue.boundaryBlue1
+            cell2 = HSearch.boundaryBlue1
           }
           else if(node2.id == model.N * model.N + 1){
-            cell2 = hSearchBlue.boundaryBlue2
+            cell2 = HSearch.boundaryBlue2
           }
           else{
             cell2 = model.board((node2.id-1) / model.N)((node2.id-1) % model.N)
           }
 
 
-          val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2)
+          val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2, false)
 
           if(weakCarriers.nonEmpty){
             blueCircuit.addLink(node1.id, node2.id)
@@ -219,25 +219,25 @@ class ResistanceHeuristic extends Const{
           var cell1, cell2 : Cell = new Cell(-1,-1)
 
           if(node1.id == 0){
-            cell1 = hSearchRed.boundaryRed1
+            cell1 = HSearch.boundaryRed1
           }
           else if(node1.id == model.N * model.N + 1){
-            cell1 = hSearchRed.boundaryRed2
+            cell1 = HSearch.boundaryRed2
           }
           else{
             cell1 = model.board((node1.id-1) / model.N)((node1.id-1) % model.N)
           }
           if(node2.id == 0){
-            cell2 = hSearchRed.boundaryRed1
+            cell2 = HSearch.boundaryRed1
           }
           else if(node2.id == model.N * model.N + 1){
-            cell2 = hSearchRed.boundaryRed2
+            cell2 = HSearch.boundaryRed2
           }
           else{
             cell2 = model.board((node2.id-1) / model.N)((node2.id-1) % model.N)
           }
 
-          val weakCarriers = hSearchRed.getWeakCarriers(cell1, cell2)
+          val weakCarriers = hSearchRed.getWeakCarriers(cell1, cell2, false)
           if(weakCarriers.nonEmpty){
             redCircuit.addLink(node1.id, node2.id)
             redCircuit.setResistance(node1, node2, (1f-(1f/(weakCarriers.size+1)))/3)

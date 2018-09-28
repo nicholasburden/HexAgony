@@ -11,7 +11,7 @@ import HSearch._
 
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 2
+  val DEPTH = 3
 
   private def myMove(): Cell = {
     move = null
