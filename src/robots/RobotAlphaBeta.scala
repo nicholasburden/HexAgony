@@ -16,11 +16,20 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     var topScore = Float.NegativeInfinity
 
 
+    val hme = new HSearch(mod, colour)
+    val hthem = new HSearch(mod, othercolour)
+    hme.initial
+    hthem.initial
+
+    hme.search
+    hthem.search
 
     for (cell <- open) {
       val mod2 = result(mod, cell, colour)
+      val hme2 = hme.makeMove(cell.i, cell.j, colour)
+      val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
       if (!stop) {
-        val score = min(mod2, DEPTH, alpha, beta)
+        val score = min(mod2, DEPTH-1, alpha, beta, hme2, hthem2)
         println(cell + " score = " + score)
         if ((score >= topScore)) { // cell is a winning move
           topScore = score
@@ -34,7 +43,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     return move
 
   }
-  def min(model : Model, depth : Int, _alpha : Float, _beta : Float) : Float = {
+  def min(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch) : Float = {
 
     val alpha = _alpha
     var beta = _beta
@@ -50,7 +59,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       //println("Heuristic")
       val heuristic = new ResistanceHeuristic
 
-      return heuristic.evaluate(model, colour)
+      return heuristic.evaluate(model, colour, hme, hthem)
 
     }
     else{
@@ -58,20 +67,21 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       var bestVal = Float.PositiveInfinity
       for (cell <- model.myCells(O)){
 
-        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta)
+        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, othercolour), hthem.makeMove(cell.i, cell.j, othercolour))
 
         bestVal = Math.min(bestVal, value)
-        beta = Math.min(beta, bestVal)
+        beta = Math.min(beta, bestVal).toFloat
         if (beta <= alpha){
-          return bestVal
+          return bestVal.toFloat
         }
 
       }
-      return bestVal
+      return bestVal.toFloat
     }
   }
 
-  def max(model : Model, depth : Int, _alpha : Float, _beta : Float) : Float = {
+  def max(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch) : Float = {
+
     var alpha = _alpha
     val beta = _beta
     // println("Start next" + depth)
@@ -84,22 +94,22 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     else if(depth == 0){
       val heuristic = new ResistanceHeuristic
 
-      return heuristic.evaluate(model, colour)
+      return heuristic.evaluate(model, colour, hme, hthem)
 
     }
     else{
       // println("Finished checking if leaf")
       var bestVal = Float.NegativeInfinity
       for (cell <- model.myCells(O)){
-        val value = min(result(model, cell, colour), depth - 1, alpha, beta)
-        bestVal = Math.max(bestVal, value)
-        alpha = Math.max(alpha, bestVal)
+        val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour))
+        bestVal = Math.max(bestVal, value).toFloat
+        alpha = Math.max(alpha, bestVal).toFloat
         if (beta <= alpha){
-          return bestVal
+          return bestVal.toFloat
         }
 
       }
-      return bestVal
+      return bestVal.toFloat
     }
   }
 

@@ -61,6 +61,9 @@ class CircuitSolver {
       for(node2 <- circuit.getNodes){
         if(node1.id != node2.id){
           if(circuit.getResistance(node1,node2) != Float.PositiveInfinity && node1.id != 0 && node1.id != (N-1)){
+            if(circuit.getResistance(node1, node2)==0){
+              circuit.setResistance(node1, node2, 0.0000001f)
+            }
             mat(node1.id)(node1.id) += 1f/circuit.getResistance(node1,node2)
             mat(node1.id)(node2.id) -= 1f/circuit.getResistance(node1,node2)
           }
