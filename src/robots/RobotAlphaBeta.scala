@@ -2,15 +2,16 @@
 import hexagony._
 import Heuristic._
 import HSearch._
-
+import scala.util.Random
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val DEPTH = 2
 
-  private def myMove(): Cell = {
-    move = null
+  private def myMove(): Set[Cell] = {
+    moveSet = null
     val mod = model.copy()
-    val open = mod.myCells(O)
+    val open = Random.shuffle(mod.myCells(O))
+    println(open)
     val alpha = Float.NegativeInfinity
     val beta = Float.PositiveInfinity
     var topScore = Float.NegativeInfinity
@@ -30,17 +31,21 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
       if (!stop) {
         val score = min(mod2, DEPTH-1, alpha, beta, hme2, hthem2)
+
         println(cell + " score = " + score)
-        if ((score >= topScore)) { // cell is a winning move
+        if ((score > topScore)) { // cell is a winning move
           topScore = score
-          move = cell
+          moveSet = Set(cell)
+        }
+        else if(score == topScore){
+          moveSet = moveSet + cell
         }
 
       }
     }
 
 
-    return move
+    return moveSet
 
   }
   def min(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch) : Float = {
@@ -49,7 +54,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     var beta = _beta
     // println("Start next" + depth)
     if(model.solution(colour)){
-      return Int.MaxValue
+      return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
     }
     else if(model.solution(othercolour)){
       return Int.MinValue
@@ -72,11 +77,11 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
         bestVal = Math.min(bestVal, value)
         beta = Math.min(beta, bestVal).toFloat
         if (beta <= alpha){
-          return bestVal.toFloat
+          return bestVal
         }
 
       }
-      return bestVal.toFloat
+      return bestVal
     }
   }
 
@@ -86,7 +91,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     val beta = _beta
     // println("Start next" + depth)
     if(model.solution(colour)){
-      return Int.MaxValue
+      return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
     }
     else if(model.solution(othercolour)){
       return Int.MinValue
@@ -105,11 +110,11 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
         bestVal = Math.max(bestVal, value).toFloat
         alpha = Math.max(alpha, bestVal).toFloat
         if (beta <= alpha){
-          return bestVal.toFloat
+          return bestVal
         }
 
       }
-      return bestVal.toFloat
+      return bestVal
     }
   }
 
@@ -148,7 +153,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
    */
   // ------------------------------------------------------------------------------------------------
 
-  var move: Cell = null // this should hold the move that will be returned
+  var moveSet: Set[Cell] = null // this should hold the move that will be returned
   var pie = false // this should hold the pie rule decision
   var stop = false // used to end computation at completion of turn
   val lag = 50 // used for self-imposed time limit
@@ -157,9 +162,11 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   def makeMove(): Cell = {
     stop = false
     // Execute your move method with the given time restriction
-    try { move = timedRun[Cell](timelimit - lag)(myMove()) }
+    try { moveSet = timedRun[Set[Cell]](timelimit - lag)(myMove()) }
     catch { case ex: Exception => } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
+    val rnd = new Random
+    var move = moveSet.toVector(rnd.nextInt(moveSet.size))
     println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move

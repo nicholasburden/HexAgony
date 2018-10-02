@@ -1,5 +1,5 @@
 package Circuits
-import util.control.Breaks._
+import Heuristic._
 
 class CircuitSolver {
 
@@ -62,7 +62,7 @@ class CircuitSolver {
         if(node1.id != node2.id){
           if(circuit.getResistance(node1,node2) != Float.PositiveInfinity && node1.id != 0 && node1.id != (N-1)){
             if(circuit.getResistance(node1, node2)==0){
-              circuit.setResistance(node1, node2, 0.0000001f)
+              circuit.setResistance(node1, node2, ResistanceHeuristic.epsilon)
             }
             mat(node1.id)(node1.id) += 1f/circuit.getResistance(node1,node2)
             mat(node1.id)(node2.id) -= 1f/circuit.getResistance(node1,node2)
@@ -73,7 +73,7 @@ class CircuitSolver {
     }
 
 
-
+    var temp = mat.clone()
     val inverted_mat = invert(mat)
 
 
@@ -94,7 +94,14 @@ class CircuitSolver {
       }
 
     }
-
+    if(current.isNaN()){
+      for(arr <- temp){
+        for(i <- arr){
+          print(i + " ")
+        }
+        println()
+      }
+    }
     Math.abs(1f/current).toFloat
   }
 
@@ -176,6 +183,7 @@ class CircuitSolver {
         }
       }
     }
+
     return (a, index)
   }
 
