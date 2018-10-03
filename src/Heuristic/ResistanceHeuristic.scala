@@ -39,8 +39,8 @@ class ResistanceHeuristic extends Const {
 
     for (cell <- model.myCells(O)) {
       val i = cell.i * model.N + cell.j + 1
-      cellResistancesBlue(i) = 1
-      cellResistancesRed(i) = 1
+      cellResistancesBlue(i) = 1f
+      cellResistancesRed(i) = 1f
     }
 
     for (node1 <- blueCircuit.getNodes) {
@@ -110,12 +110,10 @@ class ResistanceHeuristic extends Const {
           }
         }
       }
-
-
     }
 
 
-    val circuitSolver = new CircuitSolver
+    val circuitSolver = new NewCircuitSolver
 
     val redResistance = circuitSolver.getResistance(redCircuit)
     val blueResistance = circuitSolver.getResistance(blueCircuit)
@@ -130,10 +128,7 @@ class ResistanceHeuristic extends Const {
     else {
       result = Math.log(blueResistance / redResistance).toFloat
     }
-    if (result.isNaN) {
-      println(redResistance)
-      println(blueResistance)
-    }
+
 
 
     return result
@@ -167,6 +162,8 @@ class ResistanceHeuristic extends Const {
 
     return cell
   }
+
+
 
 
 }

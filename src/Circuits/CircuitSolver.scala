@@ -64,6 +64,7 @@ class CircuitSolver {
             if(circuit.getResistance(node1, node2)==0){
               circuit.setResistance(node1, node2, ResistanceHeuristic.epsilon)
             }
+            println(1f/circuit.getResistance(node1, node1))
             mat(node1.id)(node1.id) += 1f/circuit.getResistance(node1,node2)
             mat(node1.id)(node2.id) -= 1f/circuit.getResistance(node1,node2)
           }
@@ -73,7 +74,7 @@ class CircuitSolver {
     }
 
 
-    var temp = mat.clone()
+
     val inverted_mat = invert(mat)
 
 
@@ -94,14 +95,9 @@ class CircuitSolver {
       }
 
     }
-    if(current.isNaN()){
-      for(arr <- temp){
-        for(i <- arr){
-          print(i + " ")
-        }
-        println()
-      }
-    }
+
+
+
     Math.abs(1f/current).toFloat
   }
 

@@ -10,7 +10,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   private def myMove(): Set[Cell] = {
     moveSet = null
     val mod = model.copy()
-    val open = Random.shuffle(mod.myCells(O))
+    val open = mod.myCells(O)
     println(open)
     val alpha = Float.NegativeInfinity
     val beta = Float.PositiveInfinity
@@ -37,7 +37,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
           topScore = score
           moveSet = Set(cell)
         }
-        else if(score == topScore){
+        else if(score >= topScore){
           moveSet = moveSet + cell
         }
 
@@ -54,7 +54,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     var beta = _beta
     // println("Start next" + depth)
     if(model.solution(colour)){
-      return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
+      //return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
+      return Int.MaxValue
     }
     else if(model.solution(othercolour)){
       return Int.MinValue
@@ -91,7 +92,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     val beta = _beta
     // println("Start next" + depth)
     if(model.solution(colour)){
-      return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
+      //return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
+      return Int.MaxValue
     }
     else if(model.solution(othercolour)){
       return Int.MinValue
