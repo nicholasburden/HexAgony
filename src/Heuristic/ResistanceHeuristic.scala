@@ -22,18 +22,18 @@ class ResistanceHeuristic extends Const {
     }
     val cellResistancesBlue: Array[Float] = Array.ofDim(model.N * model.N + 2)
     val cellResistancesRed: Array[Float] = Array.ofDim(model.N * model.N + 2)
-    cellResistancesBlue(0) = 0f
-    cellResistancesBlue(model.N * model.N + 1) = 0f
-    cellResistancesRed(0) = 0f
-    cellResistancesRed(model.N * model.N + 1) = 0f
+    cellResistancesBlue(0) = ResistanceHeuristic.epsilon
+    cellResistancesBlue(model.N * model.N + 1) = ResistanceHeuristic.epsilon
+    cellResistancesRed(0) = ResistanceHeuristic.epsilon
+    cellResistancesRed(model.N * model.N + 1) = ResistanceHeuristic.epsilon
     for (cell <- model.myCells(B)) {
       val i = cell.i * model.N + cell.j + 1
-      cellResistancesBlue(i) = 0f
+      cellResistancesBlue(i) = ResistanceHeuristic.epsilon
       cellResistancesRed(i) = Float.PositiveInfinity
     }
     for (cell <- model.myCells(R)) {
       val i = cell.i * model.N + cell.j + 1
-      cellResistancesRed(i) = 0f
+      cellResistancesRed(i) = ResistanceHeuristic.epsilon
       cellResistancesBlue(i) = Float.PositiveInfinity
     }
 
@@ -65,6 +65,7 @@ class ResistanceHeuristic extends Const {
     for (node1 <- blueCircuit.getNodes) {
       for (node2 <- blueCircuit.getNodes) {
         val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
+
         val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
         if (strongCarriers.nonEmpty) {
           blueCircuit.addLink(node1.id, node2.id)
@@ -113,10 +114,11 @@ class ResistanceHeuristic extends Const {
     }
 
 
-    val circuitSolver = new NewCircuitSolver
+    val circuitSolver = new CircuitSolver
 
     val redResistance = circuitSolver.getResistance(redCircuit)
     val blueResistance = circuitSolver.getResistance(blueCircuit)
+
 
     //println("RED: " + redResistance)
     //println("BLUE: " + blueResistance)

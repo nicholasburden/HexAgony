@@ -6,4 +6,7 @@ class Node(var id : Int) {
   def addAdjacencies(adjs : Set[Node]) = {
     adjacencies = adjacencies ++ adjs
   }
+  def addAdjacency(adj : Node) = {
+    adjacencies = adjacencies + adj
+  }
 }

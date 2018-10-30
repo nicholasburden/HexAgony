@@ -33,8 +33,8 @@ abstract class Circuit {
     max
   }
   def addLink(id1 : Int, id2 : Int): Unit ={
-    nodes(id1).addAdjacencies(Set(nodes(id2)))
-    nodes(id2).addAdjacencies(Set(nodes(id1)))
+    nodes(id1).addAdjacency(nodes(id2))
+    nodes(id2).addAdjacency(nodes(id1))
   }
 
 }
