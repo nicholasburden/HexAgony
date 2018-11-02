@@ -7,48 +7,50 @@ class HSearch(val model: Model, colour: Colour) extends Const{
 
 
   var Gtemp : Set[Cell] = Set()
-  for(cell <- model.myCells(colour)){
-    Gtemp = Gtemp + cell
-  }
-  for(cell <- model.myCells(O)){
-    Gtemp = Gtemp + cell
-  }
-  if(colour == B){
-    Gtemp = Gtemp + HSearch.boundaryBlue1
-    Gtemp = Gtemp + HSearch.boundaryBlue2
-  }
-  else{
-    Gtemp = Gtemp + HSearch.boundaryRed1
-    Gtemp = Gtemp + HSearch.boundaryRed2
-  }
+
   var G : DisjointSets[Cell] = new DisjointSets[Cell]()
-  for(g <- Gtemp){
 
-    G.add(g)
-  }
-
-  for(g1 <- Gtemp){
-
-    for(g2 <- Gtemp){
-      if(g1.colour.equals(colour) && g2.colour.equals(colour) && areNearestNeighbours(g1, g2)){
-
-        G.union(g1, g2)
-      }
-    }
-  }
 
   var C : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
   var SC : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
   var oldC : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
 
-  for(g1 <- G.getReps){
-    for(g2 <- G.getReps){
-      oldC((g1, g2)) = Set()
-    }
-  }
+
 
   def initial = {
+    for(cell <- model.myCells(colour)){
+      Gtemp = Gtemp + cell
+    }
+    for(cell <- model.myCells(O)){
+      Gtemp = Gtemp + cell
+    }
+    if(colour == B){
+      Gtemp = Gtemp + HSearch.boundaryBlue1
+      Gtemp = Gtemp + HSearch.boundaryBlue2
+    }
+    else{
+      Gtemp = Gtemp + HSearch.boundaryRed1
+      Gtemp = Gtemp + HSearch.boundaryRed2
+    }
+    for(g <- Gtemp){
 
+      G.add(g)
+    }
+
+    for(g1 <- Gtemp){
+
+      for(g2 <- Gtemp){
+        if(g1.colour.equals(colour) && g2.colour.equals(colour) && areNearestNeighbours(g1, g2)){
+
+          G.union(g1, g2)
+        }
+      }
+    }
+    for(g1 <- G.getReps){
+      for(g2 <- G.getReps){
+        oldC((g1, g2)) = Set()
+      }
+    }
     for(g1 <- G.getReps){
 
       for(g2 <- G.getReps){
@@ -69,9 +71,41 @@ class HSearch(val model: Model, colour: Colour) extends Const{
 
     val mod2 = result(model, cell, c)
     val hsearch = new HSearch(mod2, colour)
-    //println(C.keys.size)
-    val C_clone = clone(C, hsearch)
-    val SC_clone = clone(SC, hsearch)
+    val newG = G.clone()
+    hsearch.G = newG.asInstanceOf[DisjointSets[Cell]]
+
+    if(colour.equals(c)) hsearch.G.add(mod2.board(cell.i)(cell.j))
+    else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+    try {
+      var set : Set[Cell] = Set()
+      if(colour.equals(R)) set = Set(HSearch.boundaryRed1, HSearch.boundaryRed2)
+      else set = Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
+      for (cellTemp: Cell <- mod2.neighbours(mod2.board(cell.i)(cell.j))) {
+        if (cellTemp.colour.equals(c) && colour.equals(c)) {
+
+          hsearch.G.union(cellTemp, mod2.board(cell.i)(cell.j))
+        }
+      }
+      for(cellTemp <- set){
+        if(areNearestNeighbours(mod2.board(cell.i)(cell.j), cellTemp) && colour.equals(c)){
+          hsearch.G.union(cellTemp, mod2.board(cell.i)(cell.j))
+        }
+
+      }
+    }
+    catch{
+      case e : Exception => e.printStackTrace()
+    }
+
+    for(g1 <- hsearch.G.getReps){
+      for(g2 <- hsearch.G.getReps){
+        hsearch.oldC((g1, g2)) = Set()
+      }
+    }
+
+
+    val C_clone = C.clone()
+    val SC_clone = SC.clone()
 
     hsearch.C = C_clone
     hsearch.SC = SC_clone
@@ -82,68 +116,45 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     else{
       set = Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
     }
+    try {
+      for (cell1 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ set) {
+        for (cell2 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ set) {
+          val strongCarriers = getStrongCarriers(cell1, cell2, true)
+          val weakCarriers = getWeakCarriers(cell1, cell2, true)
 
-    for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set){
-      for(cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
-        val strongCarriers = getStrongCarriers(cell1, cell2, true)
-        val weakCarriers = getWeakCarriers(cell1, cell2, true)
+          if (!c.equals(colour) && strongCarriers.contains(cell)) {
 
-        if(!c.equals(colour)) {
-          if (strongCarriers.contains(cell)) {
-            hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getStrongCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
-            hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
+            hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getStrongCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
+            hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
+
           }
-        }
-        else if(c.equals(colour)){
-          if(strongCarriers.contains(cell)) {
+          else if (c.equals(colour) && strongCarriers.contains(cell)) {
             hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getStrongCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
             if (hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)).size == 1) {
               hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
               hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
             }
+
           }
-        }
-        else if(!c.equals(colour)){
-          if(weakCarriers.contains(cell)) {
+          else if (!c.equals(colour) && weakCarriers.contains(cell)) {
+
             hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
+
           }
-        }
-        else if(c.equals(colour)){
-          if(weakCarriers.contains(cell)){
+          else if (c.equals(colour) && weakCarriers.contains(cell)) {
+
             hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getWeakCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
             hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
           }
-
         }
-
-
       }
     }
-
-
-
+    catch{
+      case e : Exception => e.printStackTrace()
+    }
         return hsearch
   }
 
-  def clone(map : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]], hsearch : HSearch) : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] ={
-    val newMap : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
-    for(key : (Cell, Cell) <- map.keys){
-      try{
-        if(hsearch.G.find(key._1).isDefined && hsearch.G.find(key._2).isDefined){
-
-
-          newMap((hsearch.G.find(key._1).get, hsearch.G.find(key._2).get)) = map(key)
-        }
-
-
-      }
-      catch{
-        case e : Exception => e.printStackTrace()
-      }
-
-    }
-    return newMap
-  }
 
   def getCell(i : Int, j : Int, h : HSearch) : Cell = {
 

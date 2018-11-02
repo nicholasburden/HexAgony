@@ -66,7 +66,7 @@ class ResistanceHeuristic extends Const {
       for (node2 <- blueCircuit.getNodes) {
         val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
 
-        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
+        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, true)
         if (strongCarriers.nonEmpty) {
           blueCircuit.addLink(node1.id, node2.id)
           blueCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 3)
@@ -77,7 +77,7 @@ class ResistanceHeuristic extends Const {
     for (node1 <- redCircuit.getNodes) {
       for (node2 <- redCircuit.getNodes) {
         val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
-        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, false)
+        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, true)
         if (strongCarriers.nonEmpty) {
           redCircuit.addLink(node1.id, node2.id)
           redCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 3)
@@ -91,7 +91,7 @@ class ResistanceHeuristic extends Const {
         for (node1 <- blueCircuit.getNodes) {
           for (node2 <- blueCircuit.getNodes) {
             val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
-            val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2, false)
+            val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2, true)
             if (weakCarriers.nonEmpty) {
               blueCircuit.addLink(node1.id, node2.id)
               blueCircuit.setResistance(node1, node2, (1f - (1f / (weakCarriers.size + 1))) / 3)
@@ -103,7 +103,7 @@ class ResistanceHeuristic extends Const {
         for (node1 <- redCircuit.getNodes) {
           for (node2 <- redCircuit.getNodes) {
             val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
-            val weakCarriers = hSearchRed.getWeakCarriers(cell1, cell2, false)
+            val weakCarriers = hSearchRed.getWeakCarriers(cell1, cell2, true)
             if (weakCarriers.nonEmpty) {
               redCircuit.addLink(node1.id, node2.id)
               redCircuit.setResistance(node1, node2, (1f - (1f / (weakCarriers.size + 1))) / 3)

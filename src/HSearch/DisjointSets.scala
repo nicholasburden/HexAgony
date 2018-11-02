@@ -12,7 +12,12 @@ import scala.annotation.tailrec
   * the set.
   */
 class DisjointSets[T](initialElements : Seq[T] = Nil) {
+  override def clone(): AnyRef = {
+    val ds = new DisjointSets[T]()
+    ds.nodes = nodes.clone()
+    ds
 
+  }
   /**
     * Add a new single-node forest to the disjoint-set forests. It will
     * be placed into its own set.
@@ -98,13 +103,14 @@ class DisjointSets[T](initialElements : Seq[T] = Nil) {
     * not keep track of the number of sets, and instead this method recomputes
     * them each time.
     */
+  def remove(t : T) : Unit = synchronized{ nodes -= t}
   def size : Int = synchronized {
     nodes.values.count(_.parent == None)
   }
 
   ////
   // Internal parts
-  private val nodes : scala.collection.mutable.Map[T, DisjointSets.Node[T]] =
+  private var nodes : scala.collection.mutable.Map[T, DisjointSets.Node[T]] =
   scala.collection.mutable.Map.empty
 
   // Initialization

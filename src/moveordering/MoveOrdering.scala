@@ -4,6 +4,9 @@ import hexagony._
 class MoveOrdering extends Const{
   var currentMoves : Set[Cell] = Set()
   var goodMoves : Set[Cell] = Set[Cell]()
+  def initial(model : Model) = {
+
+  }
   def getOrdering(colour : Colour, model : Model) : List[Cell] = {
     var ordering : List[Cell] = List()
     if(model.count == 0){
@@ -38,7 +41,8 @@ class MoveOrdering extends Const{
     val result = new MoveOrdering
     result.goodMoves = goodMoves
     result.currentMoves = currentMoves + start
-
+    getBridges(start, model).foreach(x => result.addGoodMove(model.board(x.i)(x.j)))
+    /*
     if(isValid(start.i-1, start.j-2, model)){
       result.addGoodMove(model.board(start.i - 1)(start.j-2))
     }
@@ -57,7 +61,7 @@ class MoveOrdering extends Const{
     if(isValid(start.i+1, start.j-1, model)){
       result.addGoodMove(model.board(start.i + 1)(start.j-1))
     }
-
+    */
     result.goodMoves = result.goodMoves -- result.currentMoves
     result
   }
@@ -65,4 +69,27 @@ class MoveOrdering extends Const{
   def isValid(i : Int, j : Int, model : Model) : Boolean = {
     return i >= 0 && i < model.N && j >= 0 && j < model.N && model.board(i)(j).colour == O
   }
+  def getBridges(start : Cell, model : Model) : List[Cell] = {
+    var list : List[Cell] = List()
+    if(isValid(start.i-1, start.j-2, model)){
+      list = model.board(start.i-1)(start.j-2) :: list
+    }
+    if(isValid(start.i-2, start.j-1, model)){
+      list = model.board(start.i-2)(start.j-1) :: list
+    }
+    if(isValid(start.i-1, start.j+1, model)){
+      list = model.board(start.i-1)(start.j+1) :: list
+    }
+    if(isValid(start.i+1, start.j+2, model)){
+      list = model.board(start.i+1)(start.j+2) :: list
+    }
+    if(isValid(start.i+2, start.j+1, model)){
+      list = model.board(start.i+2)(start.j+1) :: list
+    }
+    if(isValid(start.i+1, start.j-1, model)){
+      list = model.board(start.i+1)(start.j-1) :: list
+    }
+    list
+  }
+
 }
