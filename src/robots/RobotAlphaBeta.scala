@@ -5,14 +5,15 @@ import HSearch._
 import pierule._
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 2
+  val DEPTH = 3
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
     if(model.pie) HSearch.pie
     val moveOrdering = new MoveOrdering
     val mod = model.copy()
-    val open = moveOrdering.getOrdering(colour, mod)
+    moveOrdering.initial(mod)
+    val open = moveOrdering.getOrdering(mod)
 
 
     val alpha = Float.NegativeInfinity
@@ -75,8 +76,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       var bestVal = Float.PositiveInfinity
 
 
-      for (cell1 <- mo.getOrdering(othercolour, model)){
-      //for(cell1 <- model.myCells(O)){
+      for (cell1 <- mo.getOrdering(model)){
+
         val cell = model.board(cell1.i)(cell1.j)
         val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, othercolour), hthem.makeMove(cell.i, cell.j, othercolour), mo.addMovesFor(cell, model))
 
@@ -112,7 +113,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       // println("Finished checking if leaf")
       var bestVal = Float.NegativeInfinity
 
-      for (cell1 <- mo.getOrdering(colour, model)){
+      for (cell1 <- mo.getOrdering(model)){
       //for(cell1 <- model.myCells(O)){
         val cell = model.board(cell1.i)(cell1.j)
         val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour), mo.addMovesFor(cell, model))

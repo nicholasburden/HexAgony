@@ -5,9 +5,15 @@ class MoveOrdering extends Const{
   var currentMoves : Set[Cell] = Set()
   var goodMoves : Set[Cell] = Set[Cell]()
   def initial(model : Model) = {
+    for(move <- model.myCells(R) ++ model.myCells(B)){
+      currentMoves = currentMoves + move
+      for(goodMove <- getBridges(move, model) ++ model.neighbours(move)){
+        if(goodMove.colour == O) goodMoves = goodMoves + goodMove
 
+      }
+    }
   }
-  def getOrdering(colour : Colour, model : Model) : List[Cell] = {
+  def getOrdering(model : Model) : List[Cell] = {
     var ordering : List[Cell] = List()
     if(model.count == 0){
       for(layer <- 0 until model.N/2){
@@ -29,9 +35,10 @@ class MoveOrdering extends Const{
           ordering = cell :: ordering
         }
       }
+
       return goodMoves.toList ++ ordering
     }
-    println(ordering)
+
     ordering
   }
 
@@ -42,26 +49,7 @@ class MoveOrdering extends Const{
     result.goodMoves = goodMoves
     result.currentMoves = currentMoves + start
     getBridges(start, model).foreach(x => result.addGoodMove(model.board(x.i)(x.j)))
-    /*
-    if(isValid(start.i-1, start.j-2, model)){
-      result.addGoodMove(model.board(start.i - 1)(start.j-2))
-    }
-    if(isValid(start.i-2, start.j-1, model)){
-      result.addGoodMove(model.board(start.i - 2)(start.j-1))
-    }
-    if(isValid(start.i-1, start.j+1, model)){
-      result.addGoodMove(model.board(start.i - 1)(start.j+1))
-    }
-    if(isValid(start.i+1, start.j+2, model)){
-      result.addGoodMove(model.board(start.i + 1)(start.j+2))
-    }
-    if(isValid(start.i+2, start.j+1, model)){
-      result.addGoodMove(model.board(start.i + 2)(start.j+1))
-    }
-    if(isValid(start.i+1, start.j-1, model)){
-      result.addGoodMove(model.board(start.i + 1)(start.j-1))
-    }
-    */
+
     result.goodMoves = result.goodMoves -- result.currentMoves
     result
   }

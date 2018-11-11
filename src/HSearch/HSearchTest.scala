@@ -2,23 +2,22 @@ package HSearch
 import hexagony._
 class HSearchTest extends Const{
   def foo = {
-    val mod = new Model(3)
+    val mod = new Model(5)
+    mod.playMove(new Cell(2,2), R)
+    mod.playMove(new Cell(3,3), B)
+    mod.playMove(new Cell(4,4), R)
+    mod.playMove(new Cell(4,3), B)
+    mod.playMove(new Cell(2,3), R)
+    mod.playMove(new Cell(2,2), B)
 
-    val hsearchRed = new HSearch(mod, R)
-    hsearchRed.initial
-    hsearchRed.search
-    println(hsearchRed.getStrongCarriers(mod.board(1)(1), HSearch.boundaryRed1, false))
-    println(hsearchRed.getStrongCarriers(mod.board(1)(1), HSearch.boundaryRed2, false))
-    //for(cell1 <- mod.myCells(R) ++ mod.myCells(O)){
-      //for(cell2 <- mod.myCells(R) ++ mod.myCells(O)){
-        //println(cell1 + " " + cell2 + hsearchRed.getStrongCarriers(cell1, cell2, true))
-      //}
-    //}
+    val hsearch = new HSearch(mod, B)
+    hsearch.initial
+    hsearch.search
+    val h = hsearch.makeMove(0,1,R)
+    println(h.getStrongCarriers(h.model.board(2)(2), h.model.board(0)(1), true))
+    println(h.getStrongCarriers(h.model.board(1)(2), HSearch.boundaryBlue1, true))
 
-    val h = hsearchRed.makeMove(1,1, R)
 
-    println(h.getWeakCarriers(h.model.board(1)(1), HSearch.boundaryRed2, false))
-    println(h.getStrongCarriers(h.model.board(1)(1), HSearch.boundaryRed2, false))
 
 
 

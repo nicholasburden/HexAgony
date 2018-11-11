@@ -51,17 +51,18 @@ class HSearch(val model: Model, colour: Colour) extends Const{
         oldC((g1, g2)) = Set()
       }
     }
-    for(g1 <- G.getReps){
+    for(g1 <- Gtemp){
 
-      for(g2 <- G.getReps){
-
+      for(g2 <- Gtemp){
+        val rep1 = G.find(g1).get
+        val rep2 = G.find(g2).get
         if(!areNearestNeighbours(g1,g2)){
-          C((g1, g2)) = Set()
+          C((rep1, rep2)) = Set()
         }
         else{
-          C((g1, g2)) = Set(Set())
+          C((rep1, rep2)) = Set(Set())
         }
-        SC((g1, g2)) = Set()
+        SC((rep1, rep2)) = Set()
 
       }
     }
@@ -123,28 +124,26 @@ class HSearch(val model: Model, colour: Colour) extends Const{
           val weakCarriers = getWeakCarriers(cell1, cell2, true)
 
           if (!c.equals(colour) && strongCarriers.contains(cell)) {
-
-            hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getStrongCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
-            hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
-
+            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(hsearch.getStrongCarriers(cell1, cell2, true) - cell)
+            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
           }
           else if (c.equals(colour) && strongCarriers.contains(cell)) {
-            hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getStrongCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
-            if (hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)).size == 1) {
-              hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
-              hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
+            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(hsearch.getStrongCarriers(cell1, cell2, true) - cell)
+            if (hsearch.getStrongCarriers(hsearch.G.find(cell1).get, hsearch.G.find(cell2).get, true).size == 1) {
+              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+
             }
 
           }
           else if (!c.equals(colour) && weakCarriers.contains(cell)) {
 
-            hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
+            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
 
           }
           else if (c.equals(colour) && weakCarriers.contains(cell)) {
 
-            hsearch.C((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set(hsearch.getWeakCarriers(getCell(cell1.i, cell1.j, hsearch), getCell(cell2.i, cell2.j, hsearch), true) - hsearch.model.board(cell.i)(cell.j))
-            hsearch.SC((hsearch.G.find(getCell(cell1.i, cell1.j, hsearch)).get, hsearch.G.find(getCell(cell2.i, cell2.j, hsearch)).get)) = Set()
+            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(hsearch.getWeakCarriers(cell1, cell2, true) - cell)
+            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
           }
         }
       }
@@ -156,24 +155,6 @@ class HSearch(val model: Model, colour: Colour) extends Const{
   }
 
 
-  def getCell(i : Int, j : Int, h : HSearch) : Cell = {
-
-    if(i < h.model.N && i >= 0 && j < h.model.N && j >= 0){
-      return h.model.board(i)(j)
-    }
-    else if(i == -1){
-      return HSearch.boundaryBlue1
-    }
-    else if(i == -3){
-      return HSearch.boundaryBlue2
-    }else if(j == -1){
-      return HSearch.boundaryRed1
-    }else if(j == -3){
-      return HSearch.boundaryRed2
-    }
-
-    return null
-  }
   def search : Unit = {
 
     var currentNewVC = false
@@ -353,7 +334,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
 }
 
 object HSearch extends Const{
-  val M = 15
+  val M = 12
   val X = 5
   var boundaryRed1 : Cell = new Cell(0, -1)
   var boundaryRed2 : Cell = new Cell(0, -3)
@@ -375,5 +356,7 @@ object HSearch extends Const{
     boundaryBlue1.colour = B
     boundaryBlue2.colour = B
   }
+
+
 }
 
