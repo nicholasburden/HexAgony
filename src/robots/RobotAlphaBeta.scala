@@ -5,7 +5,7 @@ import HSearch._
 import pierule._
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 3
+  val DEPTH = 1
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {

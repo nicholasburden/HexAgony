@@ -58,6 +58,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
         val rep2 = G.find(g2).get
         if(!areNearestNeighbours(g1,g2)){
           C((rep1, rep2)) = Set()
+
         }
         else{
           C((rep1, rep2)) = Set(Set())
@@ -67,6 +68,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
       }
     }
   }
+
   def makeMove(i : Int, j : Int, c : Colour): HSearch = {
     val cell = model.board(i)(j)
 

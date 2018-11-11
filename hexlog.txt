@@ -6503,3 +6503,88 @@ Pie rule is not available
 197.505: (Red) RobotAlphaBeta plays move 15: (1, 4)
 197.505: (Red) End game - winner is RobotAlphaBeta
 
+2018.11.11 21:36:46
+5 x 5 game: Red (Human) vs Blue (Human)
+Pie rule is not available
+2.401: (Red) Red plays move 1: (2, 2)
+5.711: (Blue) Blue plays move 2: (3, 3)
+12.531: (Red) Red plays move 3: (4, 4)
+14.708: (Blue) Blue plays move 4: (4, 3)
+29.255: (Red) Red plays move 5: (2, 3)
+50.548: (Blue) Blue plays move 6: (0, 2)
+50.887: (Red) Red plays move 7: (1, 2)
+51.210: (Blue) Blue plays move 8: (0, 1)
+51.884: (Red) Red plays move 9: (0, 3)
+52.937: (Blue) Blue plays move 10: (1, 4)
+53.746: (Red) Red plays move 11: (1, 3)
+54.332: (Blue) Blue plays move 12: (2, 4)
+54.838: (Red) Red plays move 13: (3, 4)
+57.134: (Blue) Blue plays move 14: (1, 1)
+58.263: (Red) Red plays move 15: (2, 1)
+58.894: (Blue) Blue plays move 16: (1, 0)
+59.420: (Red) Red plays move 17: (2, 0)
+59.423: (Red) End game - winner is Red
+
+2018.11.11 21:37:49
+5 x 5 game: Red (Human) vs Blue (Human)
+Pie rule is not available
+7.488: (Red) Red plays move 1: (2, 2)
+8.931: (Blue) Blue plays move 2: (3, 3)
+9.901: (Red) Red plays move 3: (4, 4)
+12.128: (Blue) Blue plays move 4: (4, 3)
+22.025: (Red) Red plays move 5: (2, 3)
+40.634: (Blue) Blue plays move 6: (2, 1)
+41.050: (Red) Red plays move 7: (1, 0)
+41.850: (Blue) Blue plays move 8: (2, 0)
+43.153: (Red) Red plays move 9: (1, 1)
+44.238: (Blue) Blue plays move 10: (3, 2)
+46.293: (Red) Red plays move 11: (2, 4)
+46.293: (Red) End game - winner is Red
+
+2018.11.11 21:38:37
+5 x 5 game: Red (Human) vs Blue (Human)
+Pie rule is not available
+1.695: (Red) Red plays move 1: (2, 2)
+9.488: (Blue) Blue plays move 2: (1, 1)
+10.033: (Red) Red plays move 3: (0, 0)
+11.553: (Blue) Blue plays move 4: (0, 1)
+12.323: (Red) Red plays move 5: (1, 2)
+12.916: (Blue) Blue plays move 6: (0, 2)
+13.681: (Red) Red plays move 7: (1, 3)
+14.290: (Blue) Blue plays move 8: (0, 3)
+15.002: (Red) Red plays move 9: (1, 4)
+15.646: (Blue) Blue plays move 10: (0, 4)
+16.388: (Red) Red plays move 11: (2, 4)
+17.330: (Blue) Blue plays move 12: (2, 1)
+18.007: (Red) Red plays move 13: (1, 0)
+18.502: (Blue) Blue plays move 14: (3, 1)
+19.139: (Red) Red plays move 15: (4, 2)
+19.825: (Blue) Blue plays move 16: (4, 1)
+19.826: (Blue) End game - winner is Blue
+
+2018.11.11 21:38:58
+5 x 5 game: Red (Human) vs Blue (Human)
+Pie rule is not available
+2.254: (Red) Red plays move 1: (1, 1)
+4.338: (Blue) Blue plays move 2: (1, 3)
+4.786: (Red) Red plays move 3: (0, 2)
+5.812: (Blue) Blue plays move 4: (0, 1)
+6.599: (Red) Red plays move 5: (1, 2)
+7.408: (Blue) Blue plays move 6: (2, 3)
+8.233: (Red) Red plays move 7: (3, 3)
+10.489: (Blue) Blue plays move 8: (4, 3)
+12.711: (Red) Red plays move 9: (2, 2)
+13.831: (Blue) Blue plays move 10: (4, 4)
+14.537: (Red) Red plays move 11: (3, 4)
+15.299: (Blue) Blue plays move 12: (2, 4)
+15.947: (Red) Red plays move 13: (1, 4)
+17.012: (Blue) Blue plays move 14: (0, 3)
+17.806: (Red) Red plays move 15: (0, 4)
+18.742: (Blue) Blue plays move 16: (3, 2)
+19.427: (Red) Red plays move 17: (4, 2)
+20.046: (Blue) Blue plays move 18: (3, 1)
+20.560: (Red) Red plays move 19: (2, 1)
+21.104: (Blue) Blue plays move 20: (1, 0)
+21.568: (Red) Red plays move 21: (0, 0)
+21.569: (Red) End game - winner is Red
+
