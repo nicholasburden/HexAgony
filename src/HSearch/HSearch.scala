@@ -1,7 +1,7 @@
 package HSearch
 
 import hexagony._
-
+//Add method in here to find simple bridges and weak connections within intial. probs best to define one method to return true if it is a bridge. maybe an option of the cells in between
 class HSearch(val model: Model, colour: Colour) extends Const{
 
 
@@ -51,17 +51,19 @@ class HSearch(val model: Model, colour: Colour) extends Const{
         oldC((g1, g2)) = Set()
       }
     }
+    val added : collection.mutable.Map[(Cell, Cell), Boolean] = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
     for(g1 <- Gtemp){
 
       for(g2 <- Gtemp){
         val rep1 = G.find(g1).get
         val rep2 = G.find(g2).get
-        if(!areNearestNeighbours(g1,g2)){
+        if(!areNearestNeighbours(g1,g2) && !added((rep1, rep2))){
           C((rep1, rep2)) = Set()
 
         }
         else{
           C((rep1, rep2)) = Set(Set())
+          added((rep1, rep2)) = true
         }
         SC((rep1, rep2)) = Set()
 
