@@ -69,7 +69,7 @@ class ResistanceHeuristic extends Const {
         val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
         if (strongCarriers.nonEmpty) {
           blueCircuit.addLink(node1.id, node2.id)
-          blueCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 10)
+          blueCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
         }
       }
     }
@@ -80,7 +80,7 @@ class ResistanceHeuristic extends Const {
         val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, false)
         if (strongCarriers.nonEmpty) {
           redCircuit.addLink(node1.id, node2.id)
-          redCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 10)
+          redCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
         }
       }
     }

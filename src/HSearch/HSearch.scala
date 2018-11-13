@@ -1,7 +1,7 @@
 package HSearch
 
 import hexagony._
-//Add method in here to find simple bridges and weak connections within intial. probs best to define one method to return true if it is a bridge. maybe an option of the cells in between
+//BIG ISSUE: cells are added to the disjoint sets, and colour is not updated, so it ignores colours. add getCell method to fetch from model instead, and change in search method
 class HSearch(val model: Model, colour: Colour) extends Const{
 
 
@@ -58,7 +58,20 @@ class HSearch(val model: Model, colour: Colour) extends Const{
         val rep1 = G.find(g1).get
         val rep2 = G.find(g2).get
         if(!areNearestNeighbours(g1,g2) && !added((rep1, rep2))){
-          C((rep1, rep2)) = Set()
+          var op : Option[(Cell, Cell)] = None
+          try{
+            op = getBridge(g1, g2)
+          }catch{
+            case e : Exception => e.printStackTrace()
+          }
+
+          if(op.isDefined){
+            println(g1 + " " + g2 + "  " + op)
+            C((rep1, rep2)) = Set(Set(op.get._1, op.get._2))
+          }
+          else {
+            C((rep1, rep2)) = Set()
+          }
 
         }
         else{
@@ -70,7 +83,85 @@ class HSearch(val model: Model, colour: Colour) extends Const{
       }
     }
   }
+  def getBridge(cell1 : Cell, cell2 : Cell) : Option[(Cell, Cell)] = {
+    var boundary1 = HSearch.boundaryBlue1
+    var boundary2 = HSearch.boundaryBlue2
+    var indexCheck1 = cell1.i
+    var indexCheck2 = cell2.i
 
+    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
+    if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))){ indexCheck1 = cell1.j; indexCheck2 = cell2.j}
+    def getBoundaryCarrier(a : Cell, b : Cell) : Option[(Cell, Cell)] = {
+      if(a.equals(boundary1) && indexCheck2 == 1){
+        if((model.pie && colour.equals(R)) || (!model.pie && colour.equals(B))) {
+          if (b.i >= 1 && b.j >= 1 && model.board(b.i - 1)(b.j).colour.equals(O) && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+            return Some((model.board(b.i-1)(b.j),model.board(b.i - 1)(b.j - 1)))
+          }
+        }
+        else{
+          if (b.i >= 1 && b.j >= 1 && model.board(b.i)(b.j-1).colour.equals(O) && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+            return Some((model.board(b.i)(b.j-1),model.board(b.i - 1)(b.j - 1)))
+          }
+        }
+      }
+      if(a.equals(boundary2) && indexCheck2 == model.N - 2){
+        if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))) {
+          if (b.i < model.N - 1 && b.j < model.N-1 && model.board(b.i)(b.j+1).colour.equals(O) && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
+            return Some((model.board(b.i)(b.j+1),model.board(b.i + 1)(b.j + 1)))
+          }
+        }
+        else{
+          if (b.i < model.N-1 && b.j < model.N - 1 && model.board(b.i+1)(b.j).colour.equals(O) && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
+            return Some((model.board(b.i+1)(b.j),model.board(b.i + 1)(b.j + 1)))
+          }
+        }
+      }
+      return None
+
+    }
+    val possibleCarrier1 = getBoundaryCarrier(cell1, cell2)
+    val possibleCarrier2 = getBoundaryCarrier(cell2, cell1)
+    if(possibleCarrier1.isDefined) return possibleCarrier1
+    if(possibleCarrier2.isDefined) return possibleCarrier2
+    var a = new Cell(-1,-1)
+    var b = new Cell(-1,-1)
+    var found = false
+    if(cell1.i == cell2.i-1 && cell1.j == cell2.j-2){
+      a = model.board(cell1.i)(cell1.j+1)
+      b = model.board(cell2.i)(cell2.j-1)
+      found = true
+    }
+
+    if(cell1.i == cell2.i-2 && cell1.j == cell2.j-1){
+      a = model.board(cell1.i+1)(cell1.j)
+      b = model.board(cell2.i-1)(cell2.j)
+      found = true
+    }
+    if (cell1.i == cell2.i-1 && cell1.j == cell2.j+1){
+      a = model.board(cell1.i)(cell2.j)
+      b = model.board(cell2.i)(cell1.j)
+      found = true
+    }
+    if (cell1.i == cell2.i+1 && cell1.j == cell2.j+2){
+      a = model.board(cell1.i)(cell1.j-1)
+      b = model.board(cell2.i)(cell2.j+1)
+      found = true
+    }
+    if(cell1.i == cell2.i+2 && cell1.j == cell2.j+1){
+      a = model.board(cell1.i-1)(cell1.j)
+      b = model.board(cell2.i+1)(cell2.j)
+      found = true
+    }
+    if(cell1.i == cell2.i+1 && cell1.j == cell2.j-1){
+      a = model.board(cell1.i)(cell2.j)
+      b = model.board(cell2.i)(cell1.j)
+      found = true
+    }
+    if(found && a.colour.equals(O) && b.colour.equals(O)){
+      return Some((a,b))
+    }
+    return None
+  }
   def makeMove(i : Int, j : Int, c : Colour): HSearch = {
     val cell = model.board(i)(j)
 
@@ -79,8 +170,8 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     val newG = G.clone()
     hsearch.G = newG.asInstanceOf[DisjointSets[Cell]]
 
-    if(colour.equals(c)) hsearch.G.add(mod2.board(cell.i)(cell.j))
-    else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+    //if(colour.equals(c)) hsearch.G.add(mod2.board(cell.i)(cell.j))
+    if(!colour.equals(c)) hsearch.G.remove(mod2.board(cell.i)(cell.j))
     try {
       var set : Set[Cell] = Set()
       if(colour.equals(R)) set = Set(HSearch.boundaryRed1, HSearch.boundaryRed2)
