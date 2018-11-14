@@ -29,7 +29,7 @@ class HSearchTest extends Const{
     h = h.makeMove(0,1,B)
     assertEquals(Set(), h.getStrongCarriers(h.G.find(new Cell(0,0)).get, h.G.find(new Cell(1, 2)).get, true))
   }
-  @Test def verifyWeakgConnectionMakeMove() = {
+  @Test def verifyWeakConnectionMakeMove() = {
     h = h.makeMove(0,0,R)
     h = h.makeMove(1,2,R)
     h = h.makeMove(0,1,B)

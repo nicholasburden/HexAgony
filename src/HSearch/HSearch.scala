@@ -325,33 +325,52 @@ class HSearch(val model: Model, colour: Colour) extends Const{
       set = Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
     }
     try {
+      val done = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
       for (cell1 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ set) {
         for (cell2 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ set) {
           val strongCarriers = getStrongCarriers(cell1, cell2, true)
           val weakCarriers = getWeakCarriers(cell1, cell2, true)
+          if(!done((cell1, cell2))) {
+            if (!c.equals(colour) && strongCarriers.contains(cell)) {
 
-          if (!c.equals(colour) && strongCarriers.contains(cell)) {
-
-            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(hsearch.getStrongCarriers(cell1, cell2, true) - cell)
-            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-          }
-          else if (c.equals(colour) && strongCarriers.contains(cell)) {
-            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(hsearch.getStrongCarriers(cell1, cell2, true) - cell)
-            if (hsearch.getStrongCarriers(hsearch.G.find(cell1).get, hsearch.G.find(cell2).get, true).size == 1) {
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
               hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
 
+              //other way
+
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
+              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
             }
+            else if (c.equals(colour) && strongCarriers.contains(cell)) {
+              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
+              //other way
+              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
 
-          }
-          else if (!c.equals(colour) && weakCarriers.contains(cell)) {
+              if (hsearch.getStrongCarriers(hsearch.G.find(cell1).get, hsearch.G.find(cell2).get, true).size == 1) {
+                hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+              }
+              //other way
+              if (hsearch.getStrongCarriers(hsearch.G.find(cell2).get, hsearch.G.find(cell1).get, true).size == 1) {
+                hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+              }
 
-            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+            }
+            else if (!c.equals(colour) && weakCarriers.contains(cell)) {
 
-          }
-          else if (c.equals(colour) && weakCarriers.contains(cell)) {
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+              //other way
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
 
-            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(hsearch.getWeakCarriers(cell1, cell2, true) - cell)
-            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+            }
+            else if (c.equals(colour) && weakCarriers.contains(cell)) {
+
+              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+              //other way
+              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+            }
+            done((cell1, cell2)) = true; done((cell2, cell1)) = true;
           }
         }
       }
