@@ -23,8 +23,7 @@ class HSearchTest extends Const{
     //hr = hr.makeMove(4,4, R)
 
     //h = h.makeMove(1,1,R)
-    println(hb.getStrongCarriers(hb.model.board(4)(3), hb.model.board(3)(2), true))
-    println(hb.getWeakCarriers(hb.model.board(1)(1), HSearch.boundaryBlue1, true))
+
 
 
 

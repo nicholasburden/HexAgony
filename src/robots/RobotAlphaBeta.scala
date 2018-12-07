@@ -9,48 +9,53 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
-    if(model.pie) HSearch.pie
-    val moveOrdering = new MoveOrdering
-    val mod = model.copy()
-    moveOrdering.initial(mod)
-    val open = moveOrdering.getOrdering(mod)
+    try {
+      if (model.pie) HSearch.pie
+      val moveOrdering = new MoveOrdering
+      val mod = model.copy()
+      moveOrdering.initial(mod)
+      val open = moveOrdering.getOrdering(mod)
 
 
-    val alpha = Float.NegativeInfinity
-    val beta = Float.PositiveInfinity
-    var topScore = Float.NegativeInfinity
+      val alpha = Float.NegativeInfinity
+      val beta = Float.PositiveInfinity
+      var topScore = Float.NegativeInfinity
 
 
-    val hme = new HSearch(mod, colour)
-    val hthem = new HSearch(mod, othercolour)
-    hme.initial
-    hthem.initial
+      val hme = new HSearch(mod, colour)
+      val hthem = new HSearch(mod, othercolour)
+      hme.initial
+      hthem.initial
 
-    hme.search
-    hthem.search
+      hme.search
+      hthem.search
 
-    for (cell1 <- open) {
-      val cell = mod.board(cell1.i)(cell1.j)
-      val mod2 = result(mod, cell, colour)
-      val hme2 = hme.makeMove(cell.i, cell.j, colour)
-      val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
-      if (!stop) {
-        var score = 0.0f
-        try{
-          score = min(mod2, DEPTH-1, alpha, beta, hme2, hthem2, moveOrdering.addMovesFor(cell, mod))
-        }catch{
-          case e : Exception => e.printStackTrace()
-        }
-        println(cell + " score = " + score)
-        if ((score > topScore)) { // cell is a winning move
-          move = cell; topScore = score
+      for (cell1 <- open) {
+        val cell = mod.board(cell1.i)(cell1.j)
+        val mod2 = result(mod, cell, colour)
+        val hme2 = hme.makeMove(cell.i, cell.j, colour)
+        val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
+        if (!stop) {
+          var score = 0.0f
+          try {
+            score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, moveOrdering.addMovesFor(cell, mod))
+          } catch {
+            case e: Exception => e.printStackTrace()
+          }
+          println(cell + " score = " + score)
+          if ((score > topScore)) { // cell is a winning move
+            move = cell;
+            topScore = score
+          }
         }
       }
+
+
+      return move
+    }catch{
+      case e : Exception => e.printStackTrace()
     }
-
-
-    return move
-
+    return null
   }
   def min(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch, mo : MoveOrdering) : Float = {
 

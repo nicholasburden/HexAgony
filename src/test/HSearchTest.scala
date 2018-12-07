@@ -1,7 +1,6 @@
 package test
 import hexagony._
 import HSearch._
-import org.hamcrest.Matchers
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.Before
@@ -10,7 +9,7 @@ class HSearchTest extends Const{
   var h = new HSearch(null, null)
   var hBlue = new HSearch(null, null)
   @Before def initialise() = {
-    val model = new Model(4)
+    val model = new Model(5)
     h = new HSearch(model, R)
     h.initial
     h.search
@@ -49,12 +48,8 @@ class HSearchTest extends Const{
     h1 = h1.makeMove(0,1,B)
     assertEquals(Set(new Cell(1,1)), h1.getWeakCarriers(h1.G.find(new Cell(1,2)).get, h1.G.find(new Cell(0, 0)).get, true))
   }
-  @Test def verifyWeakConnectionSimple() = {
-    assertEquals(Set(new Cell(2,1)), h.getWeakCarriers(new Cell(1,1), new Cell(3, 1), true))
-  }
-  @Test def verifyWeakConnectionBoundary() = {
-    assertThat(h.getWeakCarriers(HSearch.boundaryRed1, new Cell(1, 1), true), Matchers.either(Matchers.is(Set(new Cell(0,0)))).or(Matchers.is(Set(new Cell(1,0)))))
-  }
+
+
   @Test def verifyFullStrongConnection():Unit = {
     var h1 = h.makeMove(1,1,R)
     h1 = h1.makeMove(2,3,R)
@@ -105,7 +100,7 @@ class HSearchTest extends Const{
     var h1 = h.makeMove(2,2,R)
     h1 = h1.makeMove(2,3,R)
     h1 = h1.makeMove(2,4,B)
-    assertEquals(Set(3,4), h1.getWeakCarriers(new Cell(2,3), HSearch.boundaryRed2, true))
+    assertEquals(Set(new Cell(3,4)), h1.getWeakCarriers(new Cell(2,3), HSearch.boundaryRed2, true))
   }
   @Test def verfifyStrongExample2() : Unit = {
     var h1 = h.makeMove(2,0,R)
@@ -114,30 +109,7 @@ class HSearchTest extends Const{
     h1 = h1.makeMove(3,3,R)
     assertEquals(Set(new Cell(2,2), new Cell(1,2)), h1.getStrongCarriers(new Cell(1,1), new Cell(2,3), true))
   }
-  @Test def verfifyWeakExample2() : Unit = {
-    var h1 = h.makeMove(3,3,R)
-    h1 = h1.makeMove(1,3,R)
-    h1 = h1.makeMove(2,3,B)
-    val t1 = Set(new Cell(1,4)).equals(h1.getWeakCarriers(new Cell(1,3), HSearch.boundaryRed2, true))
-    val t2 = Set(new Cell(3,4)).equals(h1.getWeakCarriers(new Cell(3,3), HSearch.boundaryRed2, true))
-
-    assertTrue(t1&&t2)
-  }
-  @Test def verfifyStrongExample3() : Unit = {
-    var h1 = h.makeMove(2,2,R)
-    var hBlue1 = hBlue.makeMove(2,2,R)
-    h1 = h1.makeMove(1,1,B)
-    hBlue1 = hBlue1.makeMove(1,1,B)
-    //h1 = h1.makeMove(3,0,R)
-    //hBlue1 = hBlue1.makeMove(3,0,R)
-    h1 = h1.makeMove(2,1,R)
-    hBlue1 = hBlue1.makeMove(2,1,B)
-    val t1 = Set(new Cell(1,0), new Cell(2,0)).equals(h1.getStrongCarriers(new Cell(2,1), HSearch.boundaryRed1, true))
-    val t2 = Set(new Cell(3,1), new Cell(3,2)).equals(hBlue1.getStrongCarriers(new Cell(2,1), HSearch.boundaryBlue2, true))
-
-    //assertTrue(t1&&t2)
-  }
-  @Test def verifyWeakExample3() : Unit = {
+  @Test def verifyWeakExample2() : Unit = {
     val model2 = new Model(4)
     h = new HSearch(model2, R)
     h.initial
@@ -159,14 +131,26 @@ class HSearchTest extends Const{
       }
     }
     for(cell1 <- hBlue1.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
-      for(cell2 <- h1.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
+      for(cell2 <- hBlue1.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
         //if(h1.getWeakCarriers(cell1, cell2,false).nonEmpty) res = false
         if(hBlue1.getWeakCarriers(cell1, cell2,false).nonEmpty) res = false
       }
     }
     assertTrue(res)
   }
+  @Test def verfifyStrongExample3() : Unit = {
+    var h1 = h.makeMove(2,2,R)
+    var hBlue1 = hBlue.makeMove(2,2,R)
+    h1 = h1.makeMove(1,1,B)
+    hBlue1 = hBlue1.makeMove(1,1,B)
+    //h1 = h1.makeMove(3,0,R)
+    //hBlue1 = hBlue1.makeMove(3,0,R)
+    h1 = h1.makeMove(2,1,R)
+    hBlue1 = hBlue1.makeMove(2,1,B)
+    val t1 = Set(new Cell(1,0), new Cell(2,0)).equals(h1.getStrongCarriers(new Cell(2,1), HSearch.boundaryRed1, true))
+    val t2 = Set(new Cell(3,1), new Cell(3,2)).equals(hBlue1.getStrongCarriers(new Cell(2,1), HSearch.boundaryBlue2, true))
 
-
+    //assertTrue(t1&&t2)
+  }
 
 }

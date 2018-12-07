@@ -354,8 +354,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
 
 
               if(cell1.equals(new Cell(3,1))){
-                println("COLOUR" + mod2.board(cell1.i)(cell1.j).colour)
-                println("key: " + hsearch.G.find(cell1))
+
 
               }
               if (hsearch.getStrongCarriers(cell1, cell2, true).size == 1) {
@@ -418,7 +417,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
   }
   def makeConnectionsConsistent() : Unit = {
 
-    for(cell1 <- model.myCells(colour) ++ set; cell2 <- model.myCells(colour) ++ set){
+    for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
       if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
       if(areNearestNeighbours(cell1, cell2)) SC((G.find(cell1).get, G.find(cell2).get)) = Set()//; C((G.find(cell1).get,G.find(cell2).get)) = Set()
     }

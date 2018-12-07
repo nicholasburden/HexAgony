@@ -88,7 +88,7 @@ class ResistanceHeuristic extends Const {
     }
 
 
-    val redsGo = (model.pie && model.count % 2 == 1) || (!model.pie && model.count == 0)
+    val redsGo = (model.pie && model.count % 2 == 1) || (!model.pie && model.count % 2 == 0)
     var blueWeakRes = 0.6f
     var redWeakRes = 0.6f
     if(redsGo) redWeakRes = 0.01f
