@@ -2,10 +2,29 @@ package HSearch
 
 import hexagony._
 class HSearch(val model: Model, colour: Colour) extends Const{
+  var boundaryRed1 : Cell = new Cell(0, -1)
+  var boundaryRed2 : Cell = new Cell(0, -3)
+  var boundaryBlue1 : Cell = new Cell(-1, 0)
+  var boundaryBlue2 : Cell = new Cell(-3, 0)
+  boundaryRed1.colour = R
+  boundaryRed2.colour = R
+  boundaryBlue1.colour = B
+  boundaryBlue2.colour = B
+  def pie = {
+    var temp = boundaryRed1
+    boundaryRed1 = boundaryBlue1
+    boundaryBlue1 = temp
+    temp = boundaryRed2
+    boundaryRed2 = boundaryBlue2
+    boundaryBlue2 = temp
+    boundaryRed1.colour = R
+    boundaryRed2.colour = R
+    boundaryBlue1.colour = B
+    boundaryBlue2.colour = B
+  }
 
-
-  var set : Set[Cell] = colour match{case R => Set(HSearch.boundaryRed1, HSearch.boundaryRed2)
-                                     case B => Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
+  var set : Set[Cell] = colour match{case R => Set(boundaryRed1, boundaryRed2)
+                                     case B => Set(boundaryBlue1, boundaryBlue2)
                                      case _ => Set()}
 
   var Gtemp : Set[Cell] = Set()
@@ -26,13 +45,13 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     for(cell <- model.myCells(O)){
       Gtemp = Gtemp + cell
     }
-    if(colour == B){
-      Gtemp = Gtemp + HSearch.boundaryBlue1
-      Gtemp = Gtemp + HSearch.boundaryBlue2
+    if(colour.equals(B)){
+      Gtemp = Gtemp + boundaryBlue1
+      Gtemp = Gtemp + boundaryBlue2
     }
     else{
-      Gtemp = Gtemp + HSearch.boundaryRed1
-      Gtemp = Gtemp + HSearch.boundaryRed2
+      Gtemp = Gtemp + boundaryRed1
+      Gtemp = Gtemp + boundaryRed2
     }
     for(g <- Gtemp){
       G.add(g)
@@ -101,10 +120,10 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     }
   }
   def getStrongBridge(cell1 : Cell, cell2 : Cell) : Option[(Cell, Cell)] = {
-    var boundary1 = HSearch.boundaryBlue1
-    var boundary2 = HSearch.boundaryBlue2
+    var boundary1 = boundaryBlue1
+    var boundary2 = boundaryBlue2
 
-    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
+    if(colour.equals(R)) {boundary1 = boundaryRed1; boundary2 = boundaryRed2}
 
 
     def getBoundaryCarrier(a : Cell, b : Cell) : Option[(Cell, Cell)] = {
@@ -298,6 +317,7 @@ class HSearch(val model: Model, colour: Colour) extends Const{
     hsearch.C = C_clone
     hsearch.SC = SC_clone
 
+
     try {
 
 
@@ -418,7 +438,8 @@ class HSearch(val model: Model, colour: Colour) extends Const{
   def makeConnectionsConsistent() : Unit = {
 
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
-      if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
+
+      if(getStrongCarriers(cell1, cell2, true).nonEmpty) //SC((G.find(cell1).get,G.find(cell2).get)) = Set()
       if(areNearestNeighbours(cell1, cell2)) SC((G.find(cell1).get, G.find(cell2).get)) = Set()//; C((G.find(cell1).get,G.find(cell2).get)) = Set()
     }
   }
@@ -431,9 +452,9 @@ class HSearch(val model: Model, colour: Colour) extends Const{
 
     val redsGo = model.myCells(R).size <= (model.myCells(B) ++ model.myCells(R)).size.toFloat / 2.0
     val myGo = (redsGo && colour.equals(R)) || (!redsGo && colour.equals(B))
-    var boundary1 = HSearch.boundaryBlue1
-    var boundary2 = HSearch.boundaryBlue2
-    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
+    var boundary1 = boundaryBlue1
+    var boundary2 = boundaryBlue2
+    if(colour.equals(R)) {boundary1 = boundaryRed1; boundary2 = boundaryRed2}
     while ((currentNewVC || previousNewVC) && ((myGo && SC((G.find(boundary1).get, G.find(boundary2).get)).isEmpty) && C((G.find(boundary1).get, G.find(boundary2).get)).isEmpty)) {
 
       val tempC = C
@@ -614,27 +635,5 @@ class HSearch(val model: Model, colour: Colour) extends Const{
 object HSearch extends Const{
   val M = 12
   val X = 5
-  var boundaryRed1 : Cell = new Cell(0, -1)
-  var boundaryRed2 : Cell = new Cell(0, -3)
-  var boundaryBlue1 : Cell = new Cell(-1, 0)
-  var boundaryBlue2 : Cell = new Cell(-3, 0)
-  boundaryRed1.colour = R
-  boundaryRed2.colour = R
-  boundaryBlue1.colour = B
-  boundaryBlue2.colour = B
-  def pie = {
-    var temp = boundaryRed1
-    boundaryRed1 = boundaryBlue1
-    boundaryBlue1 = temp
-    temp = boundaryRed2
-    boundaryRed2 = boundaryBlue2
-    boundaryBlue2 = temp
-    boundaryRed1.colour = R
-    boundaryRed2.colour = R
-    boundaryBlue1.colour = B
-    boundaryBlue2.colour = B
-  }
-
-
 }
 

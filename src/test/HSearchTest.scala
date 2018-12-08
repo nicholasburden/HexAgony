@@ -4,7 +4,7 @@ import HSearch._
 import org.junit.Assert._
 import org.junit.Test
 import org.junit.Before
-
+/*
 class HSearchTest extends Const{
   var h = new HSearch(null, null)
   var hBlue = new HSearch(null, null)
@@ -154,3 +154,4 @@ class HSearchTest extends Const{
   }
 
 }
+*/

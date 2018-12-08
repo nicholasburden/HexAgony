@@ -7611,3 +7611,24 @@ Pie rule is available
 15.288: (Blue) RobotAlphaBeta plays move 7: (1, 0)
 15.289: (Blue) End game - winner is RobotAlphaBeta
 
+2018.12.08 13:00:31
+4 x 4 game: RobotAlphaBeta (15000ms) vs Blue (Human)
+Pie rule is not available
+33.545: (Red) java.util.concurrent.TimeoutException: Futures timed out after [15000 milliseconds]
+33.547: (Red) RobotAlphaBeta failed to select a move on move 1
+33.547: (Blue) End game - winner is Blue
+
+2018.12.08 13:20:24
+4 x 4 game: RobotAlphaBeta (15000ms) vs Blue (Human)
+Pie rule is not available
+15.077: (Red) RobotAlphaBeta plays move 1: (3, 2)
+17.078: (Blue) Blue plays move 2: (2, 0)
+26.135: (Red) RobotAlphaBeta plays move 3: (1, 1)
+28.939: (Blue) Blue plays move 4: (1, 2)
+34.514: (Red) RobotAlphaBeta plays move 5: (2, 2)
+36.000: (Blue) Blue plays move 6: (2, 3)
+39.214: (Red) RobotAlphaBeta plays move 7: (3, 3)
+42.109: (Blue) Blue plays move 8: (0, 0)
+43.370: (Red) RobotAlphaBeta plays move 9: (1, 0)
+43.371: (Red) End game - winner is RobotAlphaBeta
+

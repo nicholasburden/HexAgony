@@ -10,7 +10,6 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
     try {
-      if (model.pie) HSearch.pie
       val moveOrdering = new MoveOrdering
       val mod = model.copy()
       moveOrdering.initial(mod)
@@ -24,12 +23,14 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
       val hme = new HSearch(mod, colour)
       val hthem = new HSearch(mod, othercolour)
+      if (model.pie) {hme.pie; hthem.pie}
+
       hme.initial
       hthem.initial
 
       hme.search
       hthem.search
-
+      //if(colour.equals(R))
       for (cell1 <- open) {
         val cell = mod.board(cell1.i)(cell1.j)
         val mod2 = result(mod, cell, colour)
