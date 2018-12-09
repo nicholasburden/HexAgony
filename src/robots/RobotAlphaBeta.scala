@@ -41,7 +41,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
           try {
             val mo = moveOrdering.addMovesFor(cell, mod)
             score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, mo)
-
+            /*
             //check for case where opponent uses pie rule
             if(othercolour.equals(B) && mod2.count == 1 && pierule){
               //search for cell
@@ -67,7 +67,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
               score = Math.min(score, value)
 
             }
-
+            */
 
           } catch {
             case e: Exception => e.printStackTrace()
