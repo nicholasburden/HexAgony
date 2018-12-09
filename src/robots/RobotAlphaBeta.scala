@@ -43,7 +43,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
             score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, mo)
 
             //check for case where opponent uses pie rule
-            if(othercolour.equals(B) && mod2.count == 1){
+            if(othercolour.equals(B) && mod2.count == 1 && pierule){
               //search for cell
 
               //play pie
