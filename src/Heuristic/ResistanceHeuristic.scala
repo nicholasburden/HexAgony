@@ -151,10 +151,10 @@ class ResistanceHeuristic extends Const {
     var cell = new Cell(-1, -1)
     if (c.equals(R)) {
       if (nodeId == 0) {
-        cell = hsearch.boundaryRed1
+        cell = HSearch.boundaryRed1
       }
       else if (nodeId == hsearch.model.N * hsearch.model.N + 1) {
-        cell = hsearch.boundaryRed2
+        cell = HSearch.boundaryRed2
       }
       else {
         cell = hsearch.model.board((nodeId - 1) / hsearch.model.N)((nodeId - 1) % hsearch.model.N)
@@ -162,10 +162,10 @@ class ResistanceHeuristic extends Const {
     }
     else {
       if (nodeId == 0) {
-        cell = hsearch.boundaryBlue1
+        cell = HSearch.boundaryBlue1
       }
       else if (nodeId == hsearch.model.N * hsearch.model.N + 1) {
-        cell = hsearch.boundaryBlue2
+        cell = HSearch.boundaryBlue2
       }
       else {
         cell = hsearch.model.board((nodeId - 1) / hsearch.model.N)((nodeId - 1) % hsearch.model.N)

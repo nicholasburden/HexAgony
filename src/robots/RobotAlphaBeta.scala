@@ -15,7 +15,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       moveOrdering.initial(mod)
       val open = moveOrdering.getOrdering(mod)
 
-
+      if(model.pie) HSearch.pie
       val alpha = Float.NegativeInfinity
       val beta = Float.PositiveInfinity
       var topScore = Float.NegativeInfinity
@@ -23,7 +23,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
       val hme = new HSearch(mod, colour)
       val hthem = new HSearch(mod, othercolour)
-      if (model.pie) {hme.pie; hthem.pie}
+      //if (model.pie) {hme.pie; hthem.pie}
 
       hme.initial
       hthem.initial
@@ -39,7 +39,36 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
         if (!stop) {
           var score = 0.0f
           try {
-            score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, moveOrdering.addMovesFor(cell, mod))
+            val mo = moveOrdering.addMovesFor(cell, mod)
+            score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, mo)
+
+            //check for case where opponent uses pie rule
+            if(othercolour.equals(B) && mod2.count == 1){
+              //search for cell
+
+              //play pie
+
+              val modPie = result(mod, cell, B)
+              HSearch.pie
+              modPie.pie = true
+              hme.model.pie = true
+              hthem.model.pie = true
+              hthem.colour = R
+              hme.colour = B
+
+              val value = max(modPie, DEPTH-1, alpha, beta, hthem.makeMove(cell.i, cell.j, B), hme.makeMove(cell.i,cell.j, B), mo)
+              //undo pie rule
+              hthem.colour = B
+              hme.colour = R
+              hme.model.pie = false
+              hthem.model.pie = false
+              modPie.pie = false
+              HSearch.pie
+              score = Math.min(score, value)
+
+            }
+
+
           } catch {
             case e: Exception => e.printStackTrace()
           }
@@ -94,6 +123,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
         }
 
       }
+
+
       return bestVal
     }
   }
