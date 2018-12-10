@@ -51,7 +51,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
             //check for case where opponent uses pie rule
             if(othercolour.equals(B) && mod2.count == 1 && pierule){
               //search for cell
-
+              println("Y")
               //play pie
 
               val modPie = result(mod, cell, B)
