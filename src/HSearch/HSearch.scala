@@ -72,22 +72,22 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
             C((rep1, rep2)) = Set(Set(op.get._1, op.get._2))
             added((rep1, rep2)) = true
           }
-          else {
+          else{
             C((rep1, rep2)) = Set()
           }
 
         }
-        else if(!added((rep1, rep2))){
+        else{
           C((rep1, rep2)) = Set(Set())
           added((rep1, rep2)) = true
         }
         try {
           if (!added2((rep1, rep2))) {
             val carriers = getWeakBridge(g1, g2)
-            if (!carriers.isEmpty && !isStrongBridge((g1, g2))) {
+            if (!carriers.isEmpty) {
               SC((rep1, rep2)) = carriers; added2((rep1, rep2)) = true
             }
-            else {
+            else{
               SC((rep1, rep2)) = Set()
             }
           }
@@ -207,10 +207,10 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
         }
         else{
           var set : Set[Set[Cell]] = Set()
-          if (b.j >= 1 && model.board(b.i)(b.j-1).colour.equals(O)){
+          if (b.j == 1 && model.board(b.i)(b.j-1).colour.equals(O)){
             set = set + Set(model.board(b.i)(b.j-1))
           }
-          if (b.j >= 1 && b.i >= 1 && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+          if (b.j == 1 && b.i >= 1 && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
             set = set + Set(model.board(b.i - 1)(b.j - 1))
           }
           return set
@@ -283,6 +283,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     }
     return Set()
   }
+
   def makeMove(i : Int, j : Int, c : Colour): HSearch = {
     val cell = model.board(i)(j)
 
@@ -421,8 +422,8 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
 
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
       //actually tends to work better without these:
-      if(getStrongCarriers(cell1, cell2, true).nonEmpty)// SC((G.find(cell1).get,G.find(cell2).get)) = Set()
-        if(areNearestNeighbours(cell1, cell2)) SC((G.find(cell1).get, G.find(cell2).get)) = Set()//; C((G.find(cell1).get,G.find(cell2).get)) = Set()
+      if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
+      if(areNearestNeighbours(cell1, cell2)) {SC((G.find(cell1).get, G.find(cell2).get)) = Set(); C((G.find(cell1).get,G.find(cell2).get)) = Set()}
     }
   }
 

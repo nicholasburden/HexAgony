@@ -154,16 +154,16 @@ class HSearchTest extends Const{
   }
   @Test def sandbox() : Unit = {
     var model1 = new Model(4)
-    model1.playMove(new Cell(1,0), R)
-    model1.playPieRule(model1.board(1)(0))
-    model1.playMove(new Cell(1,1), R)
-    model1.playMove(new Cell(2,1), B)
+    model1.playMove(new Cell(2,2), R)
+    model1.playPieRule(model1.board(2)(2))
+    //model1.playMove(new Cell(1,1), R)
+    //model1.playMove(new Cell(2,1), B)
     HSearch.pie
     var hs = new HSearch(model1, B)
 
     hs.initial
     hs.search
-    hs = hs.makeMove(3,3,R)
+    //hs = hs.makeMove(3,3,R)
 
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
