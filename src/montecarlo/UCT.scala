@@ -11,7 +11,7 @@ object UCT {
   }
   def findBestNodeWithUCT(node : Node) = {
     val parentVisit = node.getState.getVisitCount
-    var max : Double = -1
+    var max : Double = Double.NegativeInfinity
     var n : Node = null
     for(i <- 0 until node.getChildArray.size){
       val c = node.getChildArray(i)

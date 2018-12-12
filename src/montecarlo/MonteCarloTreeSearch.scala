@@ -6,7 +6,7 @@ import tree.{Node, Tree}
 class MonteCarloTreeSearch(var level : Int) {
   final val WIN_SCORE = 10
   var opponent = 0
-  def this() = this(3)
+  def this() = this(15)
   def getLevel = level
   def setLevel(l : Int) = level = l
   def getMillisForCurrentLevel() = 2 * (level - 1) + 1

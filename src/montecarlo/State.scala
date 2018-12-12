@@ -28,7 +28,7 @@ class State(var board : Model, var playerNo : Int, var visitCount : Int, var win
   }
   def incrementVisit = this.visitCount+=1
   def addScore(score : Double) = {
-    if(winScore != Int.MinValue) winScore += score
+    if(winScore != Integer.MIN_VALUE) winScore += score
   }
   def randomPlay = {
     val availablePositions = this.board.myCells(O)
