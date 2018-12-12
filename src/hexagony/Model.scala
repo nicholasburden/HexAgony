@@ -143,16 +143,11 @@ class Model(val N: Int) extends Const {
 
 
 
-  def checkStatus() : Int = {
-    if(solution(R)) return Model.p1
-    if(solution(B)) return Model.p2
-    return Model.IN_PROGRESS
+  def winner() : Colour = {
+    if(solution(R)) return R
+    if(solution(B)) return B
+    return O
   }
   
 }
 
-object Model{
-  final val IN_PROGRESS = -1
-  final val p1 = 1
-  final val p2 = 2
-}
