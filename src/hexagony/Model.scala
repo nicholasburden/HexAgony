@@ -140,5 +140,19 @@ class Model(val N: Int) extends Const {
     None
     
   }
+
+
+
+  def checkStatus() : Int = {
+    if(solution(R)) return Model.p1
+    if(solution(B)) return Model.p2
+    return Model.IN_PROGRESS
+  }
   
+}
+
+object Model{
+  final val IN_PROGRESS = -1
+  final val p1 = 1
+  final val p2 = 2
 }
