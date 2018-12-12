@@ -1,35 +1,111 @@
 
 import hexagony._
-import montecarlo.MonteCarloTreeSearch
+
+import montecarlo.Node
 
 
 class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
 
 
-  private def myMove(): Cell = {
-    var mcts : MonteCarloTreeSearch = null
-    var board : Model = null
-    try {
-      mcts = new MonteCarloTreeSearch(model.N)
-      board = mcts.findNextMove(model, 1)
-    }
-    catch{
-      case e : Exception => e.printStackTrace()
-    }
-    //var nextMove = null
-    for(cell <- board.myCells(colour)){
-      if(!model.myCells(colour).contains(cell)){
-        return cell
+  final val WIN = 10
+  final val time = 1800
+  var (player, otherPlayer) = colour match{
+    case R => (0,1)
+    case B => (1,0)
+  }
+
+  def myMove() : Cell = {
+    val mod = model.copy()
+    val start = System.currentTimeMillis()
+    val end = start + time
+    otherPlayer = 1-player
+    val tree : Node = new Node()
+    val rootNode : Node = tree
+    rootNode.state.setBoard(mod)
+    rootNode.state.setPlayer(otherPlayer)
+    while(System.currentTimeMillis() < end) {
+      //Selection
+      val goodNode = findGoodNode(rootNode)
+
+      //expansion
+      if(goodNode.state.mod.checkIfFinished == -1){
+        val states = goodNode.state.getNextStates()
+        states.foreach(state => {
+          val next = new Node(state)
+          next.setParent(goodNode)
+          next.state.setPlayer(1-goodNode.state.player)
+          goodNode.childArray += next
+        })
       }
+
+      //Simulation
+      var node = goodNode
+      if(goodNode.childArray.size > 0){
+        node = goodNode.getRandomChildNode()
+      }
+      var tempN = new Node(node)
+      var tempS = tempN.state
+      var modelVal = tempS.mod.checkIfFinished()
+      if(modelVal == otherPlayer) {
+        tempN.parent.state.setWinScore(Integer.MIN_VALUE)
+      }
+      while(modelVal == -1){
+        tempS.changePlayer
+        tempS.randomPlay
+        modelVal = tempS.mod.checkIfFinished
+      }
+      val playOut = modelVal
+
+      //update
+      backProp(node, playOut)
+    }
+    val best : Node = rootNode.getChildWithMaxScore()
+
+    for(cell <- best.state.mod.myCells(colour)){
+      if(!mod.myCells(colour).contains(cell))
+        return cell
     }
     return null
   }
-  private def getPlayerNo(colour: Colour) : Int = {
-    colour match{
-      case R => 1
-      case B => 2
+
+  private def findGoodNode(root : Node) : Node = {
+    var node = root
+    while(node.childArray.size != 0){
+      node = findBestNode(node)
     }
+    node
+  }
+
+  private def backProp(node : Node, player : Int) = {
+    var temp = node
+    while(temp != null){
+      temp.state.visit
+      if(temp.state.player == player){
+        temp.state.addScore(WIN)
+      }
+      temp = temp.parent
+    }
+  }
+
+  private def uct(visitTotal : Int, nodeScore : Double, nodeVCount : Int) : Double = {
+    if(nodeVCount == 0){
+      return Integer.MAX_VALUE
+    }
+    (nodeScore / nodeVCount.asInstanceOf[Double]) + 1.41 * Math.sqrt(Math.log(visitTotal) / nodeVCount.asInstanceOf[Double])
+  }
+  private def findBestNode(node : Node) = {
+    val parentVCount = node.state.visits
+    var max : Double = Double.NegativeInfinity
+    var n : Node = null
+    for(i <- 0 until node.childArray.size){
+      val c = node.childArray(i)
+      val v = uct(parentVCount, c.state.score, c.state.visits)
+      if(v > max){
+        max = v; n = c
+      }
+    }
+    n
   }
 
 

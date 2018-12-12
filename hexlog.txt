@@ -9750,3 +9750,367 @@ Pie rule is not available
 21.708: (Red) RobotMonteCarlo plays move 15: (4, 0)
 21.708: (Red) End game - winner is RobotMonteCarlo
 
+2018.12.12 17:23:47
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+0.779: (Red) RobotMonteCarlo plays move 1: (4, 4)
+15.496: (Blue) Blue plays move 2: (2, 2)
+16.156: (Red) RobotMonteCarlo plays move 3: (1, 1)
+17.997: (Blue) Blue plays move 4: (1, 2)
+19.191: (Red) RobotMonteCarlo plays move 5: (0, 2)
+20.772: (Blue) Blue plays move 6: (3, 3)
+22.151: (Red) RobotMonteCarlo plays move 7: (4, 3)
+23.536: (Blue) Blue plays move 8: (3, 2)
+25.129: (Red) RobotMonteCarlo plays move 9: (4, 2)
+26.515: (Blue) Blue plays move 10: (3, 0)
+27.929: (Red) RobotMonteCarlo plays move 11: (3, 1)
+29.257: (Blue) Blue plays move 12: (2, 0)
+30.476: (Red) RobotMonteCarlo plays move 13: (0, 0)
+32.308: (Blue) Blue plays move 14: (2, 1)
+32.850: (Red) RobotMonteCarlo plays move 15: (0, 1)
+36.432: (Blue) Blue plays move 16: (0, 4)
+36.974: (Red) RobotMonteCarlo plays move 17: (1, 3)
+38.493: (Blue) Blue plays move 18: (1, 4)
+39.035: (Red) RobotMonteCarlo plays move 19: (2, 4)
+39.036: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 17:42:06
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+0.779: (Red) RobotMonteCarlo plays move 1: (4, 3)
+2.449: (Blue) Blue plays move 2: (2, 2)
+3.216: (Red) RobotMonteCarlo plays move 3: (4, 4)
+4.962: (Blue) Blue plays move 4: (4, 2)
+6.270: (Red) RobotMonteCarlo plays move 5: (1, 2)
+7.967: (Blue) Blue plays move 6: (1, 1)
+9.440: (Red) RobotMonteCarlo plays move 7: (0, 1)
+10.807: (Blue) Blue plays move 8: (0, 0)
+12.255: (Red) RobotMonteCarlo plays move 9: (3, 2)
+13.358: (Blue) Blue plays move 10: (2, 1)
+13.900: (Red) RobotMonteCarlo plays move 11: (3, 1)
+14.754: (Blue) Blue plays move 12: (3, 0)
+15.296: (Red) RobotMonteCarlo plays move 13: (2, 0)
+15.296: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 17:47:03
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+0.829: (Red) RobotMonteCarlo plays move 1: (2, 1)
+3.206: (Blue) Blue plays move 2: (2, 2)
+3.876: (Red) RobotMonteCarlo plays move 3: (3, 2)
+5.075: (Blue) Blue plays move 4: (4, 4)
+6.285: (Red) RobotMonteCarlo plays move 5: (1, 2)
+9.535: (Blue) Blue plays move 6: (2, 4)
+10.935: (Red) RobotMonteCarlo plays move 7: (3, 4)
+12.164: (Blue) Blue plays move 8: (2, 3)
+13.689: (Red) RobotMonteCarlo plays move 9: (3, 3)
+14.731: (Blue) Blue plays move 10: (1, 0)
+15.272: (Red) RobotMonteCarlo plays move 11: (2, 0)
+15.273: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 17:51:04
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+0.715: (Red) RobotMonteCarlo plays move 1: (1, 4)
+2.160: (Blue) Blue plays move 2: (2, 2)
+2.907: (Red) RobotMonteCarlo plays move 3: (1, 2)
+4.615: (Blue) Blue plays move 4: (1, 1)
+5.867: (Red) RobotMonteCarlo plays move 5: (4, 4)
+7.844: (Blue) Blue plays move 6: (3, 3)
+9.273: (Red) RobotMonteCarlo plays move 7: (4, 3)
+10.467: (Blue) Blue plays move 8: (3, 2)
+11.980: (Red) RobotMonteCarlo plays move 9: (4, 2)
+12.455: (Blue) Blue plays move 10: (3, 0)
+13.874: (Red) RobotMonteCarlo plays move 11: (0, 1)
+18.114: (Blue) Blue plays move 12: (0, 0)
+19.378: (Red) RobotMonteCarlo plays move 13: (1, 0)
+21.707: (Blue) Blue plays move 14: (3, 1)
+22.249: (Red) RobotMonteCarlo plays move 15: (4, 1)
+24.440: (Blue) Blue plays move 16: (4, 0)
+24.441: (Blue) End game - winner is Blue
+
+2018.12.12 17:51:33
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+1.520: (Red) RobotMonteCarlo plays move 1: (1, 2)
+3.825: (Blue) Blue plays move 2: (1, 1)
+5.249: (Red) RobotMonteCarlo plays move 3: (0, 0)
+6.515: (Blue) Blue plays move 4: (0, 1)
+7.091: (Red) RobotMonteCarlo plays move 5: (3, 1)
+9.076: (Blue) Blue plays move 6: (2, 1)
+9.851: (Red) RobotMonteCarlo plays move 7: (3, 2)
+10.728: (Blue) Blue plays move 8: (3, 3)
+11.270: (Red) RobotMonteCarlo plays move 9: (4, 3)
+12.242: (Blue) Blue plays move 10: (4, 4)
+12.955: (Red) RobotMonteCarlo plays move 11: (2, 2)
+14.189: (Blue) Blue plays move 12: (2, 3)
+14.731: (Red) RobotMonteCarlo plays move 13: (0, 3)
+15.896: (Blue) Blue plays move 14: (1, 3)
+16.466: (Red) RobotMonteCarlo plays move 15: (0, 2)
+17.540: (Blue) Blue plays move 16: (1, 4)
+18.081: (Red) RobotMonteCarlo plays move 17: (0, 4)
+18.932: (Blue) Blue plays move 18: (2, 0)
+19.474: (Red) RobotMonteCarlo plays move 19: (3, 0)
+19.474: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 17:53:05
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+0.712: (Red) RobotMonteCarlo plays move 1: (0, 0)
+2.735: (Blue) Blue plays move 2: (2, 2)
+3.410: (Red) RobotMonteCarlo plays move 3: (3, 3)
+4.860: (Blue) Blue plays move 4: (3, 2)
+6.039: (Red) RobotMonteCarlo plays move 5: (0, 3)
+9.121: (Blue) Blue plays move 6: (2, 3)
+10.461: (Red) RobotMonteCarlo plays move 7: (4, 3)
+11.913: (Blue) Blue plays move 8: (4, 2)
+13.368: (Red) RobotMonteCarlo plays move 9: (1, 2)
+15.127: (Blue) Blue plays move 10: (1, 1)
+16.403: (Red) RobotMonteCarlo plays move 11: (0, 1)
+17.226: (Blue) Blue plays move 12: (1, 3)
+17.769: (Red) RobotMonteCarlo plays move 13: (0, 2)
+18.804: (Blue) Blue plays move 14: (1, 4)
+19.346: (Red) RobotMonteCarlo plays move 15: (0, 4)
+19.346: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 17:58:36
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+0.758: (Red) RobotMonteCarlo plays move 1: (0, 2)
+7.187: (Blue) Blue plays move 2: (2, 2)
+8.026: (Red) RobotMonteCarlo plays move 3: (2, 0)
+10.200: (Blue) Blue plays move 4: (2, 1)
+11.765: (Red) RobotMonteCarlo plays move 5: (3, 3)
+14.525: (Blue) Blue plays move 6: (3, 2)
+16.044: (Red) RobotMonteCarlo plays move 7: (1, 3)
+18.132: (Blue) Blue plays move 8: (1, 2)
+19.685: (Red) RobotMonteCarlo plays move 9: (4, 2)
+21.451: (Blue) Blue plays move 10: (4, 3)
+21.993: (Red) RobotMonteCarlo plays move 11: (0, 1)
+24.109: (Blue) Blue plays move 12: (1, 1)
+25.316: (Red) RobotMonteCarlo plays move 13: (0, 0)
+27.518: (Blue) Blue plays move 14: (1, 4)
+28.060: (Red) RobotMonteCarlo plays move 15: (2, 4)
+28.060: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 18:08:59
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+0.804: (Red) RobotMonteCarlo plays move 1: (4, 4)
+2.353: (Blue) Blue plays move 2: (2, 2)
+3.070: (Red) RobotMonteCarlo plays move 3: (0, 0)
+4.753: (Blue) Blue plays move 4: (3, 3)
+6.428: (Red) RobotMonteCarlo plays move 5: (4, 3)
+7.852: (Blue) Blue plays move 6: (3, 2)
+9.358: (Red) RobotMonteCarlo plays move 7: (3, 1)
+10.779: (Blue) Blue plays move 8: (4, 2)
+12.297: (Red) RobotMonteCarlo plays move 9: (1, 2)
+14.615: (Blue) Blue plays move 10: (2, 3)
+16.180: (Red) RobotMonteCarlo plays move 11: (1, 3)
+17.002: (Blue) Blue plays move 12: (1, 4)
+17.543: (Red) RobotMonteCarlo plays move 13: (2, 4)
+18.999: (Blue) Blue plays move 14: (1, 1)
+19.543: (Red) RobotMonteCarlo plays move 15: (0, 1)
+19.543: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 18:10:37
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+3.049: (Red) RobotMonteCarlo plays move 1: (2, 2)
+4.264: (Blue) Blue plays move 2: (2, 1)
+9.604: (Red) RobotMonteCarlo plays move 3: (1, 1)
+11.284: (Blue) Blue plays move 4: (3, 4)
+13.206: (Red) RobotMonteCarlo plays move 5: (1, 3)
+14.083: (Blue) Blue plays move 6: (1, 4)
+17.347: (Red) RobotMonteCarlo plays move 7: (2, 4)
+18.376: (Blue) Blue plays move 8: (2, 3)
+20.177: (Red) RobotMonteCarlo plays move 9: (1, 2)
+21.501: (Blue) Blue plays move 10: (0, 0)
+23.303: (Red) RobotMonteCarlo plays move 11: (1, 0)
+23.303: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 18:12:26
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+1.968: (Red) RobotMonteCarlo plays move 1: (2, 2)
+4.949: (Blue) Blue plays move 2: (1, 0)
+8.900: (Red) RobotMonteCarlo plays move 3: (3, 1)
+10.413: (Blue) Blue plays move 4: (1, 3)
+12.215: (Red) RobotMonteCarlo plays move 5: (3, 3)
+13.649: (Blue) Blue plays move 6: (3, 4)
+15.610: (Red) RobotMonteCarlo plays move 7: (4, 4)
+16.569: (Blue) Blue plays move 8: (2, 1)
+18.546: (Red) RobotMonteCarlo plays move 9: (3, 2)
+19.248: (Blue) Blue plays move 10: (2, 0)
+21.050: (Red) RobotMonteCarlo plays move 11: (3, 0)
+21.050: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 18:15:48
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+2.844: (Red) RobotMonteCarlo plays move 1: (3, 0)
+4.715: (Blue) Blue plays move 2: (2, 1)
+7.270: (Red) RobotMonteCarlo plays move 3: (4, 0)
+8.909: (Blue) Blue plays move 4: (3, 1)
+10.711: (Red) RobotMonteCarlo plays move 5: (4, 2)
+12.159: (Blue) Blue plays move 6: (4, 1)
+14.625: (Red) RobotMonteCarlo plays move 7: (3, 2)
+15.934: (Blue) Blue plays move 8: (2, 2)
+17.985: (Red) RobotMonteCarlo plays move 9: (0, 0)
+19.257: (Blue) Blue plays move 10: (2, 3)
+21.484: (Red) RobotMonteCarlo plays move 11: (1, 4)
+23.065: (Blue) Blue plays move 12: (2, 4)
+24.868: (Red) RobotMonteCarlo plays move 13: (3, 3)
+25.916: (Blue) Blue plays move 14: (1, 3)
+27.718: (Red) RobotMonteCarlo plays move 15: (1, 0)
+29.002: (Blue) Blue plays move 16: (0, 2)
+29.003: (Blue) End game - winner is Blue
+
+2018.12.12 18:20:38
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+2.064: (Red) RobotMonteCarlo plays move 1: (1, 3)
+4.855: (Blue) Blue plays move 2: (2, 2)
+26.186: (Red) java.util.concurrent.TimeoutException: Futures timed out after [15000 milliseconds]
+26.351: (Red) RobotMonteCarlo failed to select a move on move 3
+26.352: (Blue) End game - winner is Blue
+
+2018.12.12 18:21:28
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+19.433: (Red) java.util.concurrent.TimeoutException: Futures timed out after [15000 milliseconds]
+19.511: (Red) RobotMonteCarlo failed to select a move on move 1
+19.512: (Blue) End game - winner is Blue
+
+2018.12.12 18:23:40
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+2.648: (Red) RobotMonteCarlo plays move 1: (0, 0)
+4.742: (Blue) Blue plays move 2: (1, 1)
+6.543: (Red) RobotMonteCarlo plays move 3: (0, 1)
+7.798: (Blue) Blue plays move 4: (1, 3)
+11.166: (Red) RobotMonteCarlo plays move 5: (0, 2)
+12.592: (Blue) Blue plays move 6: (0, 3)
+14.394: (Red) RobotMonteCarlo plays move 7: (3, 3)
+20.437: (Blue) Blue plays move 8: (1, 2)
+22.258: (Red) RobotMonteCarlo plays move 9: (2, 1)
+24.348: (Blue) Blue plays move 10: (1, 0)
+26.343: (Red) RobotMonteCarlo plays move 11: (2, 0)
+27.343: (Blue) Blue plays move 12: (2, 2)
+29.146: (Red) RobotMonteCarlo plays move 13: (3, 2)
+29.966: (Blue) Blue plays move 14: (3, 4)
+31.768: (Red) RobotMonteCarlo plays move 15: (4, 4)
+31.768: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 22:51:00
+5 x 5 game: RobotMonteCarlo (30000ms) vs Blue (Human)
+Pie rule is not available
+2.150: (Red) RobotMonteCarlo plays move 1: (1, 2)
+5.547: (Blue) Blue plays move 2: (2, 3)
+8.057: (Red) RobotMonteCarlo plays move 3: (1, 3)
+9.552: (Blue) Blue plays move 4: (1, 1)
+11.358: (Red) RobotMonteCarlo plays move 5: (3, 2)
+12.944: (Blue) Blue plays move 6: (2, 2)
+15.001: (Red) RobotMonteCarlo plays move 7: (4, 4)
+16.405: (Blue) Blue plays move 8: (2, 0)
+18.478: (Red) RobotMonteCarlo plays move 9: (4, 2)
+19.996: (Blue) Blue plays move 10: (3, 0)
+22.712: (Red) RobotMonteCarlo plays move 11: (4, 1)
+23.881: (Blue) Blue plays move 12: (3, 1)
+25.682: (Red) RobotMonteCarlo plays move 13: (4, 0)
+28.035: (Blue) Blue plays move 14: (3, 3)
+29.836: (Red) RobotMonteCarlo plays move 15: (4, 3)
+29.836: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 22:57:32
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is available
+2.522: (Red) RobotMonteCarlo plays move 1: (0, 1)
+7.022: (Blue) Blue does not play pie rule
+7.882: (Blue) Blue plays move 2: (2, 2)
+10.533: (Red) RobotMonteCarlo plays move 3: (0, 2)
+11.953: (Blue) Blue plays move 4: (0, 3)
+13.755: (Red) RobotMonteCarlo plays move 5: (4, 4)
+16.097: (Blue) Blue plays move 6: (1, 3)
+18.415: (Red) RobotMonteCarlo plays move 7: (3, 2)
+19.759: (Blue) Blue plays move 8: (2, 0)
+21.825: (Red) RobotMonteCarlo plays move 9: (3, 3)
+23.435: (Blue) Blue plays move 10: (3, 1)
+26.064: (Red) RobotMonteCarlo plays move 11: (4, 1)
+27.556: (Blue) Blue plays move 12: (2, 1)
+29.358: (Red) RobotMonteCarlo plays move 13: (4, 2)
+31.280: (Blue) Blue plays move 14: (3, 0)
+33.082: (Red) RobotMonteCarlo plays move 15: (4, 0)
+33.082: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 23:00:41
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+2.485: (Red) RobotMonteCarlo plays move 1: (4, 4)
+4.394: (Blue) Blue plays move 2: (2, 2)
+11.797: (Red) RobotMonteCarlo plays move 3: (3, 2)
+13.551: (Blue) Blue plays move 4: (2, 0)
+16.464: (Red) RobotMonteCarlo plays move 5: (3, 3)
+17.985: (Blue) Blue plays move 6: (3, 1)
+19.787: (Red) RobotMonteCarlo plays move 7: (4, 1)
+20.966: (Blue) Blue plays move 8: (2, 1)
+22.767: (Red) RobotMonteCarlo plays move 9: (4, 2)
+24.650: (Blue) Blue plays move 10: (3, 0)
+26.452: (Red) RobotMonteCarlo plays move 11: (4, 0)
+26.452: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 23:04:31
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+1.892: (Red) RobotMonteCarlo plays move 1: (3, 2)
+3.202: (Blue) Blue plays move 2: (1, 1)
+5.038: (Red) RobotMonteCarlo plays move 3: (3, 3)
+6.152: (Blue) Blue plays move 4: (2, 0)
+10.260: (Red) RobotMonteCarlo plays move 5: (3, 4)
+12.534: (Blue) Blue plays move 6: (2, 1)
+14.336: (Red) RobotMonteCarlo plays move 7: (4, 1)
+15.801: (Blue) Blue plays move 8: (3, 0)
+17.603: (Red) RobotMonteCarlo plays move 9: (0, 1)
+19.369: (Blue) Blue plays move 10: (4, 0)
+22.248: (Red) RobotMonteCarlo plays move 11: (0, 0)
+23.776: (Blue) Blue plays move 12: (0, 2)
+25.578: (Red) RobotMonteCarlo plays move 13: (1, 2)
+27.352: (Blue) Blue plays move 14: (2, 3)
+29.154: (Red) RobotMonteCarlo plays move 15: (2, 2)
+29.154: (Red) End game - winner is RobotMonteCarlo
+
+2018.12.12 23:13:59
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+2.426: (Red) RobotMonteCarlo plays move 1: (1, 2)
+5.939: (Blue) Blue plays move 2: (1, 1)
+9.637: (Red) RobotMonteCarlo plays move 3: (2, 2)
+13.093: (Blue) Blue plays move 4: (2, 1)
+16.515: (Red) RobotMonteCarlo plays move 5: (3, 2)
+17.906: (Blue) Blue plays move 6: (3, 1)
+20.082: (Red) RobotMonteCarlo plays move 7: (0, 0)
+21.257: (Blue) Blue plays move 8: (0, 1)
+23.058: (Red) RobotMonteCarlo plays move 9: (4, 3)
+24.949: (Blue) Blue plays move 10: (4, 2)
+24.950: (Blue) End game - winner is Blue
+
+2018.12.12 23:14:28
+5 x 5 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+2.282: (Red) RobotMonteCarlo plays move 1: (1, 1)
+3.548: (Blue) Blue plays move 2: (1, 2)
+6.590: (Red) RobotMonteCarlo plays move 3: (3, 3)
+7.778: (Blue) Blue plays move 4: (2, 2)
+9.950: (Red) RobotMonteCarlo plays move 5: (4, 2)
+11.243: (Blue) Blue plays move 6: (3, 2)
+14.132: (Red) RobotMonteCarlo plays move 7: (0, 2)
+16.006: (Blue) Blue plays move 8: (0, 1)
+18.749: (Red) RobotMonteCarlo plays move 9: (4, 3)
+22.476: (Blue) Blue plays move 10: (4, 0)
+25.089: (Red) RobotMonteCarlo plays move 11: (3, 0)
+26.063: (Blue) Blue plays move 12: (4, 1)
+27.864: (Red) RobotMonteCarlo plays move 13: (3, 1)
+28.555: (Blue) Blue plays move 14: (3, 4)
+30.357: (Red) RobotMonteCarlo plays move 15: (4, 4)
+30.357: (Red) End game - winner is RobotMonteCarlo
+
