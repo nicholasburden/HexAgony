@@ -153,27 +153,27 @@ class HSearchTest extends Const{
     //assertTrue(t1&&t2)
   }
   @Test def sandbox() : Unit = {
-    var model1 = new Model(4)
+    var model1 = new Model(5)
 
-    model1.playMove(new Cell(1,3), B)
-    model1.playPieRule(model1.board(1)(3))
-    model1.playMove(new Cell(0,1), B)
+    model1.playMove(new Cell(2,2), R)
+    //model1.playPieRule(model1.board(1)(3))
+    model1.playMove(new Cell(2,1), B)
     //model1.playMove(new Cell(2,1), B)
-    HSearch.pie
+    //HSearch.pie
     //*/
     var hs = new HSearch(model1, B)
 
     hs.initial
-    println("HO")
+    //println("HO")
     hs.search
-    //hs = hs.makeMove(3,3,R)
+    hs = hs.makeMove(0,0,B)
 
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
       println("WEAK: " + c1 + " -> " + c2 + ": " + hs.getWeakCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
 
     }
-    println("HO")
+    //println("HO")
     /*
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(R) ++ Set(HSearch.boundaryRed1, HSearch.boundaryRed2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(R) ++ Set(HSearch.boundaryRed1, HSearch.boundaryRed2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))

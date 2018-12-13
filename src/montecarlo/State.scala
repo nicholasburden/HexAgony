@@ -21,6 +21,14 @@ class State(var mod : Model, var player : Int, var visits : Int, var score : Dou
       newState.mod.playMove(cells(i), State.getColour(newState.player))
       states += newState
     }
+    if(mod.count == 1 && State.getColour(this.player).equals(R)){
+      val newState = new State(this.mod)
+      val onlyRedMove = mod.myCells(R)(0)
+      newState.setPlayer(1-this.player)
+      newState.mod.playPieRule(onlyRedMove)
+      states += newState
+
+    }
     states
 
   }

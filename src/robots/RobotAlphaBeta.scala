@@ -10,6 +10,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
     try {
+      //playing middle is strong on first go
+      if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2)
       val moveOrdering = new MoveOrdering
       val mod = model.copy()
       moveOrdering.initial(mod)
@@ -96,13 +98,14 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       return Float.PositiveInfinity
     }
     else if(model.solution(othercolour)){
-      return Float.NegativeInfinity
+      return Float.MinValue
     }
 
     else if(depth == 0){
       //println("Heuristic")
       val heuristic = new ResistanceHeuristic
-
+      hme.makeConnectionsConsistent()
+      hthem.makeConnectionsConsistent()
       return heuristic.evaluate(model, colour, hme, hthem)
 
     }
@@ -138,11 +141,12 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       return Float.PositiveInfinity
     }
     else if(model.solution(othercolour)){
-      return Float.NegativeInfinity
+      return Float.MinValue
     }
     else if(depth == 0){
       val heuristic = new ResistanceHeuristic
-
+      hme.makeConnectionsConsistent()
+      hthem.makeConnectionsConsistent()
       return heuristic.evaluate(model, colour, hme, hthem)
 
     }

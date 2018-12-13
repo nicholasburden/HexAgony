@@ -15,7 +15,7 @@ class ResistanceHeuristic extends Const {
     var blueInitial = B
     var redInitial = R
     //TO DO: Experiment with different settings in this class regarding constructing circuit after pie rule
-   if(model.pie) {blueInitial = R; redInitial = B}
+    if(model.pie) {blueInitial = R; redInitial = B}
 
     val blueCircuit: HexCircuit = new HexCircuit(model.N, blueInitial)
     val redCircuit: HexCircuit = new HexCircuit(model.N, redInitial)
@@ -96,8 +96,8 @@ class ResistanceHeuristic extends Const {
     val redsGo = (model.pie && model.count % 2 == 1) || (!model.pie && model.count % 2 == 0)
     var blueWeakRes = 0.6f
     var redWeakRes = 0.6f
-    if(redsGo) redWeakRes = 0.01f
-    if(!redsGo) blueWeakRes = 0.01f
+    if(!redsGo) redWeakRes = 0.01f
+    if(redsGo) blueWeakRes = 0.01f
 
 
     for (node1 <- blueCircuit.getNodes) {
@@ -111,7 +111,7 @@ class ResistanceHeuristic extends Const {
         }
       }
     }
-  //  }
+    //  }
     //else {
     for (node1 <- redCircuit.getNodes) {
       for (node2 <- redCircuit.getNodes) {
@@ -124,7 +124,7 @@ class ResistanceHeuristic extends Const {
         }
       }
     }
-   // }
+    // }
 
 
 

@@ -80,7 +80,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
           }
 
         }
-        else{
+        else if(!added((rep1,rep2))){
           C((rep1, rep2)) = Set(Set())
 
           added((rep1, rep2)) = true
@@ -429,12 +429,23 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     catch{
       case e : Exception => e.printStackTrace()
     }
-    hsearch.makeConnectionsConsistent()
+    //hsearch.makeConnectionsConsistent()
     return hsearch
   }
   def makeConnectionsConsistent() : Unit = {
 
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
+      /*
+      for(mid <- model.myCells(colour) ++ model.myCells(O) ++ set){
+        if(getStrongCarriers(cell1, mid, true).nonEmpty && getStrongCarriers(mid, cell2, true).nonEmpty){
+          C((G.find(cell1).get, G.find(cell2).get)) = C((G.find(cell1).get, G.find(cell2).get)) + getStrongCarriers(cell1,mid,true).union(getStrongCarriers(mid, cell2,true) + mid)
+          C((G.find(cell2).get, G.find(cell1).get)) = C((G.find(cell1).get, G.find(cell2).get)) + getStrongCarriers(cell1,mid,true).union(getStrongCarriers(mid, cell2,true) + mid)
+          //C((G.find(cell1).get, G.find(mid).get)) = Set()
+          //C((G.find(cell1).get, G.find(mid).get)) = Set()
+
+        }
+      }
+      */
       //actually tends to work better without these:
       if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
       if(areNearestNeighbours(cell1, cell2)) {SC((G.find(cell1).get, G.find(cell2).get)) = Set()}//; C((G.find(cell1).get,G.find(cell2).get)) = Set()}
@@ -554,7 +565,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
       return minSet
     }
     else{
-      if(cell1.colour.equals(colour) || cell2.colour.equals(colour)){
+      if(cell1.colour.equals(colour) && cell2.colour.equals(colour)){
         for(set <- SC((G.find(cell1).get, G.find(cell2).get))){
 
           if(minSize > set.size){
