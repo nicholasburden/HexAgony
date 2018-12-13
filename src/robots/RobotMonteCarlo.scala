@@ -1,12 +1,13 @@
 
 import hexagony._
-
 import montecarlo.Node
+import pierule.PieRule
 
 
 class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-
+  val pieRule = new PieRule(model.N)
+  val pieRuleTable = pieRule.getTable
 
   final val WIN = 10
   final val time = 1800
@@ -112,7 +113,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
 
   // Your method for deciding whether to play the pie rule
-  private def myPie(firstmove: Cell): Boolean = false
+  private def myPie(firstmove: Cell): Boolean = model.N <= 5 && pieRuleTable(firstmove.i)(firstmove.j)
 
   private def result(mod: Model, cell: Cell, col: Colour): Model = {
     val mod2 = mod.copy()
