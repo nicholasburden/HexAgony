@@ -1,8 +1,8 @@
-package Heuristic
+package heuristic
 
 import hexagony._
-import Circuits._
-import HSearch._
+import circuits._
+import hsearch._
 
 class ResistanceHeuristic extends Const {
   def evaluate(model: Model, colour: Colour, hme: HSearch, hthem: HSearch): Float = {
@@ -75,7 +75,7 @@ class ResistanceHeuristic extends Const {
         if (strongCarriers.nonEmpty) {
           blueCircuit.addLink(node1.id, node2.id)
           //blueCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
-          blueCircuit.setResistance(node1, node2, 0.01f)
+          blueCircuit.setResistance(node1, node2, ResistanceHeuristic.epsilon)
         }
       }
     }
@@ -87,44 +87,42 @@ class ResistanceHeuristic extends Const {
         if (strongCarriers.nonEmpty) {
           redCircuit.addLink(node1.id, node2.id)
           //redCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
-          redCircuit.setResistance(node1, node2, 0.01f)
+          redCircuit.setResistance(node1, node2, ResistanceHeuristic.epsilon)
         }
       }
     }
 
 
     val redsGo = (model.pie && model.count % 2 == 1) || (!model.pie && model.count % 2 == 0)
-    var blueWeakRes = 0.6f
-    var redWeakRes = 0.6f
-    if(!redsGo) redWeakRes = 0.01f
-    if(redsGo) blueWeakRes = 0.01f
-
-
-    for (node1 <- blueCircuit.getNodes) {
-      for (node2 <- blueCircuit.getNodes) {
-        val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
-        val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2, false)
-        if (weakCarriers.nonEmpty) {
-          blueCircuit.addLink(node1.id, node2.id)
-          //blueCircuit.setResistance(node1, node2, (1f - (1f / (weakCarriers.size))) / 3)
-          blueCircuit.setResistance(node1, node2, blueWeakRes)
+    var blueWeakRes = 50f*ResistanceHeuristic.epsilon
+    var redWeakRes  = 50f*ResistanceHeuristic.epsilon
+    if(!redsGo) {
+      for (node1 <- blueCircuit.getNodes) {
+        for (node2 <- blueCircuit.getNodes) {
+          val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
+          val weakCarriers = hSearchBlue.getWeakCarriers(cell1, cell2, false)
+          if (weakCarriers.nonEmpty) {
+            blueCircuit.addLink(node1.id, node2.id)
+            //blueCircuit.setResistance(node1, node2, (1f - (1f / (weakCarriers.size))) / 3)
+            blueCircuit.setResistance(node1, node2, blueWeakRes)
+          }
         }
       }
     }
-    //  }
-    //else {
-    for (node1 <- redCircuit.getNodes) {
-      for (node2 <- redCircuit.getNodes) {
-        val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
-        val weakCarriers = hSearchRed.getWeakCarriers(cell1, cell2, false)
-        if (weakCarriers.nonEmpty) {
-          redCircuit.addLink(node1.id, node2.id)
-          //redCircuit.setResistance(node1, node2, (1f - (1f / (weakCarriers.size))) / 3)
-          redCircuit.setResistance(node1, node2, redWeakRes)
+    ///  }
+    else {
+      for (node1 <- redCircuit.getNodes) {
+        for (node2 <- redCircuit.getNodes) {
+          val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
+          val weakCarriers = hSearchRed.getWeakCarriers(cell1, cell2, false)
+          if (weakCarriers.nonEmpty) {
+            redCircuit.addLink(node1.id, node2.id)
+            //redCircuit.setResistance(node1, node2, (1f - (1f / (weakCarriers.size))) / 3)
+            redCircuit.setResistance(node1, node2, redWeakRes)
+          }
         }
       }
     }
-    // }
 
 
 
@@ -186,6 +184,6 @@ class ResistanceHeuristic extends Const {
 }
 
 object ResistanceHeuristic{
-  val epsilon = 0.0000001f
+  val epsilon = 0.000000000001f
   def maxNotInfinity(boardSize : Int) : Float = (1f/epsilon) + 1
 }

@@ -1,6 +1,6 @@
-package Heuristic
+package heuristic
 import hexagony._
-import HSearch.DisjointSets
+import hsearch.DisjointSets
 
 object Test {
   def main(args : Array[String]) = {

@@ -1,4 +1,4 @@
-package Graph
+package graph
 //may not need id
 class Node(var id : Int){
   private var adjacencies : Set[Node] = Set()

@@ -1,6 +1,6 @@
-package Heuristic
+package heuristic
 
-import Graph._
+import graph._
 import hexagony._
 class FlowHeuristic extends Heuristic with Const{
 

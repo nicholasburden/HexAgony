@@ -1,4 +1,4 @@
-package HSearch
+package hsearch
 
 object TestMain {
   def main(args: Array[String]) = {

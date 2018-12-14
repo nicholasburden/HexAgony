@@ -1,4 +1,4 @@
-package HSearch
+package hsearch
 
 import scala.annotation.tailrec
 

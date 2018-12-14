@@ -6,18 +6,18 @@ override def robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colo
 
 import moveordering.MoveOrdering
 import hexagony._
-import Heuristic._
-import HSearch._
+import heuristic._
+import hsearch._
 import pierule._
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 3
+  val DEPTH = 2
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
     try {
       //playing middle is strong on first go
-      if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2)
+      //if(model.count == 0 && !pierule) return model.board(model.N/2 - 1)(model.N/2 - 1)
       val moveOrdering = new MoveOrdering
       val mod = model.copy()
       moveOrdering.initial(mod)

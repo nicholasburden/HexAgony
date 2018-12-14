@@ -1,4 +1,4 @@
-package Heuristic
+package heuristic
 
 import hexagony._
 class ResistanceHeuristicTest extends Const {
