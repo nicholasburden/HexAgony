@@ -86,7 +86,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       //println("Heuristic")
       val heuristic = new FlowHeuristic
 
-      return heuristic.evaluate(model, colour)
+      return heuristic.evaluate(model, colour, model.pie)
 
     }
     else{
@@ -126,7 +126,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     else if(depth == 0){
       val heuristic = new FlowHeuristic
 
-      return heuristic.evaluate(model, colour)
+      return heuristic.evaluate(model, colour, model.pie)
 
     }
     else{
