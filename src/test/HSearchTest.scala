@@ -186,7 +186,7 @@ class HSearchTest extends Const{
     //println("HO")
     hs.search
     hs = hs.makeMove(0,4,R)
-    hs = hs.makeMove(0,5,R)
+    hs = hs.makeMove(1,5,B)
     /*
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))

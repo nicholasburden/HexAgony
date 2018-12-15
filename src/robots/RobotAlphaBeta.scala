@@ -17,7 +17,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   private def myMove(): Cell = {
     try {
       //playing middle is strong on first go
-      //if(model.count == 0 && !pierule) return model.board(model.N/2 - 1)(model.N/2 - 1)
+      if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2 )
       val moveOrdering = new MoveOrdering
       val mod = model.copy()
       moveOrdering.initial(mod)

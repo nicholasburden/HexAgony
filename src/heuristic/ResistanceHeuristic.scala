@@ -94,8 +94,8 @@ class ResistanceHeuristic extends Const {
 
 
     val redsGo = (model.pie && model.count % 2 == 1) || (!model.pie && model.count % 2 == 0)
-    var blueWeakRes = 50f*ResistanceHeuristic.epsilon
-    var redWeakRes  = 50f*ResistanceHeuristic.epsilon
+    var blueWeakRes = 10*ResistanceHeuristic.epsilon
+    var redWeakRes  = 10*ResistanceHeuristic.epsilon
     if(!redsGo) {
       for (node1 <- blueCircuit.getNodes) {
         for (node2 <- blueCircuit.getNodes) {
