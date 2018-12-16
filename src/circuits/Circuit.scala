@@ -1,4 +1,4 @@
-package Circuits
+package circuits
 
 abstract class Circuit {
   private val resistance : collection.mutable.Map[(Node, Node), Float] = collection.mutable.Map()

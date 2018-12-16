@@ -1,4 +1,4 @@
-package Circuits
+package circuits
 import hexagony._
 class HexCircuit(size :Int, colour : Colour) extends Circuit with Const{
   var nodes : List[Node] = List()

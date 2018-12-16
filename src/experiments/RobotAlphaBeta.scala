@@ -1,3 +1,4 @@
+package experiments
 import moveordering.MoveOrdering
 import hexagony._
 import heuristic._
@@ -161,7 +162,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       var bestVal = Float.NegativeInfinity
 
       for (cell1 <- mo.getOrdering(model)){
-      //for(cell1 <- model.myCells(O)){
+        //for(cell1 <- model.myCells(O)){
         val cell = model.board(cell1.i)(cell1.j)
         val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour), mo.addMovesFor(cell, model))
         bestVal = Math.max(bestVal, value)

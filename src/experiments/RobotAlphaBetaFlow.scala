@@ -1,85 +1,145 @@
-
+package experiments
+import moveordering.MoveOrdering
 import hexagony._
 import heuristic._
 import hsearch._
-import scala.util.Random
-class RobotRandom(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
+import pierule._
+class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
+  val DEPTH = 3
+  val pieRule = new PieRule(model.N)
+  val pieRuleTable = pieRule.getTable
+  private def myMove(): Cell = {
+    try {
+      //playing middle is strong on first go
+      //if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2)
+      val moveOrdering = new MoveOrdering
+      val mod = model.copy()
+      moveOrdering.initial(mod)
+      val open = moveOrdering.getOrdering(mod)
+
+      val alpha = Float.NegativeInfinity
+      val beta = Float.PositiveInfinity
+      var topScore = Float.NegativeInfinity
 
 
-  private def myMove(): Set[Cell] = {
-    val rnd = new Random
 
 
 
-    return Set(model.myCells(O).toVector(rnd.nextInt(model.myCells(O).size)))
+      for (cell1 <- open) {
+        val cell = mod.board(cell1.i)(cell1.j)
+        val mod2 = result(mod, cell, colour)
+        if (!stop) {
+          var score = 0.0f
+          try {
+            val mo = moveOrdering.addMovesFor(cell, mod)
+            score = min(mod2, DEPTH - 1, alpha, beta, mo)
+
+            //check for case where opponent uses pie rule
+            if(othercolour.equals(B) && mod2.count == 1 && pierule){
+
+
+              val modPie = result(mod, cell, B)
+
+              modPie.pie = true
+
+
+              val value = max(modPie, DEPTH-1, alpha, beta, mo)
+              //undo pie rule
+
+              modPie.pie = false
+              score = Math.min(score, value)
+
+            }
+
+
+          } catch {
+            case e: Exception => e.printStackTrace()
+          }
+          println(cell + " score = " + score)
+          if ((score > topScore)) { // cell is a winning move
+            move = cell;
+            topScore = score
+          }
+        }
+      }
+
+
+      return move
+    }catch{
+      case e : Exception => e.printStackTrace()
+    }
+    return null
   }
-
-
-
-
-
-  def min(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch) : Float = {
+  def min(model : Model, depth : Int, _alpha : Float, _beta : Float, mo : MoveOrdering) : Float = {
 
     val alpha = _alpha
     var beta = _beta
     // println("Start next" + depth)
     if(model.solution(colour)){
-      return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
+      return Float.PositiveInfinity
     }
     else if(model.solution(othercolour)){
-      return Int.MinValue
+      return Float.MinValue
     }
 
     else if(depth == 0){
       //println("Heuristic")
-      val heuristic = new ResistanceHeuristic
+      val heuristic = new FlowHeuristic
 
-      return heuristic.evaluate(model, colour, hme, hthem)
+      return heuristic.evaluate(model, colour, model.pie)
 
     }
     else{
       //println("Finished checking if leaf")
       var bestVal = Float.PositiveInfinity
-      for (cell <- model.myCells(O)){
 
-        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, othercolour), hthem.makeMove(cell.i, cell.j, othercolour))
+
+      for (cell1 <- mo.getOrdering(model)){
+
+        val cell = model.board(cell1.i)(cell1.j)
+        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, mo.addMovesFor(cell, model))
 
         bestVal = Math.min(bestVal, value)
-        beta = Math.min(beta, bestVal).toFloat
+        beta = Math.min(beta, bestVal)
         if (beta <= alpha){
           return bestVal
         }
 
       }
+
+
       return bestVal
     }
   }
 
-  def max(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch) : Float = {
+  def max(model : Model, depth : Int, _alpha : Float, _beta : Float, mo : MoveOrdering) : Float = {
 
     var alpha = _alpha
     val beta = _beta
     // println("Start next" + depth)
     if(model.solution(colour)){
-      return ResistanceHeuristic.maxNotInfinity(model.N) + (model.myCells(O).size)
+      return Float.PositiveInfinity
     }
     else if(model.solution(othercolour)){
-      return Int.MinValue
+      return Float.MinValue
     }
     else if(depth == 0){
-      val heuristic = new ResistanceHeuristic
+      val heuristic = new FlowHeuristic
 
-      return heuristic.evaluate(model, colour, hme, hthem)
+      return heuristic.evaluate(model, colour, model.pie)
 
     }
     else{
       // println("Finished checking if leaf")
       var bestVal = Float.NegativeInfinity
-      for (cell <- model.myCells(O)){
-        val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour))
-        bestVal = Math.max(bestVal, value).toFloat
-        alpha = Math.max(alpha, bestVal).toFloat
+
+      for (cell1 <- mo.getOrdering(model)){
+        //for(cell1 <- model.myCells(O)){
+        val cell = model.board(cell1.i)(cell1.j)
+        val value = min(result(model, cell, colour), depth - 1, alpha, beta, mo.addMovesFor(cell, model))
+        bestVal = Math.max(bestVal, value)
+        alpha = Math.max(alpha, bestVal)
         if (beta <= alpha){
           return bestVal
         }
@@ -90,7 +150,9 @@ class RobotRandom(model: Model, timelimit: Long, pierule: Boolean, colour: Colou
   }
 
   // Your method for deciding whether to play the pie rule
-  private def myPie(firstmove: Cell): Boolean = false
+  private def myPie(firstmove: Cell): Boolean = model.N <= 5 && pieRuleTable(firstmove.i)(firstmove.j)
+
+
 
   private def result(mod: Model, cell: Cell, col: Colour): Model = {
     val mod2 = mod.copy()
@@ -124,7 +186,7 @@ class RobotRandom(model: Model, timelimit: Long, pierule: Boolean, colour: Colou
    */
   // ------------------------------------------------------------------------------------------------
 
-  var moveSet: Set[Cell] = null // this should hold the move that will be returned
+  var move: Cell = null // this should hold the move that will be returned
   var pie = false // this should hold the pie rule decision
   var stop = false // used to end computation at completion of turn
   val lag = 50 // used for self-imposed time limit
@@ -133,11 +195,9 @@ class RobotRandom(model: Model, timelimit: Long, pierule: Boolean, colour: Colou
   def makeMove(): Cell = {
     stop = false
     // Execute your move method with the given time restriction
-    try { moveSet = timedRun[Set[Cell]](timelimit - lag)(myMove()) }
+    try { move = timedRun[Cell](timelimit - lag)(myMove()) }
     catch { case ex: Exception => } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-    val rnd = new Random
-    var move = moveSet.toVector(rnd.nextInt(moveSet.size))
     println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move

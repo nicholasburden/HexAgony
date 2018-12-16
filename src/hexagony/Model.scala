@@ -143,10 +143,10 @@ class Model(val N: Int) extends Const {
 
 
 
-  def winner() : Colour = {
-    if(solution(R)) return R
-    if(solution(B)) return B
-    return O
+  def checkIfFinished() : Int = {
+    if(solution(R)) return 0
+    if(solution(B)) return 1
+    return -1
   }
   
 }

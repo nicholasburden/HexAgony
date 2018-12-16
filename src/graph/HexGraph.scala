@@ -1,4 +1,4 @@
-package Graph
+package graph
 import hexagony._
 class HexGraph(size : Int, colour : Colour) extends Graph(size) with Const{
   val nodes : Array[Node] = Array.ofDim(size*size+2)

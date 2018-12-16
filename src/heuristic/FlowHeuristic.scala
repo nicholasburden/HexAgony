@@ -1,12 +1,20 @@
-package Heuristic
+package heuristic
 
-import Graph._
+import graph._
 import hexagony._
 class FlowHeuristic extends Heuristic with Const{
 
-  def evaluate(model : Model, colour : Colour) : Int = {
+  def evaluate(model : Model, colour : Colour, pie : Boolean) : Int = {
+    val othercolour = colour match{
+      case R => B
+      case B => R
+      }
 
-    val graph = new HexGraph(model.N, colour)
+    val c = pie match{
+      case true => othercolour
+      case false => colour
+    }
+    val graph = new HexGraph(model.N, c)
     val board = model.board
     for(i <- 0 until board.length){
       for(j <- 0 until board(0).length){

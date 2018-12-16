@@ -1,4 +1,4 @@
-package HSearch
+package hsearch
 import hexagony._
 class HSearchTest extends Const{
   def foo = {

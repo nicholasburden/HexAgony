@@ -1,4 +1,4 @@
-
+package experiments
 import hexagony._
 import montecarlo.Node
 import pierule.PieRule

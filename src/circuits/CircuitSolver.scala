@@ -1,5 +1,5 @@
-package Circuits
-import Heuristic._
+package circuits
+import heuristic._
 import Jama._
 class CircuitSolver {
 

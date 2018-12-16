@@ -1,4 +1,4 @@
-
+package experiments
 import hexagony._
 import heuristic._
 import hsearch._

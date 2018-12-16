@@ -1,4 +1,4 @@
-package Circuits
+package circuits
 
 class Node(var id : Int) {
   private var adjacencies : Set[Node] = Set()

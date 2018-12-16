@@ -2,46 +2,55 @@ package montecarlo
 
 import hexagony._
 import scala.collection.mutable.ListBuffer
-class State(var model : Model, var colour : Colour, var visit : Int, var score : Double) extends Const {
-  def this(N : Int) = this(new Model(N), null, 0, 0)
-  def this(mod : Model) = this(mod.copy(), null, 0, 0)
-  def this(state : State) = this(state.model.copy(), state.colour, state.visit, state.score)
-  //def getBoard() = board
-  def setModel(mod : Model) : Unit = model = mod
-  //def getPlayerNo = playerNo
-  def setColour(c : Colour): Unit = colour = c
-  def getOtherColour(c : Colour) : Colour = {
-    c match{
-      case R => B
-      case B => R
-    }
-  }
+class State(var mod : Model, var player : Int, var visits : Int, var score : Double) extends Const {
+  def this() = this(new Model(5), 0, 0, 0)
+  def this(board : Model) = this(board.copy(), 0, 0, 0)
+  def this(state : State) = this(state.mod.copy(), state.player, state.visits, state.score)
+  def setBoard(newMod : Model) = mod = newMod
 
-  def setScore(newWinScore : Double) = score = newWinScore
+  def setPlayer(p : Int) = player = p
+
+
+  def setWinScore(newScore : Double) = score = newScore
   def getNextStates(): ListBuffer[State] = {
     val states : ListBuffer[State] = new ListBuffer[State]()
-    val cells : ListBuffer[Cell] = this.model.myCells(O).to[ListBuffer]
+    val cells : ListBuffer[Cell] = this.mod.myCells(O).to[ListBuffer]
     for(i <- 0 until cells.size){
-      val newState = new State(this.model)
-      newState.setColour(getOtherColour(this.colour))
-      newState.model.playMove(cells(i), newState.colour)
+      val newState = new State(this.mod)
+      newState.setPlayer(1-this.player)
+      newState.mod.playMove(cells(i), State.getColour(newState.player))
       states += newState
+    }
+    if(mod.count == 1 && State.getColour(this.player).equals(R)){
+      val newState = new State(this.mod)
+      val onlyRedMove = mod.myCells(R)(0)
+      newState.setPlayer(1-this.player)
+      newState.mod.playPieRule(onlyRedMove)
+      states += newState
+
     }
     states
 
   }
-  def doVisit = this.visit+=1
+  def visit = this.visits+=1
   def addScore(s : Double) = {
     if(score != Integer.MIN_VALUE) score += s
   }
-  def playARandomMove = {
-    val availablePositions = this.model.myCells(O)
+  def randomPlay = {
+    val availablePositions = this.mod.myCells(O)
     val totalPossibilities = availablePositions.size
     val selectRandom = (Math.random() * totalPossibilities).asInstanceOf[Int]
-    this.model.playMove(availablePositions(selectRandom), this.colour)
+    this.mod.playMove(availablePositions(selectRandom), State.getColour(this.player))
   }
-  def changePlayer = colour = getOtherColour(colour)
+  def changePlayer = player = 1 - player
 
 }
 
-
+object State extends Const{
+  def getColour(playerNum : Int) : Colour = {
+    playerNum match {
+      case 0 => R
+      case 1 => B
+    }
+  }
+}

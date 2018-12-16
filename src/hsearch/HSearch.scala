@@ -1,4 +1,4 @@
-package HSearch
+package hsearch
 
 import hexagony._
 class HSearch(var model: Model, var colour: Colour) extends Const{
@@ -50,253 +50,47 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     for(g1 <- G.getReps){
       for(g2 <- G.getReps){
         oldC((g1, g2)) = Set()
+        oldC((g2, g1)) = Set()
       }
     }
-    val added : collection.mutable.Map[(Cell, Cell), Boolean] = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
-    val added2 : collection.mutable.Map[(Cell, Cell), Boolean] = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
-    val isStrongBridge : collection.mutable.Map[(Cell, Cell), Boolean] = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
+
     for(g1 <- Gtemp){
 
       for(g2 <- Gtemp){
         val rep1 = G.find(g1).get
         val rep2 = G.find(g2).get
-        if(!areNearestNeighbours(g1,g2) && !added((rep1, rep2))){
-          var op : Option[(Cell, Cell)] = None
-          try{
-            op = getStrongBridge(g1, g2)
-          }catch{
-            case e : Exception => e.printStackTrace()
-          }
-
-          if(op.isDefined){
-            println("HE")
-            C((rep1, rep2)) = Set(Set(op.get._1, op.get._2))
-
-            added((rep1, rep2)) = true
-
-          }
-          else{
-            C((rep1, rep2)) = Set()
-          }
+        if(!areNearestNeighbours(g1,g2)){
+          C((rep1, rep2)) = Set()
+          C((rep2, rep1)) = Set()
 
         }
         else{
           C((rep1, rep2)) = Set(Set())
+          C((rep2, rep1)) = Set(Set())
 
-          added((rep1, rep2)) = true
+
 
         }
         try {
-          if (!added2((rep1, rep2))) {
-            val carriers = getWeakBridge(g1, g2)
-            if (!carriers.isEmpty) {
-              SC((rep1, rep2)) = carriers
 
-              added2((rep1, rep2)) = true
-
-
-            }
-            else{
-              SC((rep1, rep2)) = Set()
-            }
-          }
+          SC((rep1, rep2)) = Set()
+          SC((rep2, rep1)) = Set()
+            //}
+          //}
         }catch{
           case e : Exception => e.printStackTrace()
         }
 
-
-
       }
 
     }
 
   }
-  def getStrongBridge(cell1 : Cell, cell2 : Cell) : Option[(Cell, Cell)] = {
-    var boundary1 = HSearch.boundaryBlue1
-    var boundary2 = HSearch.boundaryBlue2
-
-    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
-
-
-    def getBoundaryCarrier(a : Cell, b : Cell) : Option[(Cell, Cell)] = {
-      //a is boundary, b is cell on the board
-      var index = b.i
-
-      if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))){ index = b.j}
-      if(a.equals(boundary1) && index == 1){
-        if((model.pie && colour.equals(R)) || (!model.pie && colour.equals(B))) {
-          if (b.i >= 1 && b.j >= 1 && model.board(b.i - 1)(b.j).colour.equals(O) && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
-            return Some((model.board(b.i-1)(b.j),model.board(b.i - 1)(b.j - 1)))
-          }
-        }
-        else{
-          if (b.i >= 1 && b.j >= 1 && model.board(b.i)(b.j-1).colour.equals(O) && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
-            return Some((model.board(b.i)(b.j-1),model.board(b.i - 1)(b.j - 1)))
-          }
-        }
-      }
-      if(a.equals(boundary2) && index == model.N - 2){
-        if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))) {
-          if (b.i < model.N - 1 && b.j < model.N-1 && model.board(b.i)(b.j+1).colour.equals(O) && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
-            return Some((model.board(b.i)(b.j+1),model.board(b.i + 1)(b.j + 1)))
-          }
-        }
-        else{
-          if (b.i < model.N-1 && b.j < model.N - 1 && model.board(b.i+1)(b.j).colour.equals(O) && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
-            return Some((model.board(b.i+1)(b.j),model.board(b.i + 1)(b.j + 1)))
-          }
-        }
-      }
-      return None
-
-    }
-    val possibleCarrier1 = getBoundaryCarrier(cell1, cell2)
-    val possibleCarrier2 = getBoundaryCarrier(cell2, cell1)
-
-    if(possibleCarrier1.isDefined) return possibleCarrier1
-    if(possibleCarrier2.isDefined) return possibleCarrier2
-    var a = new Cell(-1,-1)
-    var b = new Cell(-1,-1)
-    var found = false
-
-    if(cell1.i == cell2.i-1 && cell1.j == cell2.j-2){
-      a = model.board(cell1.i)(cell1.j+1)
-      b = model.board(cell2.i)(cell2.j-1)
-      found = true
-    }
-
-    if(cell1.i == cell2.i-2 && cell1.j == cell2.j-1){
-      a = model.board(cell1.i+1)(cell1.j)
-      b = model.board(cell2.i-1)(cell2.j)
-      found = true
-    }
-    if (cell1.i == cell2.i-1 && cell1.j == cell2.j+1){
-      a = model.board(cell1.i)(cell2.j)
-      b = model.board(cell2.i)(cell1.j)
-      found = true
-    }
-    if (cell1.i == cell2.i+1 && cell1.j == cell2.j+2){
-      a = model.board(cell1.i)(cell1.j-1)
-      b = model.board(cell2.i)(cell2.j+1)
-      found = true
-    }
-    if(cell1.i == cell2.i+2 && cell1.j == cell2.j+1){
-      a = model.board(cell1.i-1)(cell1.j)
-      b = model.board(cell2.i+1)(cell2.j)
-      found = true
-    }
-    if(cell1.i == cell2.i+1 && cell1.j == cell2.j-1){
-      a = model.board(cell1.i)(cell2.j)
-      b = model.board(cell2.i)(cell1.j)
-      found = true
-    }
-    if(found && a.colour.equals(O) && b.colour.equals(O)){
-      if(cell1.equals(new Cell(0,1)) && cell2.equals(new Cell(1,3))) println(possibleCarrier1 + " " + possibleCarrier2)
-      return Some((a,b))
-    }
-    return None
-  }
 
 
 
-  def getWeakBridge(cell1 : Cell, cell2 : Cell) : Set[Set[Cell]] = {
-    var boundary1 = HSearch.boundaryBlue1
-    var boundary2 = HSearch.boundaryBlue2
 
-    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
 
-    def getBoundaryCarrier(a : Cell, b : Cell) : Set[Set[Cell]] = {
-      var index = b.i
-      if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))){ index = b.j}
-      if(a.equals(boundary1) && index == 1){
-        if((model.pie && colour.equals(R)) || (!model.pie && colour.equals(B))) {
-          var set : Set[Set[Cell]] = Set()
-          if (b.i == 1 && model.board(b.i - 1)(b.j).colour.equals(O)){
-            set = set + Set(model.board(b.i-1)(b.j))
-          }
-          if (b.i == 1 && b.j >= 1 && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
-            set = set + Set(model.board(b.i - 1)(b.j - 1))
-          }
-          return set
-        }
-        else{
-          var set : Set[Set[Cell]] = Set()
-          if (b.j == 1 && model.board(b.i)(b.j-1).colour.equals(O)){
-            set = set + Set(model.board(b.i)(b.j-1))
-          }
-          if (b.j == 1 && b.i >= 1 && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
-            set = set + Set(model.board(b.i - 1)(b.j - 1))
-          }
-          return set
-        }
-      }
-      if(a.equals(boundary2) && index == model.N - 2){
-        if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))) {
-          var set : Set[Set[Cell]] = Set()
-          if (b.j == model.N - 2 && model.board(b.i)(b.j + 1).colour.equals(O)){
-            set = set + Set(model.board(b.i)(b.j+1))
-          }
-          if (b.j == model.N - 2 && b.i < model.N - 1 && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
-            set = set + Set(model.board(b.i + 1)(b.j + 1))
-          }
-          return set
-        }
-        else{
-
-          var set : Set[Set[Cell]] = Set()
-          if (b.i == model.N - 2 && model.board(b.i+1)(b.j).colour.equals(O)){
-            set = set + Set(model.board(b.i+1)(b.j))
-          }
-          if (b.i == model.N - 2 && b.j < model.N - 1 && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
-            set = set + Set(model.board(b.i + 1)(b.j + 1))
-          }
-          return set
-        }
-      }
-      return Set()
-
-    }
-    if(cell1.equals(boundary1) || cell2.equals(boundary1) || cell1.equals(boundary2) || cell2.equals(boundary2)){
-      val possibleCarrier1 = getBoundaryCarrier(cell1, cell2)
-      val possibleCarrier2 = getBoundaryCarrier(cell2, cell1)
-      if(!possibleCarrier1.isEmpty) return possibleCarrier1
-      return possibleCarrier2
-    }
-
-    var a = new Cell(-1,-1)
-    var found = false
-    if(cell1.i == cell2.i+2 && cell1.j == cell2.j+2){
-      a = model.board(cell1.i-1)(cell1.j-1)
-      found = true
-    }
-
-    if(cell1.i == cell2.i+2 && cell1.j == cell2.j){
-      a = model.board(cell1.i-1)(cell1.j)
-      found = true
-    }
-    if (cell1.i == cell2.i && cell1.j == cell2.j+2){
-      a = model.board(cell1.i)(cell2.j+1)
-      found = true
-    }
-    if(cell1.i == cell2.i-2 && cell1.j == cell2.j-2){
-      a = model.board(cell1.i+1)(cell1.j+1)
-      found = true
-    }
-
-    if(cell1.i == cell2.i-2 && cell1.j == cell2.j){
-      a = model.board(cell1.i+1)(cell1.j)
-      found = true
-    }
-    if (cell1.i == cell2.i && cell1.j == cell2.j-2){
-      a = model.board(cell1.i)(cell2.j-1)
-      found = true
-    }
-
-    if(found && a.colour.equals(O)){
-      return Set(Set(a))
-    }
-    return Set()
-  }
 
   def makeMove(i : Int, j : Int, c : Colour): HSearch = {
     val cell = model.board(i)(j)
@@ -331,8 +125,6 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     }
 
 
-
-
     try {
       val done = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
       for (cell1 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ set) {
@@ -341,17 +133,9 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
           if(!done((cell1, cell2))) {
 
 
-
-            /*
-            //If fills gaps between two cells, then empty SC between those two cells
-            if(areNearestNeighbours(cell1, cell) && areNearestNeighbours(cell2, cell)){
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
-            }#
-            */
             val strongCarriers = getStrongCarriers(cell1, cell2, true)
             val weakCarriers = getWeakCarriers(cell1, cell2, true)
-
+            if(cell1.equals(new Cell(0,4)))
             if (!c.equals(colour) && strongCarriers.contains(cell)) {
 
               hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
@@ -383,7 +167,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
               }
 
             }
-            if (!c.equals(colour) && weakCarriers.contains(cell)) {
+            else if (!c.equals(colour) && weakCarriers.contains(cell)) {
 
               hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
               //other way
@@ -394,15 +178,6 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
               hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
               hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
 
-              /*
-
-              Need to make sure this part works
-              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-              //other way
-              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
-              */
 
             }
             done((cell1, cell2)) = true; done((cell2, cell1)) = true;
@@ -437,7 +212,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
       //actually tends to work better without these:
       if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
-      if(areNearestNeighbours(cell1, cell2)) {SC((G.find(cell1).get, G.find(cell2).get)) = Set()}//; C((G.find(cell1).get,G.find(cell2).get)) = Set()}
+      if(areNearestNeighbours(cell1, cell2)) {SC((G.find(cell1).get, G.find(cell2).get)) = Set()}
     }
   }
 
@@ -447,12 +222,8 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     var previousNewVC = true
 
 
-    val redsGo = model.myCells(R).size <= (model.myCells(B) ++ model.myCells(R)).size.toFloat / 2.0
-    val myGo = (redsGo && colour.equals(R)) || (!redsGo && colour.equals(B))
-    var boundary1 = HSearch.boundaryBlue1
-    var boundary2 = HSearch.boundaryBlue2
-    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
-    while ((currentNewVC || previousNewVC) && ((myGo && SC((G.find(boundary1).get, G.find(boundary2).get)).isEmpty) && C((G.find(boundary1).get, G.find(boundary2).get)).isEmpty)) {
+
+    while (currentNewVC || previousNewVC) {
 
       val tempC = C
       previousNewVC = currentNewVC
@@ -519,7 +290,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
       return minSet
     }
     else{
-      if(cell1.colour.equals(colour) || cell2.colour.equals(colour)){
+      if(cell1.colour.equals(colour) && cell2.colour.equals(colour)){
 
         for(set <- C((G.find(cell1).get, G.find(cell2).get))){
 
@@ -554,7 +325,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
       return minSet
     }
     else{
-      if(cell1.colour.equals(colour) || cell2.colour.equals(colour)){
+      if(cell1.colour.equals(colour) && cell2.colour.equals(colour)){
         for(set <- SC((G.find(cell1).get, G.find(cell2).get))){
 
           if(minSize > set.size){
@@ -654,5 +425,5 @@ object HSearch extends Const{
     boundaryBlue2.colour = B
   }
   val M = 12
-  val X = 5
+  val X = 6
 }

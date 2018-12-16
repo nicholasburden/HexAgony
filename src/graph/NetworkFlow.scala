@@ -1,4 +1,4 @@
-package Graph
+package graph
 
 class NetworkFlow(g : Graph) {
   val nodes = g.getNodes
