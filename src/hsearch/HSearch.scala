@@ -167,7 +167,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
               }
 
             }
-            else if (!c.equals(colour) && weakCarriers.contains(cell)) {
+            if (!c.equals(colour) && weakCarriers.contains(cell)) {
 
               hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
               //other way
@@ -207,13 +207,208 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     hsearch.makeConnectionsConsistent()
     return hsearch
   }
-  def makeConnectionsConsistent() : Unit = {
+  def getStrongBridge(cell1 : Cell, cell2 : Cell) : Option[(Cell, Cell)] = {
+    var boundary1 = HSearch.boundaryBlue1
+    var boundary2 = HSearch.boundaryBlue2
 
+    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
+
+
+    def getBoundaryCarrier(a : Cell, b : Cell) : Option[(Cell, Cell)] = {
+      //a is boundary, b is cell on the board
+      var index = b.i
+
+      if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))){ index = b.j}
+      if(a.equals(boundary1) && index == 1){
+        if((model.pie && colour.equals(R)) || (!model.pie && colour.equals(B))) {
+          if (b.i >= 1 && b.j >= 1 && model.board(b.i - 1)(b.j).colour.equals(O) && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+            return Some((model.board(b.i-1)(b.j),model.board(b.i - 1)(b.j - 1)))
+          }
+        }
+        else{
+          if (b.i >= 1 && b.j >= 1 && model.board(b.i)(b.j-1).colour.equals(O) && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+            return Some((model.board(b.i)(b.j-1),model.board(b.i - 1)(b.j - 1)))
+          }
+        }
+      }
+      if(a.equals(boundary2) && index == model.N - 2){
+        if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))) {
+          if (b.i < model.N - 1 && b.j < model.N-1 && model.board(b.i)(b.j+1).colour.equals(O) && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
+            return Some((model.board(b.i)(b.j+1),model.board(b.i + 1)(b.j + 1)))
+          }
+        }
+        else{
+          if (b.i < model.N-1 && b.j < model.N - 1 && model.board(b.i+1)(b.j).colour.equals(O) && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
+            return Some((model.board(b.i+1)(b.j),model.board(b.i + 1)(b.j + 1)))
+          }
+        }
+      }
+      return None
+
+    }
+    val possibleCarrier1 = getBoundaryCarrier(cell1, cell2)
+    val possibleCarrier2 = getBoundaryCarrier(cell2, cell1)
+
+    if(possibleCarrier1.isDefined) return possibleCarrier1
+    if(possibleCarrier2.isDefined) return possibleCarrier2
+    var a = new Cell(-1,-1)
+    var b = new Cell(-1,-1)
+    var found = false
+    if(!cell1.equals(boundary1) && !cell1.equals(boundary2) && !cell2.equals(boundary1) && !cell2.equals(boundary2)) {
+      if (cell1.i == cell2.i - 1 && cell1.j == cell2.j - 2) {
+        a = model.board(cell1.i)(cell1.j + 1)
+        b = model.board(cell2.i)(cell2.j - 1)
+        found = true
+      }
+
+      if (cell1.i == cell2.i - 2 && cell1.j == cell2.j - 1) {
+        a = model.board(cell1.i + 1)(cell1.j)
+        b = model.board(cell2.i - 1)(cell2.j)
+        found = true
+      }
+      if (cell1.i == cell2.i - 1 && cell1.j == cell2.j + 1) {
+        a = model.board(cell1.i)(cell2.j)
+        b = model.board(cell2.i)(cell1.j)
+        found = true
+      }
+      if (cell1.i == cell2.i + 1 && cell1.j == cell2.j + 2) {
+        a = model.board(cell1.i)(cell1.j - 1)
+        b = model.board(cell2.i)(cell2.j + 1)
+        found = true
+      }
+      if (cell1.i == cell2.i + 2 && cell1.j == cell2.j + 1) {
+        a = model.board(cell1.i - 1)(cell1.j)
+        b = model.board(cell2.i + 1)(cell2.j)
+        found = true
+      }
+      if (cell1.i == cell2.i + 1 && cell1.j == cell2.j - 1) {
+        a = model.board(cell1.i)(cell2.j)
+        b = model.board(cell2.i)(cell1.j)
+        found = true
+      }
+      if (found && a.colour.equals(O) && b.colour.equals(O)) {
+        if (cell1.equals(new Cell(0, 1)) && cell2.equals(new Cell(1, 3))) println(possibleCarrier1 + " " + possibleCarrier2)
+        return Some((a, b))
+      }
+    }
+    return None
+  }
+
+
+
+  def getWeakBridge(cell1 : Cell, cell2 : Cell) : Set[Set[Cell]] = {
+    var boundary1 = HSearch.boundaryBlue1
+    var boundary2 = HSearch.boundaryBlue2
+
+    if(colour.equals(R)) {boundary1 = HSearch.boundaryRed1; boundary2 = HSearch.boundaryRed2}
+
+    def getBoundaryCarrier(a : Cell, b : Cell) : Set[Set[Cell]] = {
+      var index = b.i
+      if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))){ index = b.j}
+      if(a.equals(boundary1) && index == 1){
+        if((model.pie && colour.equals(R)) || (!model.pie && colour.equals(B))) {
+          var set : Set[Set[Cell]] = Set()
+          if (b.i == 1 && model.board(b.i - 1)(b.j).colour.equals(O)){
+            set = set + Set(model.board(b.i-1)(b.j))
+          }
+          if (b.i == 1 && b.j >= 1 && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+            set = set + Set(model.board(b.i - 1)(b.j - 1))
+          }
+          return set
+        }
+        else{
+          var set : Set[Set[Cell]] = Set()
+          if (b.j == 1 && model.board(b.i)(b.j-1).colour.equals(O)){
+            set = set + Set(model.board(b.i)(b.j-1))
+          }
+          if (b.j == 1 && b.i >= 1 && model.board(b.i - 1)(b.j - 1).colour.equals(O)){
+            set = set + Set(model.board(b.i - 1)(b.j - 1))
+          }
+          return set
+        }
+      }
+      if(a.equals(boundary2) && index == model.N - 2){
+        if((model.pie && colour.equals(B)) || (!model.pie && colour.equals(R))) {
+          var set : Set[Set[Cell]] = Set()
+          if (b.j == model.N - 2 && model.board(b.i)(b.j + 1).colour.equals(O)){
+            set = set + Set(model.board(b.i)(b.j+1))
+          }
+          if (b.j == model.N - 2 && b.i < model.N - 1 && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
+            set = set + Set(model.board(b.i + 1)(b.j + 1))
+          }
+          return set
+        }
+        else{
+
+          var set : Set[Set[Cell]] = Set()
+          if (b.i == model.N - 2 && model.board(b.i+1)(b.j).colour.equals(O)){
+            set = set + Set(model.board(b.i+1)(b.j))
+          }
+          if (b.i == model.N - 2 && b.j < model.N - 1 && model.board(b.i + 1)(b.j + 1).colour.equals(O)){
+            set = set + Set(model.board(b.i + 1)(b.j + 1))
+          }
+          return set
+        }
+      }
+      return Set()
+
+    }
+    if(cell1.equals(boundary1) || cell2.equals(boundary1) || cell1.equals(boundary2) || cell2.equals(boundary2)){
+      val possibleCarrier1 = getBoundaryCarrier(cell1, cell2)
+      val possibleCarrier2 = getBoundaryCarrier(cell2, cell1)
+      if(!possibleCarrier1.isEmpty) return possibleCarrier1
+      return possibleCarrier2
+    }
+
+    var a = new Cell(-1,-1)
+    var found = false
+    if(cell1.i == cell2.i+2 && cell1.j == cell2.j+2){
+      a = model.board(cell1.i-1)(cell1.j-1)
+      found = true
+    }
+
+    if(cell1.i == cell2.i+2 && cell1.j == cell2.j){
+      a = model.board(cell1.i-1)(cell1.j)
+      found = true
+    }
+    if (cell1.i == cell2.i && cell1.j == cell2.j+2){
+      a = model.board(cell1.i)(cell2.j+1)
+      found = true
+    }
+    if(cell1.i == cell2.i-2 && cell1.j == cell2.j-2){
+      a = model.board(cell1.i+1)(cell1.j+1)
+      found = true
+    }
+
+    if(cell1.i == cell2.i-2 && cell1.j == cell2.j){
+      a = model.board(cell1.i+1)(cell1.j)
+      found = true
+    }
+    if (cell1.i == cell2.i && cell1.j == cell2.j-2){
+      a = model.board(cell1.i)(cell2.j-1)
+      found = true
+    }
+
+    if(found && a.colour.equals(O)){
+      return Set(Set(a))
+    }
+    return Set()
+  }
+  def makeConnectionsConsistent() : Unit = {
+    for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
+      //actually tends to work better without these:
+      val strong = getStrongBridge(cell1, cell2)
+      val weak = getWeakBridge(cell1, cell2)
+      //if(strong.isDefined) C((G.find(cell1).get, G.find(cell2).get)) = Set(Set(strong.get._1, strong.get._2))
+      if(weak.nonEmpty) SC((G.find(cell1).get, G.find(cell2).get)) = weak
+    }
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
       //actually tends to work better without these:
       if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
       if(areNearestNeighbours(cell1, cell2)) {SC((G.find(cell1).get, G.find(cell2).get)) = Set()}
     }
+
+
   }
 
   def search : Unit = {
@@ -397,6 +592,18 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     return mod2
 
   }
+
+  def getUnionOfWeakConnections : Set[Cell] = {
+    val setList = set.toList
+    val boundary1 = setList(0)
+    val boundary2 = setList(1)
+    var finalSet = model.myCells(O).toSet
+    for(s <- SC((G.find(boundary1).get, G.find(boundary2).get))){
+      finalSet = finalSet.intersect(s)
+    }
+    finalSet
+  }
+
 
 
 }

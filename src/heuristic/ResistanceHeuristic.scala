@@ -71,7 +71,7 @@ class ResistanceHeuristic extends Const {
       for (node2 <- blueCircuit.getNodes) {
         val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
 
-        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
+        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, true)
         if (strongCarriers.nonEmpty) {
           blueCircuit.addLink(node1.id, node2.id)
           //blueCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
@@ -83,7 +83,7 @@ class ResistanceHeuristic extends Const {
     for (node1 <- redCircuit.getNodes) {
       for (node2 <- redCircuit.getNodes) {
         val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
-        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, false)
+        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, true)
         if (strongCarriers.nonEmpty) {
           redCircuit.addLink(node1.id, node2.id)
           //redCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
@@ -94,8 +94,8 @@ class ResistanceHeuristic extends Const {
 
 
     val redsGo = (model.pie && model.count % 2 == 1) || (!model.pie && model.count % 2 == 0)
-    var blueWeakRes = 10*ResistanceHeuristic.epsilon
-    var redWeakRes  = 10*ResistanceHeuristic.epsilon
+    var blueWeakRes = ResistanceHeuristic.epsilon
+    var redWeakRes  = ResistanceHeuristic.epsilon
     if(!redsGo) {
       for (node1 <- blueCircuit.getNodes) {
         for (node2 <- blueCircuit.getNodes) {

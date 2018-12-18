@@ -27,7 +27,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       val moveOrdering = new MoveOrdering
       val mod = model.copy()
       moveOrdering.initial(mod)
-      val open = moveOrdering.getOrdering(mod)
+      var open = moveOrdering.getOrdering(mod)
 
       if(model.pie && !HSearch.p) HSearch.pie
       val alpha = Float.NegativeInfinity
@@ -45,6 +45,12 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       hme.search
       hthem.search
       //if(colour.equals(R))
+      val weakCarrier = hthem.getUnionOfWeakConnections
+      if(weakCarrier.nonEmpty) open = weakCarrier.toList
+
+      val boundaries = hme.set.toList
+      val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
+      if(strongCarrier.nonEmpty) open = strongCarrier.toList
       for (cell1 <- open) {
         val cell = mod.board(cell1.i)(cell1.j)
         val mod2 = result(mod, cell, colour)

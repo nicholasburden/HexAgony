@@ -4,7 +4,8 @@ import graph._
 import hexagony._
 class FlowHeuristic extends Heuristic with Const{
 
-  def evaluate(model : Model, colour : Colour, pie : Boolean) : Int = {
+  def evaluate(model : Model, colour : Colour) : Int = {
+    val pie = model.pie
     val othercolour = colour match{
       case R => B
       case B => R
