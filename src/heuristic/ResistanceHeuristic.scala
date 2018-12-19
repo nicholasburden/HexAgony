@@ -71,7 +71,7 @@ class ResistanceHeuristic extends Const {
       for (node2 <- blueCircuit.getNodes) {
         val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
 
-        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, true)
+        val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
         if (strongCarriers.nonEmpty) {
           blueCircuit.addLink(node1.id, node2.id)
           //blueCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
@@ -83,7 +83,7 @@ class ResistanceHeuristic extends Const {
     for (node1 <- redCircuit.getNodes) {
       for (node2 <- redCircuit.getNodes) {
         val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
-        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, true)
+        val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, false)
         if (strongCarriers.nonEmpty) {
           redCircuit.addLink(node1.id, node2.id)
           //redCircuit.setResistance(node1, node2, (1f - (1f / strongCarriers.size)) / 7)
@@ -184,6 +184,6 @@ class ResistanceHeuristic extends Const {
 }
 
 object ResistanceHeuristic{
-  val epsilon = 0.000000000001f
+  val epsilon = 0.00001f
   def maxNotInfinity(boardSize : Int) : Float = (1f/epsilon) + 1
 }

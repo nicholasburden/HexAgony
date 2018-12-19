@@ -154,13 +154,23 @@ class HSearchTest extends Const{
   }
   @Test def sandbox() : Unit = {
 
-    var model1 = new Model(3)
+    var model1 = new Model(5)
 
     //model1.playMove(new Cell(4,0), R)
-    model1.playMove(new Cell(2,1), R)
-    model1.playPieRule(new Cell(2,1))
-    model1.playMove(new Cell(1,1), R)
-    /*
+    model1.playMove(new Cell(1,4), B)
+
+    model1.playMove(new Cell(3,4), B)
+    model1.playMove(new Cell(4,4), B)
+    model1.playMove(new Cell(4,3), R)
+    model1.playMove(new Cell(1,3), R)
+    model1.playMove(new Cell(2,2), R)
+
+
+
+
+    //model1.playPieRule(new Cell(2,1))
+    //model1.playMove(new Cell(1,1), R)
+    /*new Cell(1,4)
     model1.playMove(new Cell(0,2), R)
     model1.playMove(new Cell(0,3), R)
 
@@ -180,30 +190,37 @@ class HSearchTest extends Const{
     //model1.playMove(new Cell(2,1), B)
     //model1.playMove(new Cell(2,1), B)
     */
-    HSearch.pie
+    //HSearch.pie
     //
 
-    var hs = new HSearch(model1, B)
+    var hs = new HSearch(model1, R)
 
     hs.initial
     //println("HO")
     hs.search
-    hs = hs.makeMove(2,2,R)
-    //hs = hs.makeMove(1,5,B)
+    hs = hs.makeMove(2,4,R)
+    println(hs.G.find(new Cell(2, 2)).get)
+    println(hs.G.find(new Cell(1, 3)).get)
+    println(hs.C((hs.G.find(new Cell(2, 2)).get, hs.G.find(new Cell(1, 3)).get)))
 
+    println(hs.G.find(new Cell(2,2)).get.colour + " " + hs.G.find(new Cell(1,3)).get.colour)
+    println("TEST " + hs.getStrongCarriers(new Cell(2, 2), new Cell(1,3), true))
+    //hs = hs.makeMove(1,5,B)
+    /*
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
       println("WEAK: " + c1 + " -> " + c2 + ": " + hs.getWeakCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
 
     }
     //println("HO")
+    */
 
-    /*
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(R) ++ Set(HSearch.boundaryRed1, HSearch.boundaryRed2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(R) ++ Set(HSearch.boundaryRed1, HSearch.boundaryRed2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
       println("WEAK: " + c1 + " -> " + c2 + ": " + hs.getWeakCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
     }
-    */
+
+
   }
 
 }

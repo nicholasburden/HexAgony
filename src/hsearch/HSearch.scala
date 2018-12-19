@@ -3,7 +3,7 @@ package hsearch
 import hexagony._
 class HSearch(var model: Model, var colour: Colour) extends Const{
 
-
+  var strong : Set[Cell] = Set()
   var set : Set[Cell] = colour match{case R => Set(HSearch.boundaryRed1, HSearch.boundaryRed2)
   case B => Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
   case _ => Set()}
@@ -186,17 +186,21 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
       }
       for (cellTemp: Cell <- mod2.neighbours(mod2.board(cell.i)(cell.j)).toSet ++ set) {
         if (cellTemp.colour.equals(c) && colour.equals(c) && areNearestNeighbours(cellTemp, cell)) {
-          hsearch.G.union(cellTemp, mod2.board(cell.i)(cell.j))
+
           for(cell_ <- mod2.myCells(colour) ++ mod2.myCells(O) ++ set){
-            val unionS = hsearch.C((hsearch.G.find(mod2.board(cell.i)(cell.j)).get, hsearch.G.find(cell_).get)).union(hsearch.C((mod2.board(cell.i)(cell.j), hsearch.G.find(cell_).get)))
-            hsearch.C((hsearch.G.find(mod2.board(cell.i)(cell.j)).get, hsearch.G.find(cell_).get)) = unionS
-            hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(mod2.board(cell.i)(cell.j)).get)) = unionS
-            val unionW = hsearch.SC((hsearch.G.find(mod2.board(cell.i)(cell.j)).get, hsearch.G.find(cell_).get)).union(hsearch.SC((mod2.board(cell.i)(cell.j), hsearch.G.find(cell_).get)))
-            hsearch.SC((hsearch.G.find(mod2.board(cell.i)(cell.j)).get, hsearch.G.find(cell_).get)) = unionW
-            hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(mod2.board(cell.i)(cell.j)).get)) = unionW
+            val unionS = hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)).union(hsearch.C(hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get))
+            hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)) = unionS
+            hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(cell).get)) = unionS
+            hsearch.C((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)) = unionS
+            hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(cellTemp).get)) = unionS
+            val unionW = hsearch.SC((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)).union(hsearch.SC((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)))
+            hsearch.SC((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)) = unionW
+            hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(cell).get)) = unionW
+            hsearch.SC((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)) = unionW
+            hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(cellTemp).get)) = unionW
 
           }
-
+          hsearch.G.union(cellTemp, cell)
 
         }
       }
@@ -204,7 +208,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     catch{
       case e : Exception => e.printStackTrace()
     }
-    hsearch.makeConnectionsConsistent()
+    //hsearch.makeConnectionsConsistent()
     return hsearch
   }
   def getStrongBridge(cell1 : Cell, cell2 : Cell) : Option[(Cell, Cell)] = {
@@ -255,12 +259,12 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     var b = new Cell(-1,-1)
     var found = false
     if(!cell1.equals(boundary1) && !cell1.equals(boundary2) && !cell2.equals(boundary1) && !cell2.equals(boundary2)) {
+
       if (cell1.i == cell2.i - 1 && cell1.j == cell2.j - 2) {
         a = model.board(cell1.i)(cell1.j + 1)
         b = model.board(cell2.i)(cell2.j - 1)
         found = true
       }
-
       if (cell1.i == cell2.i - 2 && cell1.j == cell2.j - 1) {
         a = model.board(cell1.i + 1)(cell1.j)
         b = model.board(cell2.i - 1)(cell2.j)
@@ -270,6 +274,8 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
         a = model.board(cell1.i)(cell2.j)
         b = model.board(cell2.i)(cell1.j)
         found = true
+
+
       }
       if (cell1.i == cell2.i + 1 && cell1.j == cell2.j + 2) {
         a = model.board(cell1.i)(cell1.j - 1)
@@ -287,7 +293,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
         found = true
       }
       if (found && a.colour.equals(O) && b.colour.equals(O)) {
-        if (cell1.equals(new Cell(0, 1)) && cell2.equals(new Cell(1, 3))) println(possibleCarrier1 + " " + possibleCarrier2)
+
         return Some((a, b))
       }
     }
@@ -395,15 +401,28 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
     return Set()
   }
   def makeConnectionsConsistent() : Unit = {
+
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
-      //actually tends to work better without these:
+
       val strong = getStrongBridge(cell1, cell2)
+
+
       val weak = getWeakBridge(cell1, cell2)
-      //if(strong.isDefined) C((G.find(cell1).get, G.find(cell2).get)) = Set(Set(strong.get._1, strong.get._2))
-      if(weak.nonEmpty) SC((G.find(cell1).get, G.find(cell2).get)) = weak
+      if(strong.isDefined){
+
+        C((G.find(cell1).get, G.find(cell2).get)) = Set(Set(strong.get._1, strong.get._2))
+        C((G.find(cell2).get, G.find(cell1).get)) = Set(Set(strong.get._1, strong.get._2))
+      }
+      if(weak.nonEmpty && getStrongCarriers(cell1, cell2, true).isEmpty){
+        SC((G.find(cell1).get, G.find(cell2).get)) = weak
+        SC((G.find(cell2).get, G.find(cell1).get)) = weak
+      }
+
     }
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
       //actually tends to work better without these:
+      val carrier = getStrongCarriers(cell1, cell2, false)
+      strong = strong.union(carrier)
       if(getStrongCarriers(cell1, cell2, true).nonEmpty) SC((G.find(cell1).get,G.find(cell2).get)) = Set()
       if(areNearestNeighbours(cell1, cell2)) {SC((G.find(cell1).get, G.find(cell2).get)) = Set()}
     }
@@ -475,8 +494,9 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
       if(!G.find(cell2).isDefined){
         println(colour + " " + model.pie + HSearch.p +"SHOULDNT HAPPEN: " + cell2)
       }
-      for(set <- C((G.find(cell1).get, G.find(cell2).get))){
 
+      for(set <- C((G.find(cell1).get, G.find(cell2).get))){
+        if(cell1.equals(new Cell(1,3)) && cell2.equals(new Cell(2, 2))) println("SET " + set)
         if(minSize > set.size){
           minSet = set
           minSize = set.size

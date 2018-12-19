@@ -51,7 +51,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       val boundaries = hme.set.toList
       val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
       if(strongCarrier.nonEmpty) open = strongCarrier.toList
-      for (cell1 <- open) {
+      val ordering = open.filter(x => !hthem.strong.contains(x))
+      for (cell1 <- ordering) {
         val cell = mod.board(cell1.i)(cell1.j)
         val mod2 = result(mod, cell, colour)
         val hme2 = hme.makeMove(cell.i, cell.j, colour)
@@ -122,8 +123,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     else if(depth == 0){
       //println("Heuristic")
       val heuristic = new ResistanceHeuristic
-      hme.makeConnectionsConsistent()
-      hthem.makeConnectionsConsistent()
+      //hme.makeConnectionsConsistent()
+      //hthem.makeConnectionsConsistent()
       return heuristic.evaluate(model, colour, hme, hthem)
 
     }
@@ -163,16 +164,16 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     }
     else if(depth == 0){
       val heuristic = new ResistanceHeuristic
-      hme.makeConnectionsConsistent()
-      hthem.makeConnectionsConsistent()
+      //hme.makeConnectionsConsistent()
+      //hthem.makeConnectionsConsistent()
       return heuristic.evaluate(model, colour, hme, hthem)
 
     }
     else{
       // println("Finished checking if leaf")
       var bestVal = Float.NegativeInfinity
-
-      for (cell1 <- mo.getOrdering(model)){
+      val ordering = mo.getOrdering(model).filter(x => !hthem.strong.contains(x))
+      for (cell1 <- ordering){
       //for(cell1 <- model.myCells(O)){
         val cell = model.board(cell1.i)(cell1.j)
         val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour), mo.addMovesFor(cell, model))
