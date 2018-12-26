@@ -1,5 +1,6 @@
 
 import hexagony._
+import hsearch.HSearch
 import montecarlo.Node
 import pierule.PieRule
 
@@ -8,7 +9,11 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
+  var ohercolour = colour match{
+    case R => B
+    case B => R
 
+  }
   final val WIN = 10
   final val time = 1800
   var (player, otherPlayer) = colour match{
@@ -17,6 +22,12 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   }
 
   def myMove() : Cell = {
+    val hRed = new HSearch(model, R)
+    val hBlue = new HSearch(model, B)
+    hRed.initial
+    hBlue.initial
+    hRed.search
+    hBlue.search
     val mod = model.copy()
     val start = System.currentTimeMillis()
     val end = start + time
@@ -31,7 +42,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
       //expansion
       if(goodNode.state.mod.checkIfFinished == -1){
-        val states = goodNode.state.getNextStates()
+        val states = goodNode.state.getNextStates(hRed, hBlue)
         states.foreach(state => {
           val next = new Node(state)
           next.setParent(goodNode)
