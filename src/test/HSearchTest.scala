@@ -1,4 +1,5 @@
 package test
+import heuristic.ResistanceHeuristic
 import hexagony._
 import hsearch._
 import org.junit.Assert._
@@ -157,13 +158,13 @@ class HSearchTest extends Const{
     var model1 = new Model(5)
 
     //model1.playMove(new Cell(4,0), R)
-    model1.playMove(new Cell(1,4), B)
+    model1.playMove(new Cell(2,2), R)
 
     model1.playMove(new Cell(3,4), B)
-    model1.playMove(new Cell(4,4), B)
-    model1.playMove(new Cell(4,3), R)
+
     model1.playMove(new Cell(1,3), R)
-    model1.playMove(new Cell(2,2), R)
+    model1.playMove(new Cell(1,4), B)
+
 
 
 
@@ -194,32 +195,44 @@ class HSearchTest extends Const{
     //
 
     var hs = new HSearch(model1, R)
+    var hs2 = new HSearch(model1, B)
 
     hs.initial
+    hs2.initial
     //println("HO")
     hs.search
+    hs2.search
     hs = hs.makeMove(2,4,R)
-    println(hs.G.find(new Cell(2, 2)).get)
-    println(hs.G.find(new Cell(1, 3)).get)
-    println(hs.C((hs.G.find(new Cell(2, 2)).get, hs.G.find(new Cell(1, 3)).get)))
+    hs2 = hs2.makeMove(2,4,R)
+    hs = hs.makeMove(2,3, B)
+    hs2 = hs2.makeMove(2,3,B)
+    //println(hs.G.find(new Cell(2, 2)).get)
+    //println(hs.G.find(new Cell(1, 3)).get)
+    //println(hs.C((hs.G.find(new Cell(2, 2)).get, hs.G.find(new Cell(1, 3)).get)))
 
-    println(hs.G.find(new Cell(2,2)).get.colour + " " + hs.G.find(new Cell(1,3)).get.colour)
-    println("TEST " + hs.getStrongCarriers(new Cell(2, 2), new Cell(1,3), true))
+    //println(hs.G.find(new Cell(2,2)).get.colour + " " + hs.G.find(new Cell(1,3)).get.colour)
+    //println("TEST " + hs.getStrongCarriers(new Cell(2, 2), new Cell(2,4), true))
     //hs = hs.makeMove(1,5,B)
-    /*
-    for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
-      println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
-      println("WEAK: " + c1 + " -> " + c2 + ": " + hs.getWeakCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
+
+    for(c1 <- hs2.model.myCells(O) ++ hs2.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2); c2 <- hs2.model.myCells(O) ++ hs2.model.myCells(B) ++ Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)){
+      println("STRONG: " + c1 + " -> " + c2 + ": " + hs2.getStrongCarriers(hs2.G.find(c1).get, hs2.G.find(c2).get, true))
+      println("WEAK: " + c1 + " -> " + c2 + ": " + hs2.getWeakCarriers(hs2.G.find(c1).get, hs2.G.find(c2).get, true))
 
     }
     //println("HO")
-    */
+    println("RED")
 
     for(c1 <- hs.model.myCells(O) ++ hs.model.myCells(R) ++ Set(HSearch.boundaryRed1, HSearch.boundaryRed2); c2 <- hs.model.myCells(O) ++ hs.model.myCells(R) ++ Set(HSearch.boundaryRed1, HSearch.boundaryRed2)){
       println("STRONG: " + c1 + " -> " + c2 + ": " + hs.getStrongCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
       println("WEAK: " + c1 + " -> " + c2 + ": " + hs.getWeakCarriers(hs.G.find(c1).get, hs.G.find(c2).get, true))
     }
-
+    val heuristic = new ResistanceHeuristic
+    for(cell <- hs.model.myCells(O)){
+      var htemp1 = hs.makeMove(cell.i, cell.j, B)
+      var htemp2 = hs2.makeMove(cell.i, cell.j,B)
+      println(cell)
+      println(heuristic.evaluate(hs.model, R, htemp1, htemp2))
+    }
 
   }
 

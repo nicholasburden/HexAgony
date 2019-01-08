@@ -135,8 +135,20 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
 
             val strongCarriers = getStrongCarriers(cell1, cell2, true)
             val weakCarriers = getWeakCarriers(cell1, cell2, true)
-            if(cell1.equals(new Cell(0,4)))
-            if (!c.equals(colour) && strongCarriers.contains(cell)) {
+            if (!c.equals(colour) && weakCarriers.contains(cell)) {
+
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+              //other way
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+
+            }
+            else if (c.equals(colour) && weakCarriers.contains(cell)) {
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
+
+
+            }
+            else if (!c.equals(colour) && strongCarriers.contains(cell)) {
 
               hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
               hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
@@ -167,19 +179,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
               }
 
             }
-            if (!c.equals(colour) && weakCarriers.contains(cell)) {
 
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-              //other way
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
-
-            }
-            else if (c.equals(colour) && weakCarriers.contains(cell)) {
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
-
-
-            }
             done((cell1, cell2)) = true; done((cell2, cell1)) = true;
           }
         }
@@ -404,14 +404,14 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
 
     for(cell1 <- model.myCells(colour) ++ model.myCells(O) ++ set; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ set){
 
-      val strong = getStrongBridge(cell1, cell2)
+      val strong_ = getStrongBridge(cell1, cell2)
 
 
       val weak = getWeakBridge(cell1, cell2)
-      if(strong.isDefined){
+      if(strong_.isDefined){
 
-        C((G.find(cell1).get, G.find(cell2).get)) = Set(Set(strong.get._1, strong.get._2))
-        C((G.find(cell2).get, G.find(cell1).get)) = Set(Set(strong.get._1, strong.get._2))
+        C((G.find(cell1).get, G.find(cell2).get)) = Set(Set(strong_.get._1, strong_.get._2))
+        C((G.find(cell2).get, G.find(cell1).get)) = Set(Set(strong_.get._1, strong_.get._2))
       }
       if(weak.nonEmpty && getStrongCarriers(cell1, cell2, true).isEmpty){
         SC((G.find(cell1).get, G.find(cell2).get)) = weak
@@ -496,7 +496,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const{
       }
 
       for(set <- C((G.find(cell1).get, G.find(cell2).get))){
-        if(cell1.equals(new Cell(1,3)) && cell2.equals(new Cell(2, 2))) println("SET " + set)
+
         if(minSize > set.size){
           minSet = set
           minSize = set.size
