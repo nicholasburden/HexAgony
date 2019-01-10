@@ -24,10 +24,12 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   def myMove() : Cell = {
     val hRed = new HSearch(model, R)
     val hBlue = new HSearch(model, B)
+    //println("BEFORE")
     hRed.initial
     hBlue.initial
     hRed.search
     hBlue.search
+  //  println("AFTER")
     val mod = model.copy()
     val start = System.currentTimeMillis()
     val end = start + time
@@ -170,7 +172,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     try { move = timedRun[Cell](timelimit - lag)(myMove()) }
     catch { case ex: Exception => } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-    println(move)
+   // println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }
@@ -186,7 +188,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   private def randomMove(mod: Model): Cell = {
     val open = mod.myCells(O)
     val randmove = open((Math.random() * open.length).toInt)
-    println("Move chosen randomly: " + randmove.toString())
+  //  println("Move chosen randomly: " + randmove.toString())
     randmove
   }
 }

@@ -56,7 +56,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
           } catch {
             case e: Exception => e.printStackTrace()
           }
-          println(cell + " score = " + score)
+         // println(cell + " score = " + score)
           if ((score > topScore)) { // cell is a winning move
             move = cell;
             topScore = score
@@ -198,7 +198,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     try { move = timedRun[Cell](timelimit - lag)(myMove()) }
     catch { case ex: Exception => } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-    println(move)
+   // println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }
@@ -214,7 +214,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
   private def randomMove(mod: Model): Cell = {
     val open = mod.myCells(O)
     val randmove = open((Math.random() * open.length).toInt)
-    println("Move chosen randomly: " + randmove.toString())
+    //println("Move chosen randomly: " + randmove.toString())
     randmove
   }
 }

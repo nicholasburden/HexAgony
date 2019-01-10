@@ -24,10 +24,12 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   def myMove() : Cell = {
     val hRed = new HSearch(model, R)
     val hBlue = new HSearch(model, B)
+    println("BEFORE")
     hRed.initial
     hBlue.initial
     hRed.search
     hBlue.search
+    println("AFTER")
     val mod = model.copy()
     val start = System.currentTimeMillis()
     val end = start + time

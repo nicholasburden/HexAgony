@@ -7,7 +7,7 @@ import pierule._
 
 
 
-//PROBLEM: WHEN LADDERING FROM RED ON 0 SIDE, IT DOES NOT GET STRONG CONNECTION RIGHT AFTER MAKE MOVE INTO STRONG CARRIER
+
 
 
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
@@ -16,31 +16,41 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
+    //println("S")
     try {
+
       //playing middle is strong on first go
       if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2 )
       val moveOrdering = new MoveOrdering
       val mod = model.copy()
+      //println("1")
       moveOrdering.initial(mod)
       val open = moveOrdering.getOrdering(mod)
-
+      //println("2")
       if(model.pie && !HSearch.p) HSearch.pie
       val alpha = Float.NegativeInfinity
       val beta = Float.PositiveInfinity
       var topScore = Float.NegativeInfinity
 
-
+      //println("3")
       val hme = new HSearch(mod, colour)
       val hthem = new HSearch(mod, othercolour)
       //if (model.pie) {hme.pie; hthem.pie}
 
       hme.initial
       hthem.initial
+     // println("4")
+      try{
+        hme.search
+        hthem.search
+      }catch{
+        case e : Exception => e.printStackTrace()
+      }
 
-      hme.search
-      hthem.search
       //if(colour.equals(R))
+     // println("5")
       for (cell1 <- open) {
+       // println("EEE")
         val cell = mod.board(cell1.i)(cell1.j)
         val mod2 = result(mod, cell, colour)
         val hme2 = hme.makeMove(cell.i, cell.j, colour)
@@ -54,7 +64,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
             //check for case where opponent uses pie rule
             if(othercolour.equals(B) && mod2.count == 1 && pierule){
               //search for cell
-              println("Y")
+             // println("Y")
               //play pie
 
               val modPie = result(mod, cell, B)
@@ -81,7 +91,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
           } catch {
             case e: Exception => e.printStackTrace()
           }
-          println(cell + " score = " + score)
+         // println(cell + " score = " + score)
           if ((score > topScore)) { // cell is a winning move
             move = cell;
             topScore = score
@@ -92,9 +102,10 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
       return move
     }catch{
-      case e : Exception => e.printStackTrace()
+      case e : Exception => e.printStackTrace(); println("YEET"); null
     }
-    return null
+
+
   }
   def min(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch, mo : MoveOrdering) : Float = {
 
@@ -225,7 +236,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     try { move = timedRun[Cell](timelimit - lag)(myMove()) }
     catch { case ex: Exception => } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-    println(move)
+    //println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }
@@ -241,7 +252,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   private def randomMove(mod: Model): Cell = {
     val open = mod.myCells(O)
     val randmove = open((Math.random() * open.length).toInt)
-    println("Move chosen randomly: " + randmove.toString())
+    //println("Move chosen randomly: " + randmove.toString())
     randmove
   }
 }

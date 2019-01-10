@@ -138,7 +138,7 @@ class RobotRandom(model: Model, timelimit: Long, pierule: Boolean, colour: Colou
     stop = true // stop the computation within the method
     val rnd = new Random
     var move = moveSet.toVector(rnd.nextInt(moveSet.size))
-    println(move)
+    //println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }
@@ -154,7 +154,7 @@ class RobotRandom(model: Model, timelimit: Long, pierule: Boolean, colour: Colou
   private def randomMove(mod: Model): Cell = {
     val open = mod.myCells(O)
     val randmove = open((Math.random() * open.length).toInt)
-    println("Move chosen randomly: " + randmove.toString())
+    //println("Move chosen randomly: " + randmove.toString())
     randmove
   }
 }
