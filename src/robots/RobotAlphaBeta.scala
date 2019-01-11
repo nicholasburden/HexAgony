@@ -5,186 +5,202 @@ import hsearch._
 import pierule._
 
 
-
-//PROBLEM: WHEN LADDERING FROM RED ON 0 SIDE, IT DOES NOT GET STRONG CONNECTION RIGHT AFTER MAKE MOVE INTO STRONG CARRIER
-
-
 class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val DEPTH = 2
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
+
   private def myMove(): Cell = {
-    try {
-      //playing middle is strong on first go
-      if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2 )
-      val moveOrdering = new MoveOrdering
-      val mod = model.copy()
-      moveOrdering.initial(mod)
-      var open = moveOrdering.getOrdering(mod)
 
-      if(model.pie && !HSearch.p) HSearch.pie
-      val alpha = Float.NegativeInfinity
-      val beta = Float.PositiveInfinity
-      var topScore = Float.NegativeInfinity
+    val mod = model.copy()
+    val moveOrdering = new MoveOrdering
+
+    moveOrdering.initial(mod)
+
+    //Get a list of open moves in order of strength
+    var open = moveOrdering.getOrdering(mod)
 
 
-      val hme = new HSearch(mod, colour)
-      val hthem = new HSearch(mod, othercolour)
-      //if (model.pie) {hme.pie; hthem.pie}
+    //Swap board if pie rule has been played
+    if (model.pie && !HSearch.p) HSearch.pie
 
-      hme.initial
-      hthem.initial
+    val alpha = Float.NegativeInfinity
+    val beta = Float.PositiveInfinity
+    var topScore = Float.NegativeInfinity
 
-      hme.search
-      hthem.search
-      //if(colour.equals(R))
-      val weakCarrier = hthem.getUnionOfWeakConnections
-      if(weakCarrier.nonEmpty) open = weakCarrier.toList
+    //H-Search objects for respective colours
+    val hme = new HSearch(mod, colour)
+    val hthem = new HSearch(mod, othercolour)
 
-      val boundaries = hme.set.toList
-      val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
-      if(strongCarrier.nonEmpty) open = strongCarrier.toList
-      val ordering = open.filter(x => !hthem.strong.contains(x))
-      for (cell1 <- ordering) {
-        val cell = mod.board(cell1.i)(cell1.j)
-        val mod2 = result(mod, cell, colour)
-        val hme2 = hme.makeMove(cell.i, cell.j, colour)
-        val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
-        if (!stop) {
-          var score = 0.0f
-          try {
-            val mo = moveOrdering.addMovesFor(cell, mod)
-            score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, mo)
-
-            //check for case where opponent uses pie rule
-            if(othercolour.equals(B) && mod2.count == 1 && pierule){
-              //search for cell
-              println("Y")
-              //play pie
-
-              val modPie = result(mod, cell, B)
-              HSearch.pie
-              modPie.pie = true
-              hme.model.pie = true
-              hthem.model.pie = true
-              hthem.colour = R
-              hme.colour = B
-
-              val value = max(modPie, DEPTH-1, alpha, beta, hthem.makeMove(cell.i, cell.j, B), hme.makeMove(cell.i,cell.j, B), mo)
-              //undo pie rule
-              hthem.colour = B
-              hme.colour = R
-              hme.model.pie = false
-              hthem.model.pie = false
-              modPie.pie = false
-              HSearch.pie
-              score = Math.min(score, value)
-
-            }
+    //Perform initialisation
+    hme.initial
+    hthem.initial
 
 
-          } catch {
-            case e: Exception => e.printStackTrace()
-          }
-          println(cell + " score = " + score)
-          if ((score > topScore)) { // cell is a winning move
-            move = cell;
-            topScore = score
-          }
+
+    //Search for strong and weak connections
+    hme.search
+    hthem.search
+
+    //Get set of cells that are in a carrier of an opponent semi-connection
+    val weakCarrier = hthem.getUnionOfWeakConnections
+
+    //Reduce move set to cells in opponent weak carriers
+    if (weakCarrier.nonEmpty) open = weakCarrier.toList
+
+
+    val boundaries = hme.set.toList
+
+    //Check if there is a strong carrier from one boundary to another, restricting moves to that carrier if so
+    val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
+    if (strongCarrier.nonEmpty) open = strongCarrier.toList
+
+    //Filter out cells in an opponent's strong carrier, since playing one is useless
+    val ordering = open.filter(x => !hthem.strong.contains(x))
+
+    //LOOP INVARIANT: move has the highest minimax value considered so far
+    for (cell <- ordering) {
+      //Play move
+      val mod2 = result(mod, cell, colour)
+      val hme2 = hme.makeMove(cell.i, cell.j, colour)
+      val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
+
+      if (!stop) {
+        var score = 0.0f
+
+        //Update move selection order for recursive calls
+        val mo = moveOrdering.addMovesFor(cell, mod)
+        score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, mo)
+
+        //check for case where opponent uses pie rule
+        if (othercolour.equals(B) && mod2.count == 1 && pierule) {
+
+
+          //play pie rule
+          val modPie = result(mod, cell, B)
+          HSearch.pie
+          modPie.pie = true
+          hme.model.pie = true
+          hthem.model.pie = true
+          hthem.colour = R
+          hme.colour = B
+
+          //Get value of board after pie rule is played
+          val value = max(modPie, DEPTH - 1, alpha, beta, hthem.makeMove(cell.i, cell.j, B), hme.makeMove(cell.i, cell.j, B), mo)
+
+          //undo pie rule
+          hthem.colour = B
+          hme.colour = R
+          hme.model.pie = false
+          hthem.model.pie = false
+          modPie.pie = false
+          HSearch.pie
+          score = Math.min(score, value)
+        }
+
+        if (score > topScore) {
+          move = cell
+          topScore = score
         }
       }
-
-
-      return move
-    }catch{
-      case e : Exception => e.printStackTrace()
     }
-    return null
+    move
   }
-  def min(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch, mo : MoveOrdering) : Float = {
+
+  def min(model: Model, depth: Int, _alpha: Float, _beta: Float, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Float = {
 
     val alpha = _alpha
     var beta = _beta
-    // println("Start next" + depth)
-    if(model.solution(colour)){
+
+
+
+    if (model.solution(colour)) {
+      //Winning move found
       return Float.PositiveInfinity
     }
-    else if(model.solution(othercolour)){
+    else if (model.solution(othercolour)) {
+      //Losing move found
       return Float.MinValue
     }
 
-    else if(depth == 0){
-      //println("Heuristic")
+    else if (depth == 0) {
+      //Leaf node, use heuristic
       val heuristic = new ResistanceHeuristic
-      //hme.makeConnectionsConsistent()
-      //hthem.makeConnectionsConsistent()
       return heuristic.evaluate(model, colour, hme, hthem)
 
     }
-    else{
-      //println("Finished checking if leaf")
+    else {
       var bestVal = Float.PositiveInfinity
 
-
-      for (cell1 <- mo.getOrdering(model)){
+      //LOOP INVARIANT: bestVal is the smallest minimax value found so far
+      for (cell1 <- mo.getOrdering(model)) {
 
         val cell = model.board(cell1.i)(cell1.j)
+
+        //Recursive call
         val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, othercolour), hthem.makeMove(cell.i, cell.j, othercolour), mo.addMovesFor(cell, model))
 
         bestVal = Math.min(bestVal, value)
         beta = Math.min(beta, bestVal)
-        if (beta <= alpha){
+        if (beta <= alpha) {
+          //Prune tree
           return bestVal
         }
 
       }
 
 
-      return bestVal
+      bestVal
     }
   }
 
-  def max(model : Model, depth : Int, _alpha : Float, _beta : Float, hme : HSearch, hthem : HSearch, mo : MoveOrdering) : Float = {
+  def max(model: Model, depth: Int, _alpha: Float, _beta: Float, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Float = {
 
     var alpha = _alpha
     val beta = _beta
-    // println("Start next" + depth)
-    if(model.solution(colour)){
+
+    if (model.solution(colour)) {
+      //Winning move found
       return Float.PositiveInfinity
     }
-    else if(model.solution(othercolour)){
+    else if (model.solution(othercolour)) {
+      //Losing move found
       return Float.MinValue
     }
-    else if(depth == 0){
+    else if (depth == 0) {
+      //Reached leaf, use heuristic
       val heuristic = new ResistanceHeuristic
-      //hme.makeConnectionsConsistent()
-      //hthem.makeConnectionsConsistent()
+
       return heuristic.evaluate(model, colour, hme, hthem)
 
     }
-    else{
-      // println("Finished checking if leaf")
+    else {
+
       var bestVal = Float.NegativeInfinity
       val ordering = mo.getOrdering(model).filter(x => !hthem.strong.contains(x))
-      for (cell1 <- ordering){
-      //for(cell1 <- model.myCells(O)){
+
+      //LOOP INVARIANT: bestVal is the largest minimax value found so far
+      for (cell1 <- ordering) {
+
         val cell = model.board(cell1.i)(cell1.j)
+
+        //Recursive call
         val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour), mo.addMovesFor(cell, model))
         bestVal = Math.max(bestVal, value)
         alpha = Math.max(alpha, bestVal)
-        if (beta <= alpha){
+        if (beta <= alpha) {
+          //Prune tree
           return bestVal
         }
 
       }
-      return bestVal
+      bestVal
     }
   }
 
-  // Your method for deciding whether to play the pie rule
-  private def myPie(firstmove: Cell): Boolean = model.N <= 5 && pieRuleTable(firstmove.i)(firstmove.j)
 
+  private def myPie(firstmove: Cell): Boolean = model.N <= 5 && pieRuleTable(firstmove.i)(firstmove.j)
 
 
   private def result(mod: Model, cell: Cell, col: Colour): Model = {
@@ -192,7 +208,6 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     mod2.playMove(cell, col)
     return mod2
   }
-
 
 
   // ------------------------------------------------------------------------------------------------
@@ -228,8 +243,12 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   def makeMove(): Cell = {
     stop = false
     // Execute your move method with the given time restriction
-    try { move = timedRun[Cell](timelimit - lag)(myMove()) }
-    catch { case ex: Exception => } // something has gone wrong, such as a timeout
+    try {
+      move = timedRun[Cell](timelimit - lag)(myMove())
+    }
+    catch {
+      case ex: Exception =>
+    } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
     println(move)
     if (!model.legal(move)) move = randomMove(model)
@@ -239,11 +258,16 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   def pieRule(firstmove: Cell): Boolean = {
     stop = false
     // Execute your pie method with the given time restriction
-    try { pie = timedRun[Boolean](timelimit - lag)(myPie(firstmove)) }
-    catch { case ex: Exception => } // something has gone wrong, such as a timeout
+    try {
+      pie = timedRun[Boolean](timelimit - lag)(myPie(firstmove))
+    }
+    catch {
+      case ex: Exception =>
+    } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
     return pie
   }
+
   private def randomMove(mod: Model): Cell = {
     val open = mod.myCells(O)
     val randmove = open((Math.random() * open.length).toInt)

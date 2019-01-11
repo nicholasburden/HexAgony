@@ -3,6 +3,9 @@ package pierule
 class PieRule(size : Int) {
   //Winning first move for initial red: table(i)(j)
   //Winning move for initial blue: table(j)(i)
+
+
+  //These are tables for deciding on whether to play the pie rule
   val table : Array[Array[Boolean]] = size match{
 
     case 3 => Array(Array(true, true, false),

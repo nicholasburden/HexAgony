@@ -22,38 +22,54 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
   val pieRuleTable = pieRule.getTable
   private def myMove(): Cell = {
     try {
-      //playing middle is strong on first go
-      if(model.count == 0 && !pierule) return model.board(model.N/2)(model.N/2 )
-      val moveOrdering = new MoveOrdering
       val mod = model.copy()
+      val moveOrdering = new MoveOrdering
+
       moveOrdering.initial(mod)
+
+      //Get a list of open moves in order of strength
       var open = moveOrdering.getOrdering(mod)
 
+
+      //Swap board if pie rule has been played
       if(model.pie && !HSearch.p) HSearch.pie
+
       val alpha = Float.NegativeInfinity
       val beta = Float.PositiveInfinity
       var topScore = Float.NegativeInfinity
 
-
+      //H-Search objects for respective colours
       val hme = new HSearch(mod, colour)
       val hthem = new HSearch(mod, othercolour)
-      //if (model.pie) {hme.pie; hthem.pie}
 
+      //Perform initialisation
       hme.initial
       hthem.initial
 
+
+
+      //Search for strong and weak connections
       hme.search
       hthem.search
-      //if(colour.equals(R))
+
+      //Get set of cells that are in a carrier of an opponent semi-connection
       val weakCarrier = hthem.getUnionOfWeakConnections
+
+      //Reduce move set to cells in opponent weak carriers
       if(weakCarrier.nonEmpty) open = weakCarrier.toList
 
+
+
       val boundaries = hme.set.toList
+
+      //Check if there is a strong carrier from one boundary to another, restricting moves to that carrier if so
       val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
       if(strongCarrier.nonEmpty) open = strongCarrier.toList
+
+      //Filter out cells in an opponent's strong carrier, since playing one is useless
       val ordering = open.filter(x => !hthem.strong.contains(x))
-      for (cell1 <- ordering) {
-        val cell = mod.board(cell1.i)(cell1.j)
+      for (cell <- ordering) {
+        //val cell = mod.board(cell1.i)(cell1.j)
         val mod2 = result(mod, cell, colour)
         val hme2 = hme.makeMove(cell.i, cell.j, colour)
         val hthem2 = hthem.makeMove(cell.i, cell.j, colour)

@@ -14891,3 +14891,22 @@ Pie rule is not available
 86.352: (Red) RobotMonteCarlo plays move 17: (1, 0)
 86.352: (Red) End game - winner is RobotMonteCarlo
 
+2019.01.11 13:03:00
+5 x 5 game: RobotAlphaBeta (50000ms) vs Blue (Human)
+Pie rule is not available
+16.384: (Red) RobotAlphaBeta plays move 1: (2, 2)
+18.393: (Blue) Blue plays move 2: (3, 4)
+34.441: (Red) RobotAlphaBeta plays move 3: (1, 3)
+35.954: (Blue) Blue plays move 4: (1, 4)
+40.872: (Red) RobotAlphaBeta plays move 5: (4, 4)
+43.409: (Blue) Blue plays move 6: (3, 2)
+52.736: (Red) RobotAlphaBeta plays move 7: (2, 1)
+54.598: (Blue) Blue plays move 8: (3, 3)
+55.728: (Red) RobotAlphaBeta plays move 9: (3, 1)
+64.420: (Blue) Blue plays move 10: (2, 4)
+65.251: (Red) RobotAlphaBeta plays move 11: (0, 1)
+66.622: (Blue) Blue plays move 12: (4, 2)
+67.190: (Red) RobotAlphaBeta plays move 13: (0, 0)
+67.833: (Blue) Blue plays move 14: (0, 3)
+67.834: (Blue) End game - winner is Blue
+
