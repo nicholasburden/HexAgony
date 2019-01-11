@@ -4,6 +4,16 @@ import filewriting.FileWrite
 
 object Main {
   def main(args : Array[String]) = {
+    /*
+    val writer = new FileWrite("test.txt")
+    for(i <- 0 until 10) {
+      writer.writeToFile(1)
+      writer.writeToFile(1)
+      writer.writeToFile(1)
+    }
+    writer.close
+    */
+
     val robotFactory1 = new RobotFactory("RANDOM")
     val robotFactory2 = new RobotFactory("FLOW")
     val writer1 = new FileWrite("Experiments/RANDOM_FLOW_10_5.txt")
@@ -22,5 +32,7 @@ object Main {
       println("Player " + res + " won that game.")
     }
     writer2.close
+
   }
+
 }
