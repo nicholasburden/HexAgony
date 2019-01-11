@@ -50,7 +50,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     if (weakCarrier.nonEmpty) open = weakCarrier.toList
 
 
-    val boundaries = hme.set.toList
+    val boundaries = hme.boundarySet.toList
 
     //Check if there is a strong carrier from one boundary to another, restricting moves to that carrier if so
     val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
