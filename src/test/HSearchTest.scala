@@ -108,6 +108,35 @@ class HSearchTest extends Const {
     h1 = h1.makeMove(3, 3, R)
     assertEquals(Set(new Cell(2, 2), new Cell(1, 2)), h1.getStrongCarriers(new Cell(1, 1), new Cell(2, 3), true))
   }
+  @Test def sandbox(): Unit = {
+    val mod = new Model(5)
+    mod.playMove(new Cell(3,2), B)
+    mod.playMove(new Cell(3,3), B)
+    mod.playMove(new Cell(3,4), B)
+    mod.playMove(new Cell(1,4), B)
+
+
+    mod.playMove(new Cell(4,4), R)
+    mod.playMove(new Cell(2,1), R)
+    mod.playMove(new Cell(2,2), R)
+    mod.playMove(new Cell(1,3), R)
+
+    val hsearchR = new HSearch(mod, R)
+    val hsearchB = new HSearch(mod, B)
+    hsearchR.initial
+    hsearchB.initial
+    hsearchR.search
+    hsearchB.search
+
+    for(cell1 <- mod.myCells(R) ++ mod.myCells(O) ++ hsearchR.boundarySet; cell2 <- mod.myCells(R) ++ mod.myCells(O) ++ hsearchR.boundarySet){
+      println("RED STRONG " + cell1 + " -> " + cell2 + ": " + hsearchR.getStrongCarriers(cell1, cell2, true))
+      println("RED WEAK " + cell1 + " -> " + cell2 + ": " + hsearchR.getWeakCarriers(cell1, cell2, true))
+    }
+    for(cell1 <- mod.myCells(B) ++ mod.myCells(O) ++ hsearchB.boundarySet; cell2 <- mod.myCells(B) ++ mod.myCells(O) ++ hsearchB.boundarySet){
+      println("BLUE STRONG " + cell1 + " -> " + cell2 + ": " + hsearchB.getStrongCarriers(cell1, cell2, true))
+      println("BLUE WEAK " + cell1 + " -> " + cell2 + ": " + hsearchB.getWeakCarriers(cell1, cell2, true))
+    }
+  }
 
 
 

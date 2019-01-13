@@ -67,6 +67,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
       val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
 
       if (!stop) {
+
         var score = 0.0f
 
         //Update move selection order for recursive calls
@@ -105,7 +106,11 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
         }
       }
     }
-    move
+    println(move)
+    return move
+
+
+
   }
 
   def min(model: Model, depth: Int, _alpha: Float, _beta: Float, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Float = {

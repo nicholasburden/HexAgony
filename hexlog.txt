@@ -14978,3 +14978,22 @@ Pie rule is not available
 103.939: (Blue) Blue plays move 18: (4, 2)
 103.940: (Blue) End game - winner is Blue
 
+2019.01.13 16:10:07
+5 x 5 game: RobotAlphaBeta (50000ms) vs Blue (Human)
+Pie rule is not available
+4.286: (Red) RobotAlphaBeta plays move 1: (2, 2)
+6.692: (Blue) Blue plays move 2: (3, 4)
+9.853: (Red) RobotAlphaBeta plays move 3: (1, 3)
+11.132: (Blue) Blue plays move 4: (1, 4)
+13.205: (Red) RobotAlphaBeta plays move 5: (4, 4)
+14.914: (Blue) Blue plays move 6: (3, 2)
+16.569: (Red) RobotAlphaBeta plays move 7: (2, 1)
+17.584: (Blue) Blue plays move 8: (3, 3)
+18.607: (Red) RobotAlphaBeta plays move 9: (3, 1)
+20.164: (Blue) Blue plays move 10: (2, 4)
+20.868: (Red) RobotAlphaBeta plays move 11: (1, 0)
+22.843: (Blue) Blue plays move 12: (4, 2)
+23.268: (Red) RobotAlphaBeta plays move 13: (0, 0)
+25.339: (Blue) Blue plays move 14: (0, 3)
+25.339: (Blue) End game - winner is Blue
+

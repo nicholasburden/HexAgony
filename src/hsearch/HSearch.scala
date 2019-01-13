@@ -446,7 +446,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       }
 
     }
-    */
+
     for (cell1 <- model.myCells(colour) ++ model.myCells(O) ++ boundarySet; cell2 <- model.myCells(colour) ++ model.myCells(O) ++ boundarySet) {
       //actually tends to work better without these:
       val carrier = getStrongCarriers(cell1, cell2, false)
@@ -461,7 +461,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
         SC((G.find(cell1).get, G.find(cell2).get)) = Set()
       }
     }
-
+  */
 
   }
   //main search method
@@ -480,7 +480,11 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
               if ((!oldC((g1, g)).contains(c1) || !oldC((g2, g)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
                 currentNewVC = true
                 if (g.colour == colour && (c1.size + c2.size) <= HSearch.M) {
-                  C((g1, g2)) = C((g1, g2)) + (c1 ++ c2)
+                  val cTemp = c1 ++ c2
+                  C((g1, g2)) = C((g1, g2)) + (cTemp)
+                  if(g1.colour == colour && g2.colour == colour){
+                    strong = strong.union(cTemp)
+                  }
                 }
                 else {
                   val sc = c1 ++ Set(g) ++ c2
@@ -495,10 +499,13 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       oldC = tempC
     }
     //ensure connections are consistent after search algorithm
+    //getTwoBridges()
     makeConnectionsConsistent()
   }
 
-
+  //def getTwoBridges() : Unit = {
+    //for(cell1 <- model.myCells(colour) ++ model.myCells())
+  //}
   //returns the strong carrier between two cells
   //getAll specifies if we include open cells too
   def getStrongCarriers(cell1: Cell, cell2: Cell, getAll: Boolean): Set[Cell] = {
@@ -551,8 +558,13 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       case B => R
     }
     //do not consider opponent's cells
-    if (cell1.colour.equals(othercolour) || cell2.colour.equals(othercolour)) {
+    if (cell1.colour.equals(othercolour) || cell2.colour.equals(othercolour) ) {
 
+      return Set()
+    }
+
+    //No weak connection if already a strong one
+    if (getStrongCarriers(cell1, cell2, getAll).nonEmpty) {
       return Set()
     }
     if (getAll) {
@@ -614,6 +626,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       val il = scl & intersection
       if (il.isEmpty && ul.size <= HSearch.M) {
         C_clone += ul
+
       }
       else {
 
@@ -659,7 +672,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 }
 
 object HSearch extends Const {
-
+  var p = false
   var boundaryRed1: Cell = new Cell(0, -1)
   var boundaryRed2: Cell = new Cell(0, -3)
   var boundaryBlue1: Cell = new Cell(-1, 0)
@@ -670,7 +683,7 @@ object HSearch extends Const {
   boundaryBlue2.colour = B
 
   def pie = {
-
+    p = !p
     var temp = boundaryRed1
     boundaryRed1 = boundaryBlue1
     boundaryBlue1 = temp
