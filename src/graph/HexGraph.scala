@@ -1,6 +1,6 @@
 package graph
 import hexagony._
-class HexGraph(size : Int, colour : Colour, pie : Boolean) extends Graph(size) with Const{
+class HexGraph(size : Int, colour : Colour/*, pie : Boolean*/) extends Graph(size) with Const{
   val nodes : Array[Node] = Array.ofDim(size*size+2)
   val t : Node = new Node(0)
   val s : Node = new Node(size*size + 1)
@@ -23,8 +23,8 @@ class HexGraph(size : Int, colour : Colour, pie : Boolean) extends Graph(size) w
     case R => B
     case B => R
   }
-  val col = pie match{
-    case true => othercolour
+  val col = true match{
+    case true => /*other*/colour
     case false => colour
   }
   def generateAdjacencies(k : Int) : Set[Node] = {

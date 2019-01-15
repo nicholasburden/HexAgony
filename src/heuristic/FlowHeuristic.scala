@@ -11,11 +11,8 @@ class FlowHeuristic extends Heuristic with Const{
       case B => R
       }
 
-    val c = pie match{
-      case true => othercolour
-      case false => colour
-    }
-    val graph = new HexGraph(model.N, colour, model.pie)
+
+    val graph = new HexGraph(model.N, colour)//, model.pie)
     val board = model.board
 
     //Place pieces on circuit to alter pipes

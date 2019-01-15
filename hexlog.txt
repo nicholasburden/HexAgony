@@ -15235,3 +15235,226 @@ Pie rule is available
 24.770: (Blue) RobotAlphaBeta plays move 11: (1, 2)
 24.770: (Blue) End game - winner is RobotAlphaBeta
 
+2019.01.15 14:07:11
+6 x 6 game: RobotAlphaBeta (15000ms) vs Blue (Human)
+Pie rule is not available
+15.066: (Red) RobotAlphaBeta plays move 1: (3, 2)
+38.381: (Blue) Blue plays move 2: (3, 3)
+53.335: (Red) RobotAlphaBeta plays move 3: (2, 3)
+77.910: (Blue) Blue plays move 4: (2, 2)
+92.865: (Red) RobotAlphaBeta plays move 5: (0, 1)
+116.170: (Blue) Blue plays move 6: (1, 4)
+131.122: (Red) RobotAlphaBeta plays move 7: (5, 4)
+172.057: (Blue) Blue plays move 8: (4, 3)
+187.011: (Red) RobotAlphaBeta plays move 9: (5, 3)
+190.334: (Blue) Blue plays move 10: (4, 2)
+205.287: (Red) RobotAlphaBeta plays move 11: (4, 1)
+216.154: (Blue) Blue plays move 12: (5, 2)
+231.108: (Red) RobotAlphaBeta plays move 13: (5, 0)
+278.943: (Blue) Blue plays move 14: (1, 2)
+293.896: (Red) RobotAlphaBeta plays move 15: (2, 5)
+299.278: (Blue) Blue plays move 16: (1, 3)
+314.230: (Red) RobotAlphaBeta plays move 17: (0, 5)
+320.080: (Blue) Blue plays move 18: (0, 4)
+320.081: (Blue) End game - winner is Blue
+
+2019.01.15 14:17:16
+6 x 6 game: RobotAlphaBetaFlow (15000ms) vs Blue (Human)
+Pie rule is not available
+0.430: (Red) RobotAlphaBetaFlow plays move 1: (3, 3)
+19.105: (Blue) Blue plays move 2: (3, 2)
+19.397: (Red) RobotAlphaBetaFlow plays move 3: (2, 3)
+23.153: (Blue) Blue plays move 4: (2, 2)
+23.411: (Red) RobotAlphaBetaFlow plays move 5: (1, 4)
+29.252: (Blue) Blue plays move 6: (1, 2)
+29.451: (Red) RobotAlphaBetaFlow plays move 7: (0, 0)
+31.335: (Blue) Blue plays move 8: (4, 2)
+31.485: (Red) RobotAlphaBetaFlow plays move 9: (0, 5)
+34.001: (Blue) Blue plays move 10: (0, 2)
+34.175: (Red) RobotAlphaBetaFlow plays move 11: (4, 1)
+39.401: (Blue) Blue plays move 12: (5, 3)
+39.402: (Blue) End game - winner is Blue
+
+2019.01.15 14:18:27
+6 x 6 game: Red (Human) vs RobotAlphaBetaFlow (15000ms)
+Pie rule is available
+11.097: (Red) Red plays move 1: (3, 2)
+11.099: (Blue) RobotAlphaBetaFlow does not play pie rule
+11.392: (Blue) RobotAlphaBetaFlow plays move 2: (4, 1)
+20.219: (Red) Red plays move 3: (3, 3)
+20.451: (Blue) RobotAlphaBetaFlow plays move 4: (2, 3)
+23.010: (Red) Red plays move 5: (3, 4)
+23.254: (Blue) RobotAlphaBetaFlow plays move 6: (1, 4)
+25.931: (Red) Red plays move 7: (2, 1)
+26.088: (Blue) RobotAlphaBetaFlow plays move 8: (0, 0)
+27.581: (Red) Red plays move 9: (1, 0)
+27.725: (Blue) RobotAlphaBetaFlow plays move 10: (0, 5)
+30.049: (Red) Red plays move 11: (3, 5)
+30.049: (Red) End game - winner is Red
+
+2019.01.15 14:19:31
+6 x 6 game: RobotMonteCarlo (15000ms) vs Blue (Human)
+Pie rule is not available
+3.681: (Red) RobotMonteCarlo plays move 1: (5, 4)
+24.540: (Blue) Blue plays move 2: (3, 2)
+29.982: (Red) RobotMonteCarlo plays move 3: (0, 1)
+39.692: (Blue) Blue plays move 4: (1, 3)
+44.178: (Red) RobotMonteCarlo plays move 5: (2, 3)
+68.041: (Blue) Blue plays move 6: (1, 1)
+71.476: (Red) RobotMonteCarlo plays move 7: (5, 5)
+80.119: (Blue) Blue plays move 8: (5, 3)
+89.137: (Red) RobotMonteCarlo plays move 9: (0, 0)
+90.366: (Blue) Blue plays move 10: (1, 2)
+105.318: (Red) RobotMonteCarlo plays move 11: (0, 5)
+106.536: (Blue) Blue plays move 12: (0, 3)
+121.489: (Red) RobotMonteCarlo plays move 13: (1, 4)
+130.093: (Blue) Blue plays move 14: (2, 2)
+145.049: (Red) RobotMonteCarlo plays move 15: (3, 1)
+156.170: (Blue) Blue plays move 16: (4, 3)
+156.170: (Blue) End game - winner is Blue
+
+2019.01.15 14:44:54
+5 x 5 game: Red (Human) vs RobotAlphaBetaFlow (50000ms)
+Pie rule is available
+3.677: (Red) Red plays move 1: (2, 2)
+3.704: (Blue) RobotAlphaBetaFlow plays pie rule
+12.797: (Red) Red plays move 2: (0, 1)
+13.152: (Blue) RobotAlphaBetaFlow plays move 3: (0, 0)
+15.944: (Red) Red plays move 4: (1, 1)
+16.095: (Blue) RobotAlphaBetaFlow plays move 5: (3, 2)
+17.760: (Red) Red plays move 6: (2, 1)
+17.888: (Blue) RobotAlphaBetaFlow plays move 7: (2, 3)
+18.858: (Red) Red plays move 8: (1, 2)
+18.970: (Blue) RobotAlphaBetaFlow plays move 9: (1, 4)
+20.179: (Red) Red plays move 10: (0, 2)
+20.248: (Blue) RobotAlphaBetaFlow plays move 11: (4, 1)
+21.553: (Red) Red plays move 12: (1, 3)
+21.609: (Blue) RobotAlphaBetaFlow plays move 13: (1, 0)
+23.347: (Red) Red plays move 14: (3, 1)
+23.412: (Blue) RobotAlphaBetaFlow plays move 15: (4, 2)
+24.262: (Red) Red plays move 16: (3, 0)
+24.311: (Blue) RobotAlphaBetaFlow plays move 17: (4, 0)
+25.657: (Red) Red plays move 18: (3, 4)
+25.692: (Blue) RobotAlphaBetaFlow plays move 19: (3, 3)
+28.228: (Red) Red plays move 20: (2, 4)
+28.250: (Blue) RobotAlphaBetaFlow plays move 21: (4, 4)
+28.251: (Blue) End game - winner is RobotAlphaBetaFlow
+
+2019.01.15 14:47:08
+5 x 5 game: RobotAlphaBetaFlow (20000ms) vs Blue (Human)
+Pie rule is available
+0.559: (Red) RobotAlphaBetaFlow plays move 1: (2, 2)
+2.358: (Blue) Blue plays pie rule
+2.533: (Red) RobotAlphaBetaFlow plays move 2: (2, 3)
+4.235: (Blue) Blue plays move 3: (3, 3)
+4.354: (Red) RobotAlphaBetaFlow plays move 4: (3, 2)
+6.574: (Blue) Blue plays move 5: (1, 2)
+6.679: (Red) RobotAlphaBetaFlow plays move 6: (0, 0)
+8.450: (Blue) Blue plays move 7: (1, 1)
+8.545: (Red) RobotAlphaBetaFlow plays move 8: (1, 4)
+10.897: (Blue) Blue plays move 9: (0, 1)
+10.960: (Red) RobotAlphaBetaFlow plays move 10: (4, 1)
+11.633: (Blue) Blue plays move 11: (0, 2)
+11.691: (Red) RobotAlphaBetaFlow plays move 12: (1, 0)
+22.788: (Blue) Blue plays move 13: (3, 4)
+22.845: (Red) RobotAlphaBetaFlow plays move 14: (2, 0)
+25.554: (Blue) Blue plays move 15: (3, 0)
+25.608: (Red) RobotAlphaBetaFlow plays move 16: (4, 2)
+26.206: (Blue) Blue plays move 17: (3, 1)
+26.228: (Red) RobotAlphaBetaFlow plays move 18: (2, 1)
+26.230: (Red) End game - winner is RobotAlphaBetaFlow
+
+2019.01.15 14:47:39
+5 x 5 game: RobotAlphaBetaFlow (20000ms) vs Blue (Human)
+Pie rule is not available
+0.130: (Red) RobotAlphaBetaFlow plays move 1: (2, 2)
+1.243: (Blue) Blue plays move 2: (3, 4)
+1.381: (Red) RobotAlphaBetaFlow plays move 3: (2, 3)
+2.590: (Blue) Blue plays move 4: (2, 4)
+2.669: (Red) RobotAlphaBetaFlow plays move 5: (3, 2)
+4.000: (Blue) Blue plays move 6: (1, 4)
+4.073: (Red) RobotAlphaBetaFlow plays move 7: (4, 1)
+4.804: (Blue) Blue plays move 8: (4, 4)
+4.863: (Red) RobotAlphaBetaFlow plays move 9: (0, 1)
+6.057: (Blue) Blue plays move 10: (0, 4)
+6.058: (Blue) End game - winner is Blue
+
+2019.01.15 14:50:56
+5 x 5 game: Red (Human) vs RobotAlphaBetaFlow (50000ms)
+Pie rule is not available
+2.143: (Red) Red plays move 1: (2, 2)
+2.443: (Blue) RobotAlphaBetaFlow plays move 2: (2, 3)
+4.146: (Red) Red plays move 3: (3, 3)
+4.291: (Blue) RobotAlphaBetaFlow plays move 4: (3, 2)
+6.835: (Red) Red plays move 5: (1, 1)
+6.940: (Blue) RobotAlphaBetaFlow plays move 6: (0, 0)
+8.369: (Red) Red plays move 7: (0, 1)
+8.465: (Blue) RobotAlphaBetaFlow plays move 8: (1, 4)
+10.715: (Red) Red plays move 9: (1, 2)
+10.782: (Blue) RobotAlphaBetaFlow plays move 10: (4, 1)
+12.483: (Red) Red plays move 11: (2, 1)
+12.543: (Blue) RobotAlphaBetaFlow plays move 12: (1, 0)
+15.475: (Red) Red plays move 13: (3, 1)
+15.530: (Blue) RobotAlphaBetaFlow plays move 14: (2, 4)
+18.667: (Red) Red plays move 15: (3, 4)
+18.712: (Blue) RobotAlphaBetaFlow plays move 16: (4, 2)
+19.541: (Red) Red plays move 17: (0, 2)
+19.570: (Blue) RobotAlphaBetaFlow plays move 18: (2, 0)
+20.951: (Red) Red plays move 19: (1, 3)
+20.965: (Blue) RobotAlphaBetaFlow plays move 20: (3, 0)
+20.966: (Blue) End game - winner is RobotAlphaBetaFlow
+
+2019.01.15 14:57:21
+5 x 5 game: RobotAlphaBeta (15000ms) vs Blue (Human)
+Pie rule is not available
+6.205: (Red) RobotAlphaBeta plays move 1: (2, 2)
+7.458: (Blue) Blue plays move 2: (3, 4)
+11.946: (Red) RobotAlphaBeta plays move 3: (1, 3)
+13.074: (Blue) Blue plays move 4: (1, 4)
+16.241: (Red) RobotAlphaBeta plays move 5: (2, 4)
+17.677: (Blue) Blue plays move 6: (1, 0)
+20.652: (Red) RobotAlphaBeta plays move 7: (0, 1)
+21.950: (Blue) Blue plays move 8: (0, 0)
+24.041: (Red) RobotAlphaBeta plays move 9: (2, 1)
+25.214: (Blue) Blue plays move 10: (2, 0)
+28.527: (Red) RobotAlphaBeta plays move 11: (4, 1)
+30.930: (Blue) Blue plays move 12: (3, 1)
+34.526: (Red) RobotAlphaBeta plays move 13: (4, 2)
+35.456: (Blue) Blue plays move 14: (3, 2)
+40.744: (Red) RobotAlphaBeta plays move 15: (4, 3)
+41.483: (Blue) Blue plays move 16: (3, 3)
+47.358: (Red) RobotAlphaBeta plays move 17: (4, 4)
+50.506: (Blue) Blue plays move 18: (3, 0)
+54.370: (Red) RobotAlphaBeta plays move 19: (4, 0)
+54.370: (Red) End game - winner is RobotAlphaBeta
+
+2019.01.15 14:58:22
+5 x 5 game: RobotAlphaBeta (15000ms) vs Blue (Human)
+Pie rule is available
+10.212: (Red) RobotAlphaBeta plays move 1: (4, 3)
+15.032: (Blue) Blue plays pie rule
+19.929: (Red) RobotAlphaBeta plays move 2: (4, 4)
+23.274: (Blue) Blue plays move 3: (3, 4)
+27.487: (Red) RobotAlphaBeta plays move 4: (2, 2)
+29.272: (Blue) Blue plays move 5: (3, 3)
+31.373: (Red) RobotAlphaBeta plays move 6: (3, 2)
+33.035: (Blue) Blue plays move 7: (4, 2)
+35.916: (Red) RobotAlphaBeta plays move 8: (3, 0)
+38.759: (Blue) Blue plays move 9: (3, 1)
+41.293: (Red) RobotAlphaBeta plays move 10: (2, 0)
+42.594: (Blue) Blue plays move 11: (2, 1)
+44.964: (Red) RobotAlphaBeta plays move 12: (1, 0)
+46.358: (Blue) Blue plays move 13: (0, 0)
+47.879: (Red) RobotAlphaBeta plays move 14: (1, 1)
+50.024: (Blue) Blue plays move 15: (0, 1)
+51.026: (Red) RobotAlphaBeta plays move 16: (1, 3)
+56.544: (Blue) Blue plays move 17: (1, 2)
+56.901: (Red) RobotAlphaBeta plays move 18: (2, 3)
+57.782: (Blue) Blue plays move 19: (0, 2)
+58.467: (Red) RobotAlphaBeta plays move 20: (1, 4)
+59.798: (Blue) Blue plays move 21: (0, 3)
+59.999: (Red) RobotAlphaBeta plays move 22: (0, 4)
+60.838: (Blue) Blue plays move 23: (4, 0)
+60.972: (Red) RobotAlphaBeta plays move 24: (4, 1)
+60.972: (Red) End game - winner is RobotAlphaBeta
+
