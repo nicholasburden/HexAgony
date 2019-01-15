@@ -19,7 +19,7 @@ abstract class Circuit {
       resistance((node1, node2))
     }
     catch{
-      case _ =>
+      case _ : Throwable =>
         //If no wire between nodes, resistance is infinity
         val result : Double = Double.PositiveInfinity
         return result
