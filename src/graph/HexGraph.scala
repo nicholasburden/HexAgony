@@ -1,6 +1,6 @@
 package graph
 import hexagony._
-class HexGraph(size : Int, colour : Colour) extends Graph(size) with Const{
+class HexGraph(size : Int, colour : Colour, pie : Boolean) extends Graph(size) with Const{
   val nodes : Array[Node] = Array.ofDim(size*size+2)
   val t : Node = new Node(0)
   val s : Node = new Node(size*size + 1)
@@ -19,17 +19,24 @@ class HexGraph(size : Int, colour : Colour) extends Graph(size) with Const{
   for(i <- (size-1)*size+1 to size*size){
     nodes(i).addAdjacent(s)
   }
-
+  val othercolour = colour match{
+    case R => B
+    case B => R
+  }
+  val col = pie match{
+    case true => othercolour
+    case false => colour
+  }
   def generateAdjacencies(k : Int) : Set[Node] = {
     val x = ((k-1) % size) + 1
     val y = ((k-1) / size) + 1
     var set : Set[Node] = Set()
     for(i <- (x-1) to (x+1)){
       for(j <- (y-1) to (y+1)){
-        if(colour == B && isValid(i,j) && !(i == (x-1) && j == (y + 1)) && !(i == (x+1) && j == (y - 1)) && !(i == x && j == y)){
+        if(col == B && isValid(i,j) && !(i == (x-1) && j == (y + 1)) && !(i == (x+1) && j == (y - 1)) && !(i == x && j == y)){
           set = set + nodes(((j-1)*size + i))
         }
-        else if(colour == R && isValid(i,j) && !(i == (x+1) && j == (y + 1)) && !(i == (x-1) && j == (y - 1)) && !(i == x && j == y)){
+        else if(col == R && isValid(i,j) && !(i == (x+1) && j == (y + 1)) && !(i == (x-1) && j == (y - 1)) && !(i == x && j == y)){
           set = set + nodes(((j-1)*size + i))
         }
       }

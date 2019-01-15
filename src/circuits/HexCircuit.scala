@@ -1,14 +1,22 @@
 package circuits
 import hexagony._
 class HexCircuit(size :Int, colour : Colour) extends Circuit with Const{
+  //A specific electrical circuit in the format of a hex board
   var nodes : List[Node] = List()
+
+  //First boundary
   val firstNode = new Node(0)
+  //Second boundary
   val lastNode = new Node(size*size + 1)
   nodes = lastNode :: nodes
+
+  //Create nodes list
   for(i <- size*size to 1 by -1){
     nodes = new Node(i) :: nodes
   }
   nodes = firstNode :: nodes
+
+  //Orient direction
   if(colour == B) {
     for (i <- 1 to size) {
       nodes(i).addAdjacency(firstNode)

@@ -15,10 +15,12 @@ class FlowHeuristic extends Heuristic with Const{
       case true => othercolour
       case false => colour
     }
-    val graph = new HexGraph(model.N, c)
+    val graph = new HexGraph(model.N, colour, model.pie)
     val board = model.board
-    for(i <- 0 until board.length){
-      for(j <- 0 until board(0).length){
+
+    //Place pieces on circuit to alter pipes
+    for(i <- board.indices){
+      for(j <- board(0).indices){
         if(colour == B){
           if(board(i)(j).colour == B){
             graph.placeYours(i+1, j+1)
@@ -40,7 +42,7 @@ class FlowHeuristic extends Heuristic with Const{
       }
     }
 
-
+    //Calculate network flow from one boundary to another
     val networkFlow = new NetworkFlow(graph)
     return networkFlow.maxFlow
 

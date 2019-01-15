@@ -25,9 +25,9 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     //Swap board if pie rule has been played
     if (model.pie && !HSearch.p) HSearch.pie
 
-    val alpha = Float.NegativeInfinity
-    val beta = Float.PositiveInfinity
-    var topScore = Float.NegativeInfinity
+    val alpha = Double.NegativeInfinity
+    val beta = Double.PositiveInfinity
+    var topScore = Double.NegativeInfinity
 
     //H-Search objects for respective colours
     val hme = new HSearch(mod, colour)
@@ -68,7 +68,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
       if (!stop) {
 
-        var score = 0.0f
+        var score = 0.0d
 
         //Update move selection order for recursive calls
         val mo = moveOrdering.addMovesFor(cell, mod)
@@ -113,7 +113,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
   }
 
-  def min(model: Model, depth: Int, _alpha: Float, _beta: Float, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Float = {
+  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Double = {
 
     val alpha = _alpha
     var beta = _beta
@@ -122,11 +122,11 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
     if (model.solution(colour)) {
       //Winning move found
-      return Float.PositiveInfinity
+      return Double.PositiveInfinity
     }
     else if (model.solution(othercolour)) {
       //Losing move found
-      return Float.MinValue
+      return Double.MinValue
     }
 
     else if (depth == 0) {
@@ -136,7 +136,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
     }
     else {
-      var bestVal = Float.PositiveInfinity
+      var bestVal = Double.PositiveInfinity
 
       //LOOP INVARIANT: bestVal is the smallest minimax value found so far
       for (cell1 <- mo.getOrdering(model)) {
@@ -160,18 +160,18 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     }
   }
 
-  def max(model: Model, depth: Int, _alpha: Float, _beta: Float, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Float = {
+  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Double = {
 
     var alpha = _alpha
     val beta = _beta
 
     if (model.solution(colour)) {
       //Winning move found
-      return Float.PositiveInfinity
+      return Double.PositiveInfinity
     }
     else if (model.solution(othercolour)) {
       //Losing move found
-      return Float.MinValue
+      return Double.MinValue
     }
     else if (depth == 0) {
       //Reached leaf, use heuristic
@@ -182,7 +182,7 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
     }
     else {
 
-      var bestVal = Float.NegativeInfinity
+      var bestVal = Double.NegativeInfinity
       val ordering = mo.getOrdering(model).filter(x => !hthem.strong.contains(x))
 
       //LOOP INVARIANT: bestVal is the largest minimax value found so far

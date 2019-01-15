@@ -1,8 +1,9 @@
 package circuits
 
 abstract class Circuit {
-  private val resistance : collection.mutable.Map[(Node, Node), Float] = collection.mutable.Map()
-  def setResistance(node1 : Node, node2 : Node, res : Float) = {
+  //Represents an electircal circuit, with nodes and wires connecting nodes
+  private val resistance : collection.mutable.Map[(Node, Node), Double] = collection.mutable.Map()
+  def setResistance(node1 : Node, node2 : Node, res : Double) = {
     resistance((node1, node2)) = res
     resistance((node2, node1)) = res
   }
@@ -13,13 +14,14 @@ abstract class Circuit {
     }
 
   }
-  def getResistance(node1: Node, node2 : Node) : Float = {
+  def getResistance(node1: Node, node2 : Node) : Double = {
     try {
       resistance((node1, node2))
     }
     catch{
       case _ =>
-        val result : Float = Float.PositiveInfinity
+        //If no wire between nodes, resistance is infinity
+        val result : Double = Double.PositiveInfinity
         return result
     }
   }

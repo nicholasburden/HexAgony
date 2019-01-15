@@ -1,7 +1,6 @@
 import moveordering.MoveOrdering
 import hexagony._
 import heuristic._
-import hsearch._
 import pierule._
 
 class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
@@ -19,16 +18,16 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     moveOrdering.initial(mod)
     val open = moveOrdering.getOrdering(mod)
 
-    val alpha = Float.NegativeInfinity
-    val beta = Float.PositiveInfinity
-    var topScore = Float.NegativeInfinity
+    val alpha = Double.NegativeInfinity
+    val beta = Double.PositiveInfinity
+    var topScore = Double.NegativeInfinity
 
     //LOOP INVARIANT: move has the highest minimax value considered so far
     for (cell <- open) {
       //Play move
       val mod2 = result(mod, cell, colour)
       if (!stop) {
-        var score = 0.0f
+        var score = 0.0d
 
         //Update move selection order for recursive calls
         val mo = moveOrdering.addMovesFor(cell, mod)
@@ -64,30 +63,29 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
 
   }
 
-  def min(model: Model, depth: Int, _alpha: Float, _beta: Float, mo: MoveOrdering): Float = {
+  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, mo: MoveOrdering): Double = {
 
     val alpha = _alpha
     var beta = _beta
 
     if (model.solution(colour)) {
       //Winning move found
-      return Float.PositiveInfinity
+      return Double.PositiveInfinity
     }
     else if (model.solution(othercolour)) {
       //Losing move found
-      return Float.MinValue
+      return Double.MinValue
     }
 
     else if (depth == 0) {
       //Leaf node, use heuristic
       val heuristic = new FlowHeuristic
-
       return heuristic.evaluate(model, colour)
 
     }
     else {
 
-      var bestVal = Float.PositiveInfinity
+      var bestVal = Double.PositiveInfinity
 
       //LOOP INVARIANT: bestVal is the smallest minimax value found so far
       for (cell1 <- mo.getOrdering(model)) {
@@ -110,18 +108,18 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     }
   }
 
-  def max(model: Model, depth: Int, _alpha: Float, _beta: Float, mo: MoveOrdering): Float = {
+  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, mo: MoveOrdering): Double = {
 
     var alpha = _alpha
     val beta = _beta
 
     if (model.solution(colour)) {
       //Winning move found
-      return Float.PositiveInfinity
+      return Double.PositiveInfinity
     }
     else if (model.solution(othercolour)) {
       //Losing move found
-      return Float.MinValue
+      return Double.MinValue
     }
     else if (depth == 0) {
       //Leaf node, use heuristic
@@ -132,7 +130,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     }
     else {
 
-      var bestVal = Float.NegativeInfinity
+      var bestVal = Double.NegativeInfinity
 
 
       //LOOP INVARIANT: bestVal is the largest minimax value found so far
