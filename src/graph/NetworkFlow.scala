@@ -15,7 +15,7 @@ class NetworkFlow(g : Graph) {
       }
     }
   }
-  def maxFlow : Int = fordFulkerson(graph, 0, V - 1)
+  def maxFlow : Double = fordFulkerson(graph, 0, V - 1)
 
   def cap(i : Int, j : Int) : Int = {
     if(i != 0 && j != 0 && i != (V-1) && j != (V-1)){

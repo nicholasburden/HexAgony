@@ -2,16 +2,16 @@ package heuristic
 
 import graph._
 import hexagony._
-class FlowHeuristic extends Heuristic with Const{
+class FlowHeuristic extends Const{
 
-  def evaluate(model : Model, colour : Colour) : Int = {
+  def evaluate(model : Model, colour : Colour, graphRed : HexGraph, graphBlue : HexGraph) : Double = {
     val pie = model.pie
     val othercolour = colour match{
       case R => B
       case B => R
       }
 
-
+    /*
     val graph = new HexGraph(model.N, colour)//, model.pie)
     val board = model.board
 
@@ -38,10 +38,20 @@ class FlowHeuristic extends Heuristic with Const{
 
       }
     }
-
+    */
     //Calculate network flow from one boundary to another
-    val networkFlow = new NetworkFlow(graph)
-    return networkFlow.maxFlow
+    val networkFlowRed = new NetworkFlow(graphRed); val networkFlowBlue = new NetworkFlow(graphBlue)
+    for(node <- graphRed.nodes){
+      print(node.id + ": ")
+      for(n <-  node.getAdjacencies) print(n.id + ", ")
+      println()
+    }
+    val x = networkFlowRed.maxFlow
+    val y = networkFlowBlue.maxFlow
+
+    if(colour.equals(R)) return x//Math.log((x+1)/(y+1))
+    else return y//Math.log((y+1)/(x+1))
+
 
   }
 }

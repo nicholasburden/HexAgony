@@ -34,7 +34,7 @@ class CircuitSolver {
 
     //set V0 to 1
     mat.set(0,0,1)
-    //set V(N-1) to 0
+    //set V(N-1) to 1
     mat.set(N-1, N-1, 1)
 
     for (node1 <- circuit.getNodes){

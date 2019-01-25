@@ -1,3 +1,4 @@
+import graph.HexGraph
 import moveordering.MoveOrdering
 import hexagony._
 import heuristic._
@@ -10,8 +11,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
   val pieRuleTable = pieRule.getTable
 
   private def myMove(): Cell = {
-
-    val mod = model.copy()
+    try{val mod = model.copy()
     //Get list of possible moves in order of strength
     val moveOrdering = new MoveOrdering
 
@@ -21,6 +21,10 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     val alpha = Double.NegativeInfinity
     val beta = Double.PositiveInfinity
     var topScore = Double.NegativeInfinity
+    val graphRed = new HexGraph(model.N, R)
+    val graphBlue = new HexGraph(model.N, B)
+    graphRed.initialise(model)
+    graphBlue.initialise(model)
 
     //LOOP INVARIANT: move has the highest minimax value considered so far
     for (cell <- open) {
@@ -28,10 +32,10 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       val mod2 = result(mod, cell, colour)
       if (!stop) {
         var score = 0.0d
-
+        val(graphRedCopy, graphBlueCopy) = alterGraph(cell, colour, graphRed, graphBlue)
         //Update move selection order for recursive calls
         val mo = moveOrdering.addMovesFor(cell, mod)
-        score = min(mod2, DEPTH - 1, alpha, beta, mo)
+        score = min(mod2, DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
 
         //check for case where opponent uses pie rule
         if (othercolour.equals(B) && mod2.count == 1 && pierule) {
@@ -41,29 +45,43 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
 
           modPie.pie = true
 
+
+
+
+          val(graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphRed, graphBlue)
           //Get value of board after pie rule is played
-          val value = max(modPie, DEPTH - 1, alpha, beta, mo)
+          val value = max(modPie, DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
           //undo pie rule
 
           modPie.pie = false
           score = Math.min(score, value)
 
         }
-
+        println(cell + " " + score)
 
         if (score > topScore) {
           move = cell
           topScore = score
         }
       }
+
     }
 
 
     move
 
+
+    }
+    catch{
+      case e : Exception => e.printStackTrace(); null
+    }
+
+
+
+
   }
 
-  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, mo: MoveOrdering): Double = {
+  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, mo: MoveOrdering, graphRed : HexGraph, graphBlue : HexGraph): Double = {
 
     val alpha = _alpha
     var beta = _beta
@@ -80,7 +98,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     else if (depth == 0) {
       //Leaf node, use heuristic
       val heuristic = new FlowHeuristic
-      return heuristic.evaluate(model, colour)
+      return heuristic.evaluate(model, colour, graphRed, graphBlue)
 
     }
     else {
@@ -91,8 +109,9 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       for (cell1 <- mo.getOrdering(model)) {
 
         val cell = model.board(cell1.i)(cell1.j)
+        val (graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphRed, graphBlue)
         //Recursive call
-        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, mo.addMovesFor(cell, model))
+        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, mo.addMovesFor(cell, model), graphRedCopy, graphBlueCopy)
 
         bestVal = Math.min(bestVal, value)
         beta = Math.min(beta, bestVal)
@@ -108,7 +127,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     }
   }
 
-  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, mo: MoveOrdering): Double = {
+  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, mo: MoveOrdering, graphRed : HexGraph, graphBlue : HexGraph): Double = {
 
     var alpha = _alpha
     val beta = _beta
@@ -125,7 +144,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       //Leaf node, use heuristic
       val heuristic = new FlowHeuristic
 
-      return heuristic.evaluate(model, colour)
+      return heuristic.evaluate(model, colour, graphRed, graphBlue)
 
     }
     else {
@@ -137,8 +156,10 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       for (cell1 <- mo.getOrdering(model)) {
 
         val cell = model.board(cell1.i)(cell1.j)
+
+        val (graphRedCopy, graphBlueCopy) = alterGraph(cell, colour, graphRed, graphBlue)
         //Recursive call
-        val value = min(result(model, cell, colour), depth - 1, alpha, beta, mo.addMovesFor(cell, model))
+        val value = min(result(model, cell, colour), depth - 1, alpha, beta, mo.addMovesFor(cell, model), graphRedCopy, graphBlueCopy)
         bestVal = Math.max(bestVal, value)
         alpha = Math.max(alpha, bestVal)
         if (beta <= alpha) {
@@ -161,6 +182,24 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     return mod2
   }
 
+
+  private def alterGraph(cell: Cell, c : Colour, redGraph : HexGraph, blueGraph : HexGraph) : (HexGraph, HexGraph) = {
+    val redGraph2 = redGraph.clone()
+    val blueGraph2 = blueGraph.clone()
+
+    if (c.equals(R)){
+      redGraph2.placeYours(cell.i, cell.j)
+      blueGraph2.placeTheirs(cell.i, cell.j)
+    }
+    else{
+      redGraph2.placeTheirs(cell.i, cell.j)
+      blueGraph2.placeYours(cell.i, cell.j)
+    }
+
+
+
+    (redGraph2, blueGraph2)
+  }
 
   // ------------------------------------------------------------------------------------------------
   /* The parameters passed to the robot are:

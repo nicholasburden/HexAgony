@@ -1,31 +1,96 @@
 package graph
 import hexagony._
-class HexGraph(size : Int, colour : Colour/*, pie : Boolean*/) extends Graph(size) with Const{
-  val nodes : Array[Node] = Array.ofDim(size*size+2)
-  val t : Node = new Node(0)
-  val s : Node = new Node(size*size + 1)
-  for(i <- 1 to size*size){
-    nodes(i) = new Node(i)
-  }
-  nodes(0) = t
-  nodes(size*size+1) = s
-  for(i <- 1 to size*size){
-    nodes(i).addAdjacencies(generateAdjacencies(i))
-  }
+class HexGraph(size : Int, colour : Colour) extends Graph(size) with Const{
 
-  for(i <- 1 to size){
-    t.addAdjacent(nodes(i))
-  }
-  for(i <- (size-1)*size+1 to size*size){
-    nodes(i).addAdjacent(s)
-  }
-  val othercolour = colour match{
+  var nodes: Array[Node] = Array.ofDim(size * size + 2)
+  var t : Node = null
+  var s : Node = null
+  val othercolour = colour match {
     case R => B
     case B => R
   }
-  val col = true match{
-    case true => /*other*/colour
+  val col = true match {
+    case true => /*other*/ colour
     case false => colour
+  }
+
+  def initialise(model : Model) {
+
+    s = new Node(0)
+    t = new Node(size * size + 1)
+    for (i <- 1 to size * size) {
+      nodes(i) = new Node(i)
+    }
+    nodes(0) = s
+    nodes(size * size + 1) = t
+    for (i <- 1 to size * size) {
+      nodes(i).addAdjacencies(generateAdjacencies(i))
+    }
+    if(colour.equals(B)){
+      for (i <- 1 to size) {
+        s.addAdjacent(nodes(i))
+      }
+      for (i <- (size - 1) * size + 1 to size * size) {
+        nodes(i).addAdjacent(t)
+      }
+    }
+    else{
+      for (i <- 1 to (size-1)*size + 1 by size) {
+        s.addAdjacent(nodes(i))
+      }
+      for (i <- size to size * size by size) {
+        nodes(i).addAdjacent(t)
+      }
+    }
+
+    for(i <- model.board.indices){
+      for(j <- model.board(0).indices){
+        if(colour == B){
+          if(model.board(i)(j).colour == B){
+            placeYours(i, j)
+          }
+          else if(model.board(i)(j).colour == R){
+
+            placeTheirs(i, j)
+          }
+        }
+        else{
+          if(model.board(i)(j).colour == R){
+            placeYours(i, j)
+          }
+          else if(model.board(i)(j).colour == B){
+            placeTheirs(i, j)
+          }
+        }
+
+      }
+    }
+  }
+
+  override def clone(): HexGraph = {
+    val newGraph = new HexGraph(size, colour)
+    newGraph.nodes = Array.ofDim[Node](size*size+2)
+    newGraph.s = new Node(0)
+    newGraph.t = new Node(size * size + 1)
+    /*
+    for(elem <- t.getAdjacencies){
+      newGraph.t.adjacencies += newGraph.nodes(elem.id)
+    }
+    for(elem <- s.getAdjacencies){
+      newGraph.s.adjacencies += elem
+    }
+    */
+    for(node <- nodes){
+      val temp = new Node(node.id)
+      newGraph.nodes(temp.id) = temp
+    }
+    for(node <- nodes){
+      for(elem <- node.adjacencies)
+      newGraph.nodes(node.id).addAdjacent(newGraph.nodes(elem.id))
+    }
+
+    newGraph
+
   }
   def generateAdjacencies(k : Int) : Set[Node] = {
     val x = ((k-1) % size) + 1
@@ -33,10 +98,7 @@ class HexGraph(size : Int, colour : Colour/*, pie : Boolean*/) extends Graph(siz
     var set : Set[Node] = Set()
     for(i <- (x-1) to (x+1)){
       for(j <- (y-1) to (y+1)){
-        if(col == B && isValid(i,j) && !(i == (x-1) && j == (y + 1)) && !(i == (x+1) && j == (y - 1)) && !(i == x && j == y)){
-          set = set + nodes(((j-1)*size + i))
-        }
-        else if(col == R && isValid(i,j) && !(i == (x+1) && j == (y + 1)) && !(i == (x-1) && j == (y - 1)) && !(i == x && j == y)){
+        if(isValid(i,j) && !(i == (x-1) && j == (y + 1)) && !(i == (x+1) && j == (y - 1)) && !(i == x && j == y)){
           set = set + nodes(((j-1)*size + i))
         }
       }
@@ -46,7 +108,7 @@ class HexGraph(size : Int, colour : Colour/*, pie : Boolean*/) extends Graph(siz
   def isValid(x : Int, y : Int) : Boolean = (x >= 1 && x <= size && y >= 1 && y <= size) //not including s or t
   def getNodes : Array[Node] = nodes
   def placeYours(x : Int, y : Int) = {
-    val k = ((x-1)*size+y)
+    val k = x*size+y+1
     //handle the special case:
     if(s.getAdjacencies.contains(nodes(k))){
       for(node <- nodes(k).getAdjacencies){
@@ -75,7 +137,8 @@ class HexGraph(size : Int, colour : Colour/*, pie : Boolean*/) extends Graph(siz
 
   }
   def placeTheirs(x : Int, y : Int) = {
-    val k = ((x-1)*size+y)
+
+    val k = x*size+y+1
 
     //handle special case:
     if (s.getAdjacencies.contains(nodes(k))){
