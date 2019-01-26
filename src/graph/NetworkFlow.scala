@@ -77,6 +77,6 @@ class NetworkFlow(g : Graph) {
       }
       maxFlow += pathFlow
     }
-    maxFlow
+    Math.max(maxFlow, 0)
   }
 }

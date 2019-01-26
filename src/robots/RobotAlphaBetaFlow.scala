@@ -48,7 +48,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
 
 
 
-          val(graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphRed, graphBlue)
+          val(graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphBlue, graphRed) //Swap colours
           //Get value of board after pie rule is played
           val value = max(modPie, DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
           //undo pie rule

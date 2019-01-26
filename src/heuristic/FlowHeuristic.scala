@@ -41,16 +41,11 @@ class FlowHeuristic extends Const{
     */
     //Calculate network flow from one boundary to another
     val networkFlowRed = new NetworkFlow(graphRed); val networkFlowBlue = new NetworkFlow(graphBlue)
-    for(node <- graphRed.nodes){
-      print(node.id + ": ")
-      for(n <-  node.getAdjacencies) print(n.id + ", ")
-      println()
-    }
-    val x = networkFlowRed.maxFlow
-    val y = networkFlowBlue.maxFlow
-
-    if(colour.equals(R)) return x//Math.log((x+1)/(y+1))
-    else return y//Math.log((y+1)/(x+1))
+    val x : Double = networkFlowRed.maxFlow
+    val y : Double= networkFlowBlue.maxFlow
+    println(x + " " + y)
+    if(colour.equals(R)) return Math.log((x+1)/(y+1))
+    else return Math.log((y+1)/(x+1))
 
 
   }

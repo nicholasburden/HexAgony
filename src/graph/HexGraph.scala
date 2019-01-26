@@ -26,7 +26,7 @@ class HexGraph(size : Int, colour : Colour) extends Graph(size) with Const{
     for (i <- 1 to size * size) {
       nodes(i).addAdjacencies(generateAdjacencies(i))
     }
-    if(colour.equals(B)){
+    if((colour.equals(B) && !model.pie) || (colour.equals(R) && model.pie)){
       for (i <- 1 to size) {
         s.addAdjacent(nodes(i))
       }
