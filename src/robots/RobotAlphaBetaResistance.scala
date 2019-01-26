@@ -5,7 +5,7 @@ import hsearch._
 import pierule._
 
 
-class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
+class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val DEPTH = 2
   val pieRule = new PieRule(model.N)
