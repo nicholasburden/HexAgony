@@ -9,123 +9,147 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
-  var ohercolour = colour match{
+  var ohercolour = colour match {
     case R => B
     case B => R
 
   }
+  //Score added to each node when node is a winning node
   final val WIN = 10
-  final val time = 1800
-  var (player, otherPlayer) = colour match{
-    case R => (0,1)
-    case B => (1,0)
+
+  //Total time for main loop of algorithm
+  final val TIME = 18000
+
+  //Time in ms allowed for a run of HSEARCH
+  final val HSEARCH_TIME_LIMIT = 1000
+  var (player, otherPlayer) = colour match {
+    case R => (0, 1)
+    case B => (1, 0)
   }
 
-  def myMove() : Cell = {
+  def myMove(): Cell = {
+
+
+    //Initialise H-Search objects and search for strong/weak connections from each perspective
     val hRed = new HSearch(model, R)
     val hBlue = new HSearch(model, B)
-    //println("BEFORE")
+
     hRed.initial
     hBlue.initial
-    hRed.search
-    hBlue.search
-  //  println("AFTER")
+    hRed.search(HSEARCH_TIME_LIMIT)
+    hBlue.search(HSEARCH_TIME_LIMIT)
+
     val mod = model.copy()
+
+    //Set time allowed to run
     val start = System.currentTimeMillis()
-    val end = start + time
-    otherPlayer = 1-player
-    val tree : Node = new Node()
-    val rootNode : Node = tree
+    val end = start + TIME
+
+
+    //Initialise game tree with initial board as root (with opponent as state player since they moved last)
+    val tree: Node = new Node()
+    val rootNode: Node = tree
+
     rootNode.state.setBoard(mod)
     rootNode.state.setPlayer(otherPlayer)
-    while(System.currentTimeMillis() < end) {
-      //Selection
+
+    //LOOP INVARIANT: Every node in the tree is labelled with the total number of times it has been visited
+    //Every node also labelled with the total number of times it has led to a win for its corresponding player multiplied by WIN
+    while (System.currentTimeMillis() < end) {
+      //Select a good node according to UCT
       val goodNode = findGoodNode(rootNode)
 
-      //expansion
-      if(goodNode.state.mod.checkIfFinished == -1){
+      //Expand this node to its children if it is not terminal
+      if (goodNode.state.mod.checkIfFinished == -1) {
         val states = goodNode.state.getNextStates(hRed, hBlue)
         states.foreach(state => {
           val next = new Node(state)
           next.setParent(goodNode)
-          next.state.setPlayer(1-goodNode.state.player)
+          next.state.setPlayer(1 - goodNode.state.player)
           goodNode.childArray += next
         })
       }
 
-      //Simulation
+      //Simulate a random game
       var node = goodNode
-      if(goodNode.childArray.size > 0){
+      if (goodNode.childArray.nonEmpty) {
         node = goodNode.getRandomChildNode()
       }
       var tempN = new Node(node)
       var tempS = tempN.state
       var modelVal = tempS.mod.checkIfFinished()
-      if(modelVal == otherPlayer) {
+      if (modelVal == otherPlayer) {
         tempN.parent.state.setWinScore(Integer.MIN_VALUE)
       }
-      while(modelVal == -1){
+      while (modelVal == -1) {
         tempS.changePlayer
         tempS.randomPlay
         modelVal = tempS.mod.checkIfFinished
       }
       val playOut = modelVal
 
-      //update
+      //Update using back-propogation to reflect result
       backProp(node, playOut)
     }
-    val best : Node = rootNode.getChildWithMaxScore()
+    val best: Node = rootNode.getChildWithMaxScore()
 
-    for(cell <- best.state.mod.myCells(colour)){
-      if(!mod.myCells(colour).contains(cell))
+
+    //Find last cell played in the best new state (ie the best move to be played)
+    for (cell <- best.state.mod.myCells(colour)) {
+      if (!mod.myCells(colour).contains(cell))
         return cell
     }
-    return null
+    //If no move is chosen, return null
+    null
   }
 
-  private def findGoodNode(root : Node) : Node = {
+  private def findGoodNode(root: Node): Node = {
+    //Greedily choose best leaf node according to UCT
     var node = root
-    while(node.childArray.size != 0){
+    while (node.childArray.nonEmpty) {
+      //Find best child according to UCT
       node = findBestNode(node)
     }
     node
   }
 
-  private def backProp(node : Node, player : Int) = {
+  private def backProp(node: Node, player: Int) = {
     var temp = node
-    while(temp != null){
+    while (temp != null) {
+      //Update total number of visits
       temp.state.visit
-      if(temp.state.player == player){
+      if (temp.state.player == player) {
+        //Add win score to winning player
         temp.state.addScore(WIN)
       }
       temp = temp.parent
     }
   }
 
-  private def uct(visitTotal : Int, nodeScore : Double, nodeVCount : Int) : Double = {
-    if(nodeVCount == 0){
+  private def uct(visitTotal: Int, nodeScore: Double, nodeVCount: Int): Double = {
+    if (nodeVCount == 0) {
       return Integer.MAX_VALUE
     }
-    (nodeScore / nodeVCount.asInstanceOf[Double]) + 1.41 * Math.sqrt(Math.log(visitTotal) / nodeVCount.asInstanceOf[Double])
+    (nodeScore / nodeVCount.asInstanceOf[Double]) + 1.4143 * Math.sqrt(Math.log(visitTotal) / nodeVCount.asInstanceOf[Double])
   }
-  private def findBestNode(node : Node) = {
+
+  private def findBestNode(node: Node) = {
+    //Find the best child with respect to its UCT value
     val parentVCount = node.state.visits
-    var max : Double = Double.NegativeInfinity
-    var n : Node = null
-    for(i <- 0 until node.childArray.size){
+    var max: Double = Double.NegativeInfinity
+    var n: Node = null
+    for (i <- node.childArray.indices) {
       val c = node.childArray(i)
       val v = uct(parentVCount, c.state.score, c.state.visits)
-      if(v > max){
-        max = v; n = c
+      if (v > max) {
+        max = v;
+        n = c
       }
     }
     n
   }
 
 
-
-
-  // Your method for deciding whether to play the pie rule
   private def myPie(firstmove: Cell): Boolean = model.N <= 5 && pieRuleTable(firstmove.i)(firstmove.j)
 
   private def result(mod: Model, cell: Cell, col: Colour): Model = {
@@ -133,7 +157,6 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     mod2.playMove(cell, col)
     return mod2
   }
-
 
 
   // ------------------------------------------------------------------------------------------------
@@ -169,10 +192,14 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   def makeMove(): Cell = {
     stop = false
     // Execute your move method with the given time restriction
-    try { move = timedRun[Cell](timelimit - lag)(myMove()) }
-    catch { case ex: Exception => } // something has gone wrong, such as a timeout
+    try {
+      move = timedRun[Cell](timelimit - lag)(myMove())
+    }
+    catch {
+      case ex: Exception =>
+    } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-   // println(move)
+    println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }
@@ -180,15 +207,20 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   def pieRule(firstmove: Cell): Boolean = {
     stop = false
     // Execute your pie method with the given time restriction
-    try { pie = timedRun[Boolean](timelimit - lag)(myPie(firstmove)) }
-    catch { case ex: Exception => } // something has gone wrong, such as a timeout
+    try {
+      pie = timedRun[Boolean](timelimit - lag)(myPie(firstmove))
+    }
+    catch {
+      case ex: Exception =>
+    } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
     return pie
   }
+
   private def randomMove(mod: Model): Cell = {
     val open = mod.myCells(O)
     val randmove = open((Math.random() * open.length).toInt)
-  //  println("Move chosen randomly: " + randmove.toString())
+    println("Move chosen randomly: " + randmove.toString())
     randmove
   }
 }

@@ -7,7 +7,7 @@ import scala.collection.mutable.ListBuffer
 
 class State(var mod: Model, var player: Int, var visits: Int, var score: Double) extends Const {
   //Threshold of visits before we consider pruning the node due to inferior cell analysis
-  final val KNOWLEDGE_THRESHOLD = 30
+
 
   //Flag to prune node from tree
   var inferior = false
@@ -31,7 +31,7 @@ class State(var mod: Model, var player: Int, var visits: Int, var score: Double)
     val cells: ListBuffer[Cell] = this.mod.myCells(O).to[ListBuffer]
     for (i <- cells.indices) {
 
-      if (visits < KNOWLEDGE_THRESHOLD || !cellInFillin(this.mod, cells(i), hRed, hBlue)) {
+      if (visits < State.KNOWLEDGE_THRESHOLD || !cellInFillin(this.mod, cells(i))){//, hRed, hBlue)) {
         //Add state to list
         val newState = new State(this.mod)
         newState.setPlayer(1 - this.player)
@@ -69,14 +69,17 @@ class State(var mod: Model, var player: Int, var visits: Int, var score: Double)
 
   def changePlayer = player = 1 - player
 
-  def cellInFillin(model: Model, cell: Cell, hRed: HSearch, hBlue: HSearch): Boolean = {
+  def cellInFillin(model: Model, cell: Cell/*, hRed: HSearch, hBlue: HSearch*/): Boolean = {
     //Inferior cell analysis
     //Returns true iff cell is inferior
     //hsearch from other player's point of view
-    var hsearch = player match {
-      case 0 => hRed
-      case 1 => hBlue
+
+    val hsearch = player match {
+      case 0 => new HSearch(model, R)
+      case 1 => new HSearch(model, B)
     }
+    hsearch.initial
+    hsearch.search(State.HSEARCH_TIME_LIMIT)
     for (cell1 <- model.myCells(hsearch.colour); cell2 <- model.myCells(hsearch.colour)) {
       if (hsearch.getStrongCarriers(cell1, cell2, false).nonEmpty) {
         //prune nodes that play in opponent's strong carriers
@@ -154,6 +157,8 @@ class State(var mod: Model, var player: Int, var visits: Int, var score: Double)
 }
 
 object State extends Const {
+  final val HSEARCH_TIME_LIMIT = 1000
+  final val KNOWLEDGE_THRESHOLD = 15
   def getColour(playerNum: Int): Colour = {
     playerNum match {
       case 0 => R

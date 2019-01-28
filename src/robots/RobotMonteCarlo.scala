@@ -15,10 +15,13 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
   }
   //Score added to each node when node is a winning node
-  final val WIN = 10
+  final val WIN_SCORE = 10
 
   //Total time for main loop of algorithm
-  final val TIME = 1800
+  final val MCTS_TIME = 1800
+
+  //Time in ms allowed for a run of HSEARCH
+  final val HSEARCH_TIME_LIMIT = 1000
   var (player, otherPlayer) = colour match {
     case R => (0, 1)
     case B => (1, 0)
@@ -33,14 +36,14 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
     hRed.initial
     hBlue.initial
-    hRed.search
-    hBlue.search
+    hRed.search(HSEARCH_TIME_LIMIT)
+    hBlue.search(HSEARCH_TIME_LIMIT)
 
     val mod = model.copy()
 
     //Set time allowed to run
     val start = System.currentTimeMillis()
-    val end = start + TIME
+    val end = start + MCTS_TIME
 
 
     //Initialise game tree with initial board as root (with opponent as state player since they moved last)
@@ -117,7 +120,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
       temp.state.visit
       if (temp.state.player == player) {
         //Add win score to winning player
-        temp.state.addScore(WIN)
+        temp.state.addScore(WIN_SCORE)
       }
       temp = temp.parent
     }

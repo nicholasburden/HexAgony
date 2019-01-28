@@ -231,10 +231,12 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 
 
   //main search method
-  def search: Unit = {
+  def search(timelimit : Long): Unit = {
     var currentNewVC = false
     var previousNewVC = true
-    while (currentNewVC || previousNewVC) {
+    val start = System.currentTimeMillis()
+    val end : Long = start + timelimit
+    while ((currentNewVC || previousNewVC) && System.currentTimeMillis() < end) {
 
       val tempC = C
       previousNewVC = currentNewVC
@@ -255,7 +257,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
                 else {
                   val sc = c1 ++ Set(g) ++ c2
                   SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
-                  C((G.find(g1).get, G.find(g2).get)) = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch.X), sc, sc)
+                  C((G.find(g1).get, G.find(g2).get)) = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc)
                 }
               }
             }
@@ -383,7 +385,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 
       val ul = scl ++ union
       val il = scl & intersection
-      if (il.isEmpty && ul.size <= HSearch.M) {
+      if (il.isEmpty && C_clone.size <= HSearch.M) {
         C_clone += ul
 
       }
@@ -461,5 +463,5 @@ object HSearch extends Const {
      X: maximumn number of virtual connections as an input to the dedection rule
   */
   val M = 12
-  val X = 4
+  val _K : Int = 4
 }

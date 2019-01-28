@@ -15,10 +15,10 @@ class HSearchTest extends Const {
     val model = new Model(5)
     hRed = new HSearch(model, R)
     hRed.initial
-    hRed.search
+    hRed.search(1000000)
     hBlue = new HSearch(model, B)
     hBlue.initial
-    hBlue.search
+    hBlue.search(1000000)
 
   }
 
@@ -76,7 +76,7 @@ class HSearchTest extends Const {
     m2.playMove(m2.board(4)(3), R)
     val h1 = new HSearch(m2, R)
     h1.initial
-    h1.search
+    h1.search(100000)
 
     val t1 = h1.getStrongCarriers(HSearch.boundaryRed1, new Cell(3, 1), true).equals(Set(new Cell(2, 0), new Cell(3, 0)))
     val t2 = h1.getStrongCarriers(new Cell(3, 1), new Cell(4, 3), true).equals(Set(new Cell(3, 2), new Cell(4, 2)))
@@ -127,8 +127,8 @@ class HSearchTest extends Const {
     var hsearchB = new HSearch(mod, B)
     hsearchR.initial
     hsearchB.initial
-    hsearchR.search
-    hsearchB.search
+    hsearchR.search(10000)
+    hsearchB.search(100000)
 
     hsearchB = hsearchB.makeMove(3, 3, B)
     hsearchR = hsearchR.makeMove(3, 3, B)

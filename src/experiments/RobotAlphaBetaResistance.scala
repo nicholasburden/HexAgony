@@ -1,6 +1,5 @@
 package experiments
 
-
 import moveordering.MoveOrdering
 import hexagony._
 import heuristic._
@@ -8,7 +7,7 @@ import hsearch._
 import pierule._
 
 
-class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
+class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val DEPTH = 2
   val pieRule = new PieRule(model.N)
@@ -43,8 +42,8 @@ class RobotAlphaBeta(model: Model, timelimit: Long, pierule: Boolean, colour: Co
 
 
     //Search for strong and weak connections
-    hme.search
-    hthem.search
+    hme.search(timelimit/3)
+    hthem.search(timelimit/3)
 
     //Get set of cells that are in a carrier of an opponent semi-connection
     val weakCarrier = hthem.getUnionOfWeakConnections
