@@ -8,13 +8,12 @@ import pierule._
 
 class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 3
+  val DEPTH = 2
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
   private def myMove(): Cell = {
-
-    val mod = model.copy()
+    try{val mod = model.copy()
     //Get list of possible moves in order of strength
     val moveOrdering = new MoveOrdering
 
@@ -26,6 +25,8 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     var topScore = Double.NegativeInfinity
     val graphRed = new HexGraph(model.N, R)
     val graphBlue = new HexGraph(model.N, B)
+    graphRed.initialise(model)
+    graphBlue.initialise(model)
 
     //LOOP INVARIANT: move has the highest minimax value considered so far
     for (cell <- open) {
@@ -49,7 +50,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
 
 
 
-          val(graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphRed, graphBlue)
+          val(graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphBlue, graphRed) //Swap colours
           //Get value of board after pie rule is played
           val value = max(modPie, DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
           //undo pie rule
@@ -58,17 +59,27 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
           score = Math.min(score, value)
 
         }
-
+        println(cell + " " + score)
 
         if (score > topScore) {
           move = cell
           topScore = score
         }
       }
+
     }
 
 
     move
+
+
+    }
+    catch{
+      case e : Exception => e.printStackTrace(); null
+    }
+
+
+
 
   }
 

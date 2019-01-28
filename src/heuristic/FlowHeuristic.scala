@@ -43,7 +43,7 @@ class FlowHeuristic extends Const{
     val networkFlowRed = new NetworkFlow(graphRed); val networkFlowBlue = new NetworkFlow(graphBlue)
     val x : Double = networkFlowRed.maxFlow
     val y : Double= networkFlowBlue.maxFlow
-    println(x + " " + y)
+
     if(colour.equals(R)) return Math.log((x+1)/(y+1))
     else return Math.log((y+1)/(x+1))
 
