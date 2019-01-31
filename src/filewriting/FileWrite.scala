@@ -6,11 +6,11 @@ class FileWrite(fileName : String) {
 
 
   def writeToFile(s : String): Unit ={
-    bw.write(s ++ "\n")
+    bw.write(s)
 
   }
   def writeToFile(x : Int): Unit ={
-    bw.write(x.toString ++ "\n")
+    bw.write(Integer.toString(x))
 
   }
   def close = {

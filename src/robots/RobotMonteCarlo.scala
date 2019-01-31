@@ -18,7 +18,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   final val WIN_SCORE = 10
 
   //Total time for main loop of algorithm
-  final val MCTS_TIME = 1800
+  final val MCTS_TIME = timelimit/3
 
   //Time in ms allowed for a run of HSEARCH
   final val HSEARCH_TIME_LIMIT = 1000

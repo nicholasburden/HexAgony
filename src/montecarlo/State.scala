@@ -157,7 +157,7 @@ class State(var mod: Model, var player: Int, var visits: Int, var score: Double)
 }
 
 object State extends Const {
-  final val HSEARCH_TIME_LIMIT = 1000
+  final val HSEARCH_TIME_LIMIT = 2000
   final val KNOWLEDGE_THRESHOLD = 15
   def getColour(playerNum: Int): Colour = {
     playerNum match {

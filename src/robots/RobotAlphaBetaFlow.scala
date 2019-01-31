@@ -6,7 +6,7 @@ import pierule._
 
 class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 2
+  val DEPTH = 3
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
