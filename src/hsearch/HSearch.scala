@@ -242,22 +242,26 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       previousNewVC = currentNewVC
       currentNewVC = false
       for (g <- Gtemp) {
-        for (g1 <- Gtemp; g2 <- Gtemp) {
-          if (g1 != g2 && (newCarrier(oldC, g1, g) || newCarrier(oldC, g2, g)) && (!(g.colour == colour) || (g1.colour == O && g2.colour == O))) {
-            for (c1 <- C((G.find(g1).get, G.find(g).get)); c2 <- C((G.find(g2).get, G.find(g).get))) {
-              if ((!oldC((G.find(g1).get, G.find(g).get)).contains(c1) || !oldC((G.find(g2).get, G.find(g).get)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
-                currentNewVC = true
-                if (g.colour == colour && (c1.size + c2.size) <= HSearch.M) {
-                  val cTemp = c1 ++ c2
-                  C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
-                  if(g1.colour == colour && g2.colour == colour){
-                    strong = strong.union(cTemp)
+        if(System.currentTimeMillis() < end) {
+          for (g1 <- Gtemp; g2 <- Gtemp) {
+            if(System.currentTimeMillis() < end) {
+              if (g1 != g2 && (newCarrier(oldC, g1, g) || newCarrier(oldC, g2, g)) && (!(g.colour == colour) || (g1.colour == O && g2.colour == O))) {
+                for (c1 <- C((G.find(g1).get, G.find(g).get)); c2 <- C((G.find(g2).get, G.find(g).get))) {
+                  if (System.currentTimeMillis() < end && (!oldC((G.find(g1).get, G.find(g).get)).contains(c1) || !oldC((G.find(g2).get, G.find(g).get)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
+                    currentNewVC = true
+                    if (g.colour == colour && (c1.size + c2.size) <= HSearch.M) {
+                      val cTemp = c1 ++ c2
+                      C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
+                      if (g1.colour == colour && g2.colour == colour) {
+                        strong = strong.union(cTemp)
+                      }
+                    }
+                    else {
+                      val sc = c1 ++ Set(g) ++ c2
+                      SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                      C((G.find(g1).get, G.find(g2).get)) = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end)
+                    }
                   }
-                }
-                else {
-                  val sc = c1 ++ Set(g) ++ c2
-                  SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
-                  C((G.find(g1).get, G.find(g2).get)) = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc)
                 }
               }
             }
@@ -266,6 +270,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       }
       oldC = tempC
     }
+    println("HSEARCH FINISHED")
   }
 
 
@@ -378,20 +383,20 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 
   //recusrive method used in main search method
   //applies deduction rules between connections
-  def apply(C_set: Set[Set[Cell]], SC_set: Set[Set[Cell]], union: Set[Cell], intersection: Set[Cell]): Set[Set[Cell]] = {
+  def apply(C_set: Set[Set[Cell]], SC_set: Set[Set[Cell]], union: Set[Cell], intersection: Set[Cell], end : Long): Set[Set[Cell]] = {
     var C_clone = C_set
 
     for (scl <- SC_set) {
+      if(System.currentTimeMillis() < end) {
+        val ul = scl ++ union
+        val il = scl & intersection
+        if (il.isEmpty && C_clone.size <= HSearch.M) {
+          C_clone += ul
 
-      val ul = scl ++ union
-      val il = scl & intersection
-      if (il.isEmpty && C_clone.size <= HSearch.M) {
-        C_clone += ul
-
-      }
-      else {
-
-        C_clone = apply(C_clone, SC_set - scl, ul, il)
+        }
+        else {
+          if (System.currentTimeMillis() < end) C_clone = apply(C_clone, SC_set - scl, ul, il, end)
+        }
       }
     }
     return C_clone

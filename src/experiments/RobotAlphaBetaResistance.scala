@@ -108,7 +108,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
         }
       }
     }
-    println(move)
+    //println(move)
     return move
 
 

@@ -57,7 +57,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
           score = Math.min(score, value)
 
         }
-        println(cell + " " + score)
+
 
         if (score > topScore) {
           move = cell
@@ -241,7 +241,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       case ex: Exception =>
     } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-    println(move)
+    //println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }

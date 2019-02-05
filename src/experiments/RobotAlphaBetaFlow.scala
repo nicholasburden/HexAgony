@@ -1,5 +1,4 @@
 package experiments
-
 import graph.HexGraph
 import moveordering.MoveOrdering
 import hexagony._
@@ -8,7 +7,7 @@ import pierule._
 
 class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 2
+  val DEPTH = 3
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
@@ -59,7 +58,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
           score = Math.min(score, value)
 
         }
-        println(cell + " " + score)
+
 
         if (score > topScore) {
           move = cell
@@ -243,7 +242,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
       case ex: Exception =>
     } // something has gone wrong, such as a timeout
     stop = true // stop the computation within the method
-    println(move)
+    //println(move)
     if (!model.legal(move)) move = randomMove(model)
     return move
   }

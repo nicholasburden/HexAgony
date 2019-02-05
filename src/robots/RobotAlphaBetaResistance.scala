@@ -40,8 +40,8 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
 
     //Search for strong and weak connections
-    hme.search(timelimit/3)
-    hthem.search(timelimit/3)
+    hme.search(timelimit/4)
+    hthem.search(timelimit/4)
 
     //Get set of cells that are in a carrier of an opponent semi-connection
     val weakCarrier = hthem.getUnionOfWeakConnections
