@@ -25,7 +25,7 @@ class State(var mod: Model, var player: Int, var visits: Int, var score: Double)
 
   def setWinScore(newScore: Double) = score = newScore
 
-  def getNextStates(hRed: HSearch, hBlue: HSearch): ListBuffer[State] = {
+  def getNextStates(): ListBuffer[State] = {
     //Returns list of next possible states, exluding any pruned (inferior) nodes
     val states: ListBuffer[State] = new ListBuffer[State]()
     val cells: ListBuffer[Cell] = this.mod.myCells(O).to[ListBuffer]
@@ -157,8 +157,9 @@ class State(var mod: Model, var player: Int, var visits: Int, var score: Double)
 }
 
 object State extends Const {
-  final val HSEARCH_TIME_LIMIT = 2000
-  final val KNOWLEDGE_THRESHOLD = 15
+
+  var HSEARCH_TIME_LIMIT = 2000
+  var KNOWLEDGE_THRESHOLD = 15
   def getColour(playerNum: Int): Colour = {
     playerNum match {
       case 0 => R

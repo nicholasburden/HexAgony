@@ -1,4 +1,5 @@
 package experiments
+
 import graph.HexGraph
 import moveordering.MoveOrdering
 import hexagony._
@@ -7,7 +8,7 @@ import pierule._
 
 class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 3
+  var DEPTH = 2
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 

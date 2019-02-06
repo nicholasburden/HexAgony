@@ -6,7 +6,7 @@ import pierule._
 
 class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 3
+
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
@@ -35,7 +35,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
         val(graphRedCopy, graphBlueCopy) = alterGraph(cell, colour, graphRed, graphBlue)
         //Update move selection order for recursive calls
         val mo = moveOrdering.addMovesFor(cell, mod)
-        score = min(mod2, DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
+        score = min(mod2, RobotAlphaBetaFlow.DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
 
         //check for case where opponent uses pie rule
         if (othercolour.equals(B) && mod2.count == 1 && pierule) {
@@ -50,7 +50,7 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
 
           val(graphRedCopy, graphBlueCopy) = alterGraph(cell, othercolour, graphBlue, graphRed) //Swap colours
           //Get value of board after pie rule is played
-          val value = max(modPie, DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
+          val value = max(modPie, RobotAlphaBetaFlow.DEPTH - 1, alpha, beta, mo, graphRedCopy, graphBlueCopy)
           //undo pie rule
 
           modPie.pie = false
@@ -265,4 +265,8 @@ class RobotAlphaBetaFlow(model: Model, timelimit: Long, pierule: Boolean, colour
     println("Move chosen randomly: " + randmove.toString())
     randmove
   }
+}
+
+object RobotAlphaBetaFlow{
+  var DEPTH = 2
 }

@@ -7,7 +7,7 @@ import pierule._
 
 class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val DEPTH = 2
+
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
@@ -72,7 +72,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
         //Update move selection order for recursive calls
         val mo = moveOrdering.addMovesFor(cell, mod)
-        score = min(mod2, DEPTH - 1, alpha, beta, hme2, hthem2, mo)
+        score = min(mod2, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hme2, hthem2, mo)
 
         //check for case where opponent uses pie rule
         if (othercolour.equals(B) && mod2.count == 1 && pierule) {
@@ -88,7 +88,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
           hme.colour = B
 
           //Get value of board after pie rule is played
-          val value = max(modPie, DEPTH - 1, alpha, beta, hthem.makeMove(cell.i, cell.j, B), hme.makeMove(cell.i, cell.j, B), mo)
+          val value = max(modPie, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hthem.makeMove(cell.i, cell.j, B), hme.makeMove(cell.i, cell.j, B), mo)
 
           //undo pie rule
           hthem.colour = B
@@ -279,4 +279,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
     println("Move chosen randomly: " + randmove.toString())
     randmove
   }
+}
+object RobotAlphaBetaResistance{
+  var DEPTH = 2
 }

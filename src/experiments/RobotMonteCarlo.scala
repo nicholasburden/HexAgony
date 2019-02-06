@@ -1,4 +1,5 @@
 package experiments
+
 import hexagony._
 import hsearch.HSearch
 import montecarlo.Node
@@ -61,7 +62,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
       //Expand this node to its children if it is not terminal
       if (goodNode.state.mod.checkIfFinished == -1) {
-        val states = goodNode.state.getNextStates(hRed, hBlue)
+        val states = goodNode.state.getNextStates()
         states.foreach(state => {
           val next = new Node(state)
           next.setParent(goodNode)

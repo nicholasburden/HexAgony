@@ -9,19 +9,14 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
+  //Total time for main loop of algorithm
+  var MCTS_TIME = timelimit/3
   var ohercolour = colour match {
     case R => B
     case B => R
 
   }
-  //Score added to each node when node is a winning node
-  final val WIN_SCORE = 10
 
-  //Total time for main loop of algorithm
-  final val MCTS_TIME = timelimit/3
-
-  //Time in ms allowed for a run of HSEARCH
-  final val HSEARCH_TIME_LIMIT = 1000
   var (player, otherPlayer) = colour match {
     case R => (0, 1)
     case B => (1, 0)
@@ -31,13 +26,9 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
 
     //Initialise H-Search objects and search for strong/weak connections from each perspective
-    val hRed = new HSearch(model, R)
-    val hBlue = new HSearch(model, B)
 
-    hRed.initial
-    hBlue.initial
-    hRed.search(HSEARCH_TIME_LIMIT)
-    hBlue.search(HSEARCH_TIME_LIMIT)
+
+
 
     val mod = model.copy()
 
@@ -61,7 +52,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
       //Expand this node to its children if it is not terminal
       if (goodNode.state.mod.checkIfFinished == -1) {
-        val states = goodNode.state.getNextStates(hRed, hBlue)
+        val states = goodNode.state.getNextStates()
         states.foreach(state => {
           val next = new Node(state)
           next.setParent(goodNode)
@@ -120,7 +111,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
       temp.state.visit
       if (temp.state.player == player) {
         //Add win score to winning player
-        temp.state.addScore(WIN_SCORE)
+        temp.state.addScore(RobotMonteCarlo.WIN_SCORE)
       }
       temp = temp.parent
     }
@@ -223,4 +214,13 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     println("Move chosen randomly: " + randmove.toString())
     randmove
   }
+
+}
+object RobotMonteCarlo{
+  //Score added to each node when node is a winning node
+  var WIN_SCORE = 10
+
+
+
+
 }
