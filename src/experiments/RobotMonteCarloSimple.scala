@@ -2,11 +2,11 @@ package experiments
 
 import hexagony._
 import hsearch.HSearch
-import montecarlo.Node
+import montecarlo.NodeSimple
 import pierule.PieRule
 
 
-class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
+class RobotMonteCarloSimple(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
@@ -15,10 +15,13 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     case B => R
 
   }
+  //Score added to each node when node is a winning node
+  var WIN_SCORE = 10
+
+  //Total time for main loop of algorithm
+  var MCTS_TIME = 10000
 
 
-  //Time in ms allowed for a run of HSEARCH
-  final val HSEARCH_TIME_LIMIT = 1000
   var (player, otherPlayer) = colour match {
     case R => (0, 1)
     case B => (1, 0)
@@ -27,14 +30,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
   def myMove(): Cell = {
 
 
-    //Initialise H-Search objects and search for strong/weak connections from each perspective
-    val hRed = new HSearch(model, R)
-    val hBlue = new HSearch(model, B)
 
-    hRed.initial
-    hBlue.initial
-    hRed.search(HSEARCH_TIME_LIMIT)
-    hBlue.search(HSEARCH_TIME_LIMIT)
 
     val mod = model.copy()
 
@@ -44,8 +40,8 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
 
     //Initialise game tree with initial board as root (with opponent as state player since they moved last)
-    val tree: Node = new Node()
-    val rootNode: Node = tree
+    val tree: NodeSimple = new NodeSimple()
+    val rootNode: NodeSimple = tree
 
     rootNode.state.setBoard(mod)
     rootNode.state.setPlayer(otherPlayer)
@@ -60,7 +56,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
       if (goodNode.state.mod.checkIfFinished == -1) {
         val states = goodNode.state.getNextStates()
         states.foreach(state => {
-          val next = new Node(state)
+          val next = new NodeSimple(state)
           next.setParent(goodNode)
           next.state.setPlayer(1 - goodNode.state.player)
           goodNode.childArray += next
@@ -72,7 +68,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
       if (goodNode.childArray.nonEmpty) {
         node = goodNode.getRandomChildNode()
       }
-      var tempN = new Node(node)
+      var tempN = new NodeSimple(node)
       var tempS = tempN.state
       var modelVal = tempS.mod.checkIfFinished()
       if (modelVal == otherPlayer) {
@@ -88,7 +84,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
       //Update using back-propogation to reflect result
       backProp(node, playOut)
     }
-    val best: Node = rootNode.getChildWithMaxScore()
+    val best: NodeSimple = rootNode.getChildWithMaxScore()
 
 
     //Find last cell played in the best new state (ie the best move to be played)
@@ -100,7 +96,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     null
   }
 
-  private def findGoodNode(root: Node): Node = {
+  private def findGoodNode(root: NodeSimple): NodeSimple = {
     //Greedily choose best leaf node according to UCT
     var node = root
     while (node.childArray.nonEmpty) {
@@ -110,7 +106,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     node
   }
 
-  private def backProp(node: Node, player: Int) = {
+  private def backProp(node: NodeSimple, player: Int) = {
     var temp = node
     while (temp != null) {
       //Update total number of visits
@@ -130,11 +126,11 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     (nodeScore / nodeVCount.asInstanceOf[Double]) + 1.4143 * Math.sqrt(Math.log(visitTotal) / nodeVCount.asInstanceOf[Double])
   }
 
-  private def findBestNode(node: Node) = {
+  private def findBestNode(node: NodeSimple) = {
     //Find the best child with respect to its UCT value
     val parentVCount = node.state.visits
     var max: Double = Double.NegativeInfinity
-    var n: Node = null
+    var n: NodeSimple = null
     for (i <- node.childArray.indices) {
       val c = node.childArray(i)
       val v = uct(parentVCount, c.state.score, c.state.visits)
@@ -220,11 +216,4 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
     println("Move chosen randomly: " + randmove.toString())
     randmove
   }
-}
-object RobotMonteCarlo{//Score added to each node when node is a winning node
-  var WIN_SCORE = 10
-
-  //Total time for main loop of algorithm
-  var MCTS_TIME = 10000
-
 }

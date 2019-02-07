@@ -7,6 +7,7 @@ class RobotFactory(robotType : String) {
     if(robotType.equals("HSEARCH")) return new RobotAlphaBetaResistance(model, timelimit, pierule, colour)
     if(robotType.equals("FLOW")) return new RobotAlphaBetaFlow(model, timelimit, pierule, colour)
     if(robotType.equals("MONTECARLO")) return new RobotMonteCarlo(model, timelimit, pierule, colour)
+    if(robotType.equals("MONTECARLOSIMPLE")) return new RobotMonteCarlo(model, timelimit, pierule, colour)
     if(robotType.equals("RANDOM")) return new RobotRandom(model, timelimit, pierule, colour)
     return null
   }

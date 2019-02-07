@@ -11,7 +11,7 @@ class PairwsieComparison {
 
     var robotFactory1 = new RobotFactory("HSEARCH")
     var robotFactory2 = new RobotFactory("FLOW")
-    for (size <- 7 to 11) {
+    for (size <- 5 to 11) {
       val writer1 = new FileWrite("Experiments/HSEARCH_FLOW_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
       for (i <- 1 to 30) {
@@ -28,7 +28,7 @@ class PairwsieComparison {
     }
     robotFactory1 = new RobotFactory("FLOW")
     robotFactory2 = new RobotFactory("MONTECARLO")
-    for (size <- 4 to 11) {
+    for (size <- 5 to 11) {
       val writer1 = new FileWrite("Experiments/FLOW_MONTECARLO_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
       for (i <- 1 to 30) {
@@ -45,7 +45,7 @@ class PairwsieComparison {
     }
     robotFactory1 = new RobotFactory("MONTECARLO")
     robotFactory2 = new RobotFactory("HSEARCH")
-    for (size <- 4 to 11) {
+    for (size <- 5 to 11) {
       val writer1 = new FileWrite("Experiments/MONTECARLO_HSEARCH_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
       for (i <- 1 to 30) {

@@ -467,6 +467,6 @@ object HSearch extends Const {
   /* M: maximum number of carriers for a pair of cells
      X: maximumn number of virtual connections as an input to the dedection rule
   */
-  val M = 20
-  val _K : Int = 4
+  var M = 20
+  var _K : Int = 4
 }
