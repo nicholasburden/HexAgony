@@ -6,6 +6,13 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 
   //a set to store all cells that belong to a strong connection's carrier
   var strong: Set[Cell] = Set()
+
+  val strongDual : collection.mutable.Map[Cell, Set[Cell]] = new collection.mutable.HashMap[Cell, Set[Cell]]().withDefaultValue(Set())
+  val weakDual : collection.mutable.Map[Cell, Set[Cell]] = new collection.mutable.HashMap[Cell, Set[Cell]]().withDefaultValue(Set())
+
+
+  val strongParents : collection.mutable.Map[Cell, Set[(Cell, Cell)]] = new collection.mutable.HashMap[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
+  val weakParents : collection.mutable.Map[Cell, Set[(Cell, Cell)]] = new collection.mutable.HashMap[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
   var boundarySet: Set[Cell] = colour match {
     case R => Set(HSearch.boundaryRed1, HSearch.boundaryRed2)
     case B => Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
@@ -102,12 +109,17 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
   }
 
 
-  def makeMove(i: Int, j: Int, c: Colour): HSearch = {
+  def makeMove(moves : List[(Cell, Colour)]): HSearch = {
+    //println("MAKE MOVE START")
+    //println("MAKE MOVE START")
     //When a move is made, we consider what happens to the strong/weak connections
     //Make a clone of the HSearch object to allow for easy recursion in minimax
-    val cell = model.board(i)(j)
+
     //Make move
-    val mod2 = result(model, cell, c)
+
+
+    var mod2 = model.copy()
+    for((cell, c) <- moves) mod2 = result(mod2, cell, c)
     //Initialise new H-Search object
     val hsearch = new HSearch(mod2, colour)
     //Clone disjoint sets (to maintain structure of neighbouring cells)
@@ -115,8 +127,10 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
     hsearch.G = newG.asInstanceOf[DisjointSets[Cell]]
 
     //Update colour
-    if (colour.equals(c)) hsearch.G.add(mod2.board(cell.i)(cell.j))
-    else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+    for((cell,c) <- moves) {
+      if (colour.equals(c)) hsearch.G.add(mod2.board(cell.i)(cell.j))
+      else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+    }
     val C_clone = C.clone()
     val SC_clone = SC.clone()
 
@@ -136,99 +150,115 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 
     //done maps pairs of cells to a boolean value (if they have been considered yet, to avoid double consideration)
     val done = collection.mutable.Map[(Cell, Cell), Boolean]().withDefaultValue(false)
-    for (cell1 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ boundarySet) {
-      for (cell2 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ boundarySet) {
-
-        if (!done((cell1, cell2))) {
-          val strongCarriers = getStrongCarriers(cell1, cell2, true)
-          val weakCarriers = getWeakCarriers(cell1, cell2, true)
-
-          if (!c.equals(colour) && weakCarriers.contains(cell)) {
-            //Case: opponent moves into a weak carrier of the player
-            //In this case we can no longer trust that the weak connection is still a weak connection, so we remove the connection
-            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-            //other way
-            hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
-
-          }
-          else if (c.equals(colour) && weakCarriers.contains(cell)) {
-            //Case: player plays in one of its own weak connections
-            //We make the (not necessarily correct) assumption that the moved was played in correct cell to preserve its connection
-            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
-            hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
+    for ((cell, c) <- moves; (cell1,cell2) <- strongParents(G.find(cell).get)) {
+      //for (cell2 <- mod2.myCells(colour) ++ mod2.myCells(O) ++ boundarySet) {
+      if(boundarySet.contains(cell1) || (cell1.i >= 0 && cell1.j < mod2.N && cell1.i >= 0 && cell1.j < mod2.N && (mod2.board(cell1).colour.equals(O) || mod2.board(cell1).colour.equals(colour)))){
+        if(boundarySet.contains(cell2) || (cell2.i >= 0 && cell2.j < mod2.N && cell2.i >= 0 && cell2.j < mod2.N && (mod2.board(cell2).colour.equals(O) || mod2.board(cell2).colour.equals(colour))) && !done((cell1, cell2))){
 
 
-            //Remove weak connection
-            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-            hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+          //for((cell,c) <- moves){
+            val strongCarriers = getStrongCarriers(cell1, cell2, true)
+            val weakCarriers = getWeakCarriers(cell1, cell2, true)
 
-
-          }
-          else if (!c.equals(colour) && strongCarriers.contains(cell)) {
-            //Case: opponent plays in a carrier of one of the player's strong carriers
-            //This connection now becomes weak, so we remove it from C, and add the connection to SC
-            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
-            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-
-            //other way
-            hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
-            hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
-          }
-          else if (c.equals(colour) && strongCarriers.contains(cell)) {
-            //Case: the player plays in a carrier of one its own strong connections
-            //This does not change the strength of the connection, so we just remove the cell from the carrier
-            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
-            //other way
-            hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
-
-            //We may be left with a full connection, however, so we remove the strong connection if the carrier is of size 1 (implying the cells are now neighbours)
-            if (hsearch.getStrongCarriers(cell1, cell2, true).size == 1) {
-              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+            if (!c.equals(colour) && weakCarriers.contains(cell)) {
+              //Case: opponent moves into a weak carrier of the player
+              //In this case we can no longer trust that the weak connection is still a weak connection, so we remove the connection
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
               //other way
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+
+            }
+            else if (c.equals(colour) && weakCarriers.contains(cell)) {
+              //Case: player plays in one of its own weak connections
+              //We make the (not necessarily correct) assumption that the moved was played in correct cell to preserve its connection
+              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
+              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
+
+
+              //Remove weak connection
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+
+
+            }
+            else if (!c.equals(colour) && strongCarriers.contains(cell)) {
+              //Case: opponent plays in a carrier of one of the player's strong carriers
+              //This connection now becomes weak, so we remove it from C, and add the connection to SC
+              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
+              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+
+              //other way
+              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
               hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+            }
+            else if (c.equals(colour) && strongCarriers.contains(cell)) {
+              //Case: the player plays in a carrier of one its own strong connections
+              //This does not change the strength of the connection, so we just remove the cell from the carrier
+              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
+              //other way
+              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
+
+              //We may be left with a full connection, however, so we remove the strong connection if the carrier is of size 1 (implying the cells are now neighbours)
+              if (hsearch.getStrongCarriers(cell1, cell2, true).size == 1) {
+                hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+                //other way
+                hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+              }
             }
           }
           done((cell1, cell2)) = true;
           done((cell2, cell1)) = true;
-        }
+        //}
       }
     }
-
+    /*
     //We must now union all connections concerning the new cell with its neighbours (and vice versa)
-    for (cellTemp <- mod2.neighbours(mod2.board(cell.i)(cell.j)).toSet ++ boundarySet) {
-
+    for ((cell,c) <- moves; cellTemp <- mod2.neighbours(mod2.board(cell.i)(cell.j)).toSet ++ boundarySet) {
+      //println(cell)
       //ensure the neighbour is indeed a neighbour of the same colour (and is the colour of the player)
       if (cellTemp.colour.equals(c) && colour.equals(c) && areNearestNeighbours(cellTemp, cell)) {
+        val options = (strongDual(G.find(cell).get) union weakDual(G.find(cell).get)) intersect (mod2.myCells(O).toSet union mod2.myCells(colour).toSet)
+        //println(options)
+        for (cell_ <- options) {
+          //for (cell_ <- mod2.myCells(colour) ++ mod2.myCells(O) ++ boundarySet) {
+          //println(cell_)
 
-        for (cell_ <- mod2.myCells(colour) ++ mod2.myCells(O) ++ boundarySet) {
-          //for each pair of cells (cellTemp, cell_)
+          if(boundarySet.contains(cell_) || (cell_.i >= 0 && cell_.j < mod2.N && cell_.i >= 0 && cell_.j < mod2.N && (mod2.board(cell_).colour.equals(O) || mod2.board(cell_).colour.equals(colour)))){//for each pair of cells (cellTemp, cell_)
           //find union of strong connections of (cell, cell_) and (cellTemp, cell_)
-          val unionS = hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)).union(hsearch.C((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)))
+            val unionS = hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)).union(hsearch.C((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)))
 
-          //Add this union to connections of the respective pairs
-          //hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)) = unionS
-          //hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(cell).get)) = unionS
-          hsearch.C((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)) = unionS
-          hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(cellTemp).get)) = unionS
+            //Add this union to connections of the respective pairs
+            //hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)) = unionS
+            //hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(cell).get)) = unionS
+            hsearch.C((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)) = unionS
+            hsearch.C((hsearch.G.find(cell_).get, hsearch.G.find(cellTemp).get)) = unionS
 
-          //same for weak connections
-          val unionW = hsearch.SC((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)).union(hsearch.SC((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)))
-          //hsearch.SC((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)) = unionW
-          //hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(cell).get)) = unionW
-          hsearch.SC((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)) = unionW
-          hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(cellTemp).get)) = unionW
+            //same for weak connections
+            val unionW = hsearch.SC((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)).union(hsearch.SC((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)))
+            //hsearch.SC((hsearch.G.find(cell).get, hsearch.G.find(cell_).get)) = unionW
+            //hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(cell).get)) = unionW
+            hsearch.SC((hsearch.G.find(cellTemp).get, hsearch.G.find(cell_).get)) = unionW
+            hsearch.SC((hsearch.G.find(cell_).get, hsearch.G.find(cellTemp).get)) = unionW}
+
+
 
         }
         hsearch.G.union(cellTemp, cell)
 
       }
     }
-
+    */
     //return new H-Search object
+    //println("MAKE MOVE FINISH")
     hsearch
   }
 
-
+  private def containsNonEmpty(setOfSets : Set[Set[Cell]]) : Boolean = {
+    for(set <- setOfSets){
+      if(set.size > 0) return true
+    }
+    return false
+  }
 
   //main search method
   def search(timelimit : Long): Unit = {
@@ -252,6 +282,14 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
                     if (g.colour == colour && (c1.size + c2.size) <= HSearch.M) {
                       val cTemp = c1 ++ c2
                       C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
+                      if(cTemp.size > 0) {
+                        strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                        strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
+                        for(cell_ <- cTemp){
+                          val tuple = (G.find(g1).get, G.find(g2).get)
+                          strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                        }
+                      }
                       if (g1.colour == colour && g2.colour == colour) {
                         strong = strong.union(cTemp)
                       }
@@ -259,7 +297,27 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
                     else {
                       val sc = c1 ++ Set(g) ++ c2
                       SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
-                      C((G.find(g1).get, G.find(g2).get)) = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end)
+                      if (sc.size > 0) {
+                        for(cell_ <- sc){
+                          val tuple = (G.find(g1).get, G.find(g2).get)
+                          weakParents(G.find(cell_).get) = weakParents(G.find(cell_).get) + tuple
+                        }
+                        weakDual(G.find(g1).get) = weakDual(G.find(g1).get) + G.find(g2).get
+                        weakDual(G.find(g2).get) = weakDual(G.find(g2).get) + G.find(g1).get
+                      }
+                      val temp = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end)
+                      C((G.find(g1).get, G.find(g2).get)) = temp
+                      if(containsNonEmpty(temp)){
+                        for(set <- temp){
+                          for(cell_ <- set){
+                            val tuple = (G.find(g1).get, G.find(g2).get)
+                            strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                          }
+                        }
+                        strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                        strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
+                      }
+
                     }
                   }
                 }
@@ -467,6 +525,6 @@ object HSearch extends Const {
   /* M: maximum number of carriers for a pair of cells
      X: maximumn number of virtual connections as an input to the dedection rule
   */
-  var M = 20
+  var M = 14
   var _K : Int = 4
 }

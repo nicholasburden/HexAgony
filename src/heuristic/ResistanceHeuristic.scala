@@ -8,6 +8,7 @@ class ResistanceHeuristic extends Const {
 
   //Evaluate a given board for a particular colour
   def evaluate(model: Model, colour: Colour, hme: HSearch, hthem: HSearch): Double = {
+    return 0
     if (model.solution(colour)) {
       //Player has won
       return Double.PositiveInfinity

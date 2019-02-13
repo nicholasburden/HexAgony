@@ -40,7 +40,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
 
     //Set time allowed to run
     val start = System.currentTimeMillis()
-    val end = start + MCTS_TIME
+    val end = start + RobotMonteCarlo.MCTS_TIME
 
 
     //Initialise game tree with initial board as root (with opponent as state player since they moved last)
@@ -117,7 +117,7 @@ class RobotMonteCarlo(model: Model, timelimit: Long, pierule: Boolean, colour: C
       temp.state.visit
       if (temp.state.player == player) {
         //Add win score to winning player
-        temp.state.addScore(WIN_SCORE)
+        temp.state.addScore(RobotMonteCarlo.WIN_SCORE)
       }
       temp = temp.parent
     }

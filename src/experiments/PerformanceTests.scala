@@ -39,7 +39,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 1")
         writer1.writeToFile(res1)
         writer1.writeToFile(1-res2)
       }
@@ -56,7 +56,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 2")
         writer2.writeToFile(res1)
         writer2.writeToFile(1-res2)
       }
@@ -73,7 +73,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 3")
         writer3.writeToFile(res1)
         writer3.writeToFile(1-res2)
       }
@@ -90,7 +90,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 4")
         writer4.writeToFile(res1)
         writer4.writeToFile(1-res2)
       }
@@ -108,7 +108,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 5")
         writer5.writeToFile(res1)
         writer5.writeToFile(1-res2)
       }
@@ -127,7 +127,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 6")
         writer6.writeToFile(res1)
         writer6.writeToFile(1-res2)
       }
@@ -144,7 +144,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 7")
         writer7.writeToFile(res1)
         writer7.writeToFile(1-res2)
       }
@@ -161,7 +161,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 8")
         writer8.writeToFile(res1)
         writer8.writeToFile(1-res2)
       }
@@ -179,7 +179,7 @@ class PerformanceTests extends Const {
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
-
+        println("PT " + j + " played testing parameter 9")
         writer9.writeToFile(res1)
         writer9.writeToFile(1-res2)
       }

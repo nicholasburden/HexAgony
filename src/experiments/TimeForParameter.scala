@@ -28,12 +28,13 @@ class TimeForParameter extends Const {
 
 
     //RobotAlphaBetaResistance - depth
-    val hsearch = robotFactory1.makeRobot(new Model(size), 30000, true, R)
+    val hsearch = robotFactory1.makeRobot(new Model(size), 999999, true, R)
     //val mcSimple = robotFactorySimple.makeRobot(new Model(size), 30000, true, R)
     for(i <- 1 to 3){
       RobotAlphaBetaResistance.DEPTH = i
       val start = System.currentTimeMillis()
       val move = hsearch.makeMove()
+      println("Time recorded for parameter 1")
       val end = System.currentTimeMillis()
       writer1.writeToFile((end-start).toString() + "\n")
     }
@@ -44,6 +45,7 @@ class TimeForParameter extends Const {
       RobotAlphaBetaResistance.TIME = time
       val start = System.currentTimeMillis()
       val move = hsearch2.makeMove()
+      println("Time recorded for parameter 2")
       val end = System.currentTimeMillis()
       writer2.writeToFile((end-start).toString() + "\n")
     }
@@ -54,6 +56,7 @@ class TimeForParameter extends Const {
       HSearch.M = m
       val start = System.currentTimeMillis()
       val move = hsearch3.makeMove()
+      println("Time recorded for parameter 3")
       val end = System.currentTimeMillis()
       writer3.writeToFile((end-start).toString() + "\n")
     }
@@ -64,6 +67,7 @@ class TimeForParameter extends Const {
       HSearch._K = k
       val start = System.currentTimeMillis()
       val move = hsearch4.makeMove()
+      println("Time recorded for parameter 4")
       val end = System.currentTimeMillis()
       writer4.writeToFile((end-start).toString() + "\n")
     }
@@ -74,6 +78,7 @@ class TimeForParameter extends Const {
       RobotAlphaBetaFlow.DEPTH = i
       val start = System.currentTimeMillis()
       val move = flow.makeMove()
+      println("Time recorded for parameter 5")
       val end = System.currentTimeMillis()
       writer5.writeToFile((end-start).toString() + "\n")
     }
@@ -85,6 +90,7 @@ class TimeForParameter extends Const {
       RobotMonteCarlo.MCTS_TIME = i
       val start = System.currentTimeMillis()
       val move = mc1.makeMove()
+      println("Time recorded for parameter 6")
       val end = System.currentTimeMillis()
       writer6.writeToFile((end-start).toString() + "\n")
     }
@@ -95,6 +101,7 @@ class TimeForParameter extends Const {
       RobotMonteCarlo.WIN_SCORE = i
       val start = System.currentTimeMillis()
       val move = mc2.makeMove()
+      println("Time recorded for parameter 7")
       val end = System.currentTimeMillis()
       writer7.writeToFile((end-start).toString() + "\n")
     }
@@ -106,14 +113,10 @@ class TimeForParameter extends Const {
       montecarlo.State.KNOWLEDGE_THRESHOLD = i
       val start = System.currentTimeMillis()
       val move = mc2.makeMove()
+      println("Time recorded for parameter 8")
       val end = System.currentTimeMillis()
       writer8.writeToFile((end-start).toString() + "\n")
     }
-    montecarlo.State.KNOWLEDGE_THRESHOLD = Integer.MAX_VALUE
-    val _start = System.currentTimeMillis()
-    val move = mc3.makeMove()
-    val _end = System.currentTimeMillis()
-    writer8.writeToFile((_end-_start).toString() + "\n")
 
     montecarlo.State.KNOWLEDGE_THRESHOLD = 15
 
@@ -123,6 +126,7 @@ class TimeForParameter extends Const {
       montecarlo.State.HSEARCH_TIME_LIMIT = i
       val start = System.currentTimeMillis()
       val move = mc4.makeMove()
+      println("Time recorded for parameter 9")
       val end = System.currentTimeMillis()
       writer9.writeToFile((end-start).toString() + "\n")
     }

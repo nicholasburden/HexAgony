@@ -21,8 +21,8 @@ class PairwsieComparison {
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
-        writer1.writeToFile(res2)
-        println("Game " + i + " played on board size " + size + ".")
+        writer1.writeToFile(1-res2)
+        println("HSEARCH V FLOW " + i + " played on board size " + size + ".")
       }
       writer1.close
     }
@@ -38,8 +38,8 @@ class PairwsieComparison {
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
-        writer1.writeToFile(res2)
-        println("Game " + i + " played on board size " + size + ".")
+        writer1.writeToFile(1-res2)
+        println("FLOW V MONTECARLO " + i + " played on board size " + size + ".")
       }
       writer1.close
     }
@@ -55,8 +55,8 @@ class PairwsieComparison {
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
-        writer1.writeToFile(res2)
-        println("Game " + i + " played on board size " + size + ".")
+        writer1.writeToFile(1-res2)
+        println("MONTECARLO V HSEARCH " + i + " played on board size " + size + ".")
       }
       writer1.close
     }

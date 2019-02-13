@@ -42,8 +42,8 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
 
     //Search for strong and weak connections
-    hme.search(timelimit/4)
-    hthem.search(timelimit/4)
+    hme.search(RobotAlphaBetaResistance.TIME)
+    hthem.search(RobotAlphaBetaResistance.TIME)
 
     //Get set of cells that are in a carrier of an opponent semi-connection
     val weakCarrier = hthem.getUnionOfWeakConnections
@@ -65,8 +65,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
     for (cell <- ordering) {
       //Play move
       val mod2 = result(mod, cell, colour)
-      val hme2 = hme.makeMove(cell.i, cell.j, colour)
-      val hthem2 = hthem.makeMove(cell.i, cell.j, colour)
+
 
       if (!stop) {
 
@@ -74,7 +73,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
         //Update move selection order for recursive calls
         val mo = moveOrdering.addMovesFor(cell, mod)
-        score = min(mod2, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hme2, hthem2, mo)
+        score = min(mod2, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hme, hthem, mo, List((new Cell(cell.i, cell.j), colour)))
 
         //check for case where opponent uses pie rule
         if (othercolour.equals(B) && mod2.count == 1 && pierule) {
@@ -90,7 +89,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
           hme.colour = B
 
           //Get value of board after pie rule is played
-          val value = max(modPie, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hthem.makeMove(cell.i, cell.j, B), hme.makeMove(cell.i, cell.j, B), mo)
+          val value = max(modPie, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hthem, hme, mo, List((new Cell(cell.i, cell.j), B)))
 
           //undo pie rule
           hthem.colour = B
@@ -115,7 +114,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
   }
 
-  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Double = {
+  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering, moves : List[(Cell, Colour)]): Double = {
 
     val alpha = _alpha
     var beta = _beta
@@ -134,7 +133,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
     else if (depth == 0) {
       //Leaf node, use heuristic
       val heuristic = new ResistanceHeuristic
-      return heuristic.evaluate(model, colour, hme, hthem)
+      return heuristic.evaluate(model, colour, hme.makeMove(moves), hthem.makeMove(moves))
 
     }
     else {
@@ -146,7 +145,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
         val cell = model.board(cell1.i)(cell1.j)
 
         //Recursive call
-        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, othercolour), hthem.makeMove(cell.i, cell.j, othercolour), mo.addMovesFor(cell, model))
+        val value = max(result(model, cell, othercolour), depth - 1, alpha, beta, hme, hthem, mo.addMovesFor(cell, model), moves ::: List((new Cell(cell.i, cell.j), othercolour)))
 
         bestVal = Math.min(bestVal, value)
         beta = Math.min(beta, bestVal)
@@ -162,7 +161,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
     }
   }
 
-  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering): Double = {
+  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering, moves : List[(Cell, Colour)]): Double = {
 
     var alpha = _alpha
     val beta = _beta
@@ -179,7 +178,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
       //Reached leaf, use heuristic
       val heuristic = new ResistanceHeuristic
 
-      return heuristic.evaluate(model, colour, hme, hthem)
+      return heuristic.evaluate(model, colour, hme.makeMove(moves), hthem.makeMove(moves))
 
     }
     else {
@@ -193,7 +192,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
         val cell = model.board(cell1.i)(cell1.j)
 
         //Recursive call
-        val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme.makeMove(cell.i, cell.j, colour), hthem.makeMove(cell.i, cell.j, colour), mo.addMovesFor(cell, model))
+        val value = min(result(model, cell, colour), depth - 1, alpha, beta, hme, hthem, mo.addMovesFor(cell, model), moves ::: List((new Cell(cell.i, cell.j), colour)))
         bestVal = Math.max(bestVal, value)
         alpha = Math.max(alpha, bestVal)
         if (beta <= alpha) {
