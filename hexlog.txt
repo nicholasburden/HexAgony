@@ -17147,3 +17147,221 @@ Pie rule is not available
 1000.929: (Blue) RobotAlphaBetaFlow plays move 22: (4, 4)
 1000.929: (Blue) End game - winner is RobotAlphaBetaFlow
 
+2019.02.13 17:41:10
+5 x 5 game: RobotAlphaBetaResistance_ (90000ms) vs Blue (Human)
+Pie rule is not available
+3.428: (Red) RobotAlphaBetaResistance_ plays move 1: (1, 2)
+6.572: (Blue) Blue plays move 2: (2, 1)
+8.727: (Red) RobotAlphaBetaResistance_ plays move 3: (4, 4)
+10.866: (Blue) Blue plays move 4: (4, 2)
+12.594: (Red) RobotAlphaBetaResistance_ plays move 5: (1, 1)
+13.969: (Blue) Blue plays move 6: (1, 0)
+15.350: (Red) RobotAlphaBetaResistance_ plays move 7: (0, 0)
+16.587: (Blue) Blue plays move 8: (2, 4)
+17.716: (Red) RobotAlphaBetaResistance_ plays move 9: (0, 3)
+18.744: (Blue) Blue plays move 10: (1, 4)
+19.602: (Red) RobotAlphaBetaResistance_ plays move 11: (3, 3)
+21.478: (Blue) Blue plays move 12: (0, 4)
+21.768: (Red) RobotAlphaBetaResistance_ plays move 13: (2, 3)
+21.768: (Red) End game - winner is RobotAlphaBetaResistance_
+
+2019.02.13 17:41:34
+5 x 5 game: RobotAlphaBetaResistance_ (90000ms) vs Blue (Human)
+Pie rule is not available
+2.610: (Red) RobotAlphaBetaResistance_ plays move 1: (1, 2)
+4.682: (Blue) Blue plays move 2: (0, 0)
+6.736: (Red) RobotAlphaBetaResistance_ plays move 3: (2, 1)
+8.179: (Blue) Blue plays move 4: (1, 3)
+9.768: (Red) RobotAlphaBetaResistance_ plays move 5: (2, 3)
+10.639: (Blue) Blue plays move 6: (2, 4)
+11.924: (Red) RobotAlphaBetaResistance_ plays move 7: (1, 0)
+13.365: (Blue) Blue plays move 8: (3, 4)
+13.889: (Red) RobotAlphaBetaResistance_ plays move 9: (4, 4)
+14.626: (Blue) Blue plays move 10: (4, 3)
+15.610: (Red) RobotAlphaBetaResistance_ plays move 11: (3, 3)
+16.658: (Blue) Blue plays move 12: (3, 2)
+16.982: (Red) RobotAlphaBetaResistance_ plays move 13: (1, 1)
+16.982: (Red) End game - winner is RobotAlphaBetaResistance_
+
+2019.02.13 22:16:54
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+0.497: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+4.528: (Blue) Blue plays move 2: (3, 4)
+4.692: (Red) RobotAlphaBetaResistance_ plays move 3: (1, 3)
+10.101: (Blue) Blue plays move 4: (2, 0)
+10.250: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+11.034: (Blue) Blue plays move 6: (0, 0)
+11.194: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+12.609: (Blue) Blue plays move 8: (3, 1)
+12.727: (Red) RobotAlphaBetaResistance_ plays move 9: (1, 4)
+14.053: (Blue) Blue plays move 10: (4, 2)
+14.316: (Red) RobotAlphaBetaResistance_ plays move 11: (1, 0)
+15.115: (Blue) Blue plays move 12: (1, 1)
+15.304: (Red) RobotAlphaBetaResistance_ plays move 13: (2, 1)
+16.167: (Blue) Blue plays move 14: (2, 3)
+16.363: (Red) RobotAlphaBetaResistance_ plays move 15: (1, 2)
+16.364: (Red) End game - winner is RobotAlphaBetaResistance_
+
+2019.02.13 22:17:56
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+1.755: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+2.686: (Blue) Blue plays move 2: (3, 4)
+3.748: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+4.741: (Blue) Blue plays move 4: (1, 3)
+5.519: (Red) RobotAlphaBetaResistance_ plays move 5: (4, 3)
+7.327: (Blue) Blue plays move 6: (4, 4)
+8.053: (Red) RobotAlphaBetaResistance_ plays move 7: (1, 4)
+9.355: (Blue) Blue plays move 8: (0, 2)
+9.535: (Red) RobotAlphaBetaResistance_ plays move 9: (2, 3)
+10.449: (Blue) Blue plays move 10: (2, 4)
+10.449: (Blue) End game - winner is Blue
+
+2019.02.13 22:18:11
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+1.302: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+2.047: (Blue) Blue plays move 2: (2, 3)
+2.937: (Red) RobotAlphaBetaResistance_ plays move 3: (1, 3)
+3.541: (Blue) Blue plays move 4: (1, 2)
+4.335: (Red) RobotAlphaBetaResistance_ plays move 5: (4, 3)
+6.261: (Blue) Blue plays move 6: (4, 4)
+6.461: (Red) RobotAlphaBetaResistance_ plays move 7: (0, 2)
+9.853: (Blue) Blue plays move 8: (0, 1)
+10.097: (Red) RobotAlphaBetaResistance_ plays move 9: (3, 3)
+10.694: (Blue) Blue plays move 10: (3, 4)
+10.695: (Blue) End game - winner is Blue
+
+2019.02.13 22:18:25
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+1.150: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+3.794: (Blue) Blue plays move 2: (2, 1)
+4.717: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+5.299: (Blue) Blue plays move 4: (1, 1)
+6.040: (Red) RobotAlphaBetaResistance_ plays move 5: (4, 3)
+7.435: (Blue) Blue plays move 6: (4, 2)
+8.016: (Red) RobotAlphaBetaResistance_ plays move 7: (0, 1)
+8.961: (Blue) Blue plays move 8: (0, 0)
+9.160: (Red) RobotAlphaBetaResistance_ plays move 9: (3, 2)
+9.862: (Blue) Blue plays move 10: (3, 1)
+9.863: (Blue) End game - winner is Blue
+
+2019.02.13 22:22:43
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+1.752: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+2.983: (Blue) Blue plays move 2: (3, 4)
+4.001: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+4.588: (Blue) Blue plays move 4: (1, 3)
+5.361: (Red) RobotAlphaBetaResistance_ plays move 5: (4, 3)
+6.370: (Blue) Blue plays move 6: (4, 4)
+7.028: (Red) RobotAlphaBetaResistance_ plays move 7: (1, 4)
+10.420: (Blue) Blue plays move 8: (2, 3)
+10.691: (Red) RobotAlphaBetaResistance_ plays move 9: (0, 2)
+12.522: (Blue) Blue plays move 10: (0, 1)
+12.715: (Red) RobotAlphaBetaResistance_ plays move 11: (1, 2)
+13.778: (Blue) Blue plays move 12: (2, 0)
+14.204: (Red) RobotAlphaBetaResistance_ plays move 13: (0, 0)
+14.965: (Blue) Blue plays move 14: (1, 0)
+15.286: (Red) RobotAlphaBetaResistance_ plays move 15: (1, 1)
+15.286: (Red) End game - winner is RobotAlphaBetaResistance_
+
+2019.02.13 22:52:24
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+3.303: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+4.682: (Blue) Blue plays move 2: (3, 4)
+6.908: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+7.859: (Blue) Blue plays move 4: (1, 3)
+9.657: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+10.930: (Blue) Blue plays move 6: (0, 2)
+12.432: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+13.848: (Blue) Blue plays move 8: (4, 4)
+14.059: (Red) RobotAlphaBetaResistance_ plays move 9: (2, 3)
+15.290: (Blue) Blue plays move 10: (2, 4)
+15.290: (Blue) End game - winner is Blue
+
+2019.02.13 22:52:43
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+2.669: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+3.687: (Blue) Blue plays move 2: (1, 0)
+5.862: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+8.355: (Blue) Blue plays move 4: (3, 1)
+10.192: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+11.479: (Blue) Blue plays move 6: (0, 0)
+12.926: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+14.153: (Blue) Blue plays move 8: (4, 2)
+14.408: (Red) RobotAlphaBetaResistance_ plays move 9: (2, 0)
+15.037: (Blue) Blue plays move 10: (2, 1)
+15.037: (Blue) End game - winner is Blue
+
+2019.02.13 22:54:11
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+3.151: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+4.621: (Blue) Blue plays move 2: (3, 4)
+6.813: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+7.675: (Blue) Blue plays move 4: (1, 3)
+9.470: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+10.130: (Blue) Blue plays move 6: (0, 2)
+11.617: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+12.628: (Blue) Blue plays move 8: (2, 3)
+12.878: (Red) RobotAlphaBetaResistance_ plays move 9: (4, 4)
+13.675: (Blue) Blue plays move 10: (3, 3)
+13.952: (Red) RobotAlphaBetaResistance_ plays move 11: (4, 3)
+15.024: (Blue) Blue plays move 12: (4, 2)
+15.215: (Red) RobotAlphaBetaResistance_ plays move 13: (3, 2)
+15.968: (Blue) Blue plays move 14: (3, 1)
+16.572: (Red) RobotAlphaBetaResistance_ plays move 15: (0, 0)
+17.753: (Blue) Blue plays move 16: (2, 1)
+17.963: (Red) RobotAlphaBetaResistance_ plays move 17: (1, 1)
+17.963: (Red) End game - winner is RobotAlphaBetaResistance_
+
+2019.02.13 22:58:46
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+3.135: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+4.867: (Blue) Blue plays move 2: (3, 4)
+7.077: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+7.964: (Blue) Blue plays move 4: (1, 3)
+9.710: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+11.750: (Blue) Blue plays move 6: (0, 2)
+13.226: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+16.330: (Blue) Blue plays move 8: (4, 4)
+16.573: (Red) RobotAlphaBetaResistance_ plays move 9: (2, 3)
+17.239: (Blue) Blue plays move 10: (2, 4)
+17.239: (Blue) End game - winner is Blue
+
+2019.02.13 23:04:52
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+3.216: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+3.748: (Blue) Blue plays move 2: (3, 4)
+5.978: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+6.721: (Blue) Blue plays move 4: (1, 3)
+8.493: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+8.896: (Blue) Blue plays move 6: (0, 2)
+10.390: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+10.942: (Blue) Blue plays move 8: (4, 4)
+11.170: (Red) RobotAlphaBetaResistance_ plays move 9: (2, 3)
+12.100: (Blue) Blue plays move 10: (2, 4)
+12.101: (Blue) End game - winner is Blue
+
+2019.02.13 23:09:02
+5 x 5 game: RobotAlphaBetaResistance_ (50000ms) vs Blue (Human)
+Pie rule is not available
+3.220: (Red) RobotAlphaBetaResistance_ plays move 1: (2, 2)
+3.726: (Blue) Blue plays move 2: (3, 4)
+5.975: (Red) RobotAlphaBetaResistance_ plays move 3: (0, 3)
+6.750: (Blue) Blue plays move 4: (1, 3)
+8.542: (Red) RobotAlphaBetaResistance_ plays move 5: (0, 1)
+9.949: (Blue) Blue plays move 6: (0, 2)
+11.410: (Red) RobotAlphaBetaResistance_ plays move 7: (4, 1)
+12.454: (Blue) Blue plays move 8: (4, 4)
+12.676: (Red) RobotAlphaBetaResistance_ plays move 9: (2, 3)
+14.626: (Blue) Blue plays move 10: (2, 4)
+14.626: (Blue) End game - winner is Blue
+

@@ -1,14 +1,89 @@
 package heuristic
 
-import hexagony._
 import circuits._
+import hexagony._
 import hsearch._
 
-class ResistanceHeuristic extends Const {
+class ResistanceHeuristic_(var mod : Model, colour : Colour) extends Const {
 
+
+  //Configure orientation of board depending on if pie rule played or not
+  var blueInitial = B
+  var redInitial = R
+
+  if (mod.pie) {
+    //Change orientation
+    blueInitial = R; redInitial = B
+  }
+
+  //Circuits for each direction
+  val blueCircuit_ : HexCircuit = new HexCircuit(mod.N, blueInitial)
+  val redCircuit_ : HexCircuit = new HexCircuit(mod.N, redInitial)
+  blueCircuit_.initial
+  redCircuit_.initial
+
+  //Array to store resistances of each cell
+  val cellResistancesBlue: Array[Double] = Array.ofDim(mod.N * mod.N + 2)
+  val cellResistancesRed: Array[Double] = Array.ofDim(mod.N * mod.N + 2)
+
+  //Boundaries have negligible resistance
+  cellResistancesBlue(0) = ResistanceHeuristic.epsilon
+  cellResistancesBlue(mod.N * mod.N + 1) = ResistanceHeuristic.epsilon
+  cellResistancesRed(0) = ResistanceHeuristic.epsilon
+  cellResistancesRed(mod.N * mod.N + 1) = ResistanceHeuristic.epsilon
+
+  /*
+  Cells of player's colour have negligible resistance
+  Empty cells have resistance of 1 unit
+   */
+  for (cell <- mod.myCells(B)) {
+    val i = cell.i * mod.N + cell.j + 1
+    cellResistancesBlue(i) = ResistanceHeuristic.epsilon
+    cellResistancesRed(i) = Double.PositiveInfinity
+  }
+  for (cell <- mod.myCells(R)) {
+    val i = cell.i * mod.N + cell.j + 1
+    cellResistancesRed(i) = ResistanceHeuristic.epsilon
+    cellResistancesBlue(i) = Double.PositiveInfinity
+  }
+
+  for (cell <- mod.myCells(O)) {
+    val i = cell.i * mod.N + cell.j + 1
+    cellResistancesBlue(i) = 1d
+    cellResistancesRed(i) = 1d
+  }
+
+  //Set resistances for wires between neighbouring cells by adding resistances of the end cells
+  for (node1 <- blueCircuit_.getNodes) {
+    for (node2 <- blueCircuit_.getNodes) {
+      val cell1 = getCell(node1.id, B, mod); val cell2 = getCell(node2.id, B, mod)
+      if (areNearestNeighbours(cell1, cell2, mod)) {
+        blueCircuit_.setResistance(node1, node2, cellResistancesBlue(node1.id) + cellResistancesBlue(node2.id))
+      }
+    }
+  }
+
+
+  for (node1 <- redCircuit_.getNodes) {
+    for (node2 <- redCircuit_.getNodes) {
+      val cell1 = getCell(node1.id, R, mod); val cell2 = getCell(node2.id, R, mod)
+      if (areNearestNeighbours(cell1, cell2, mod)) {
+        redCircuit_.setResistance(node1, node2, cellResistancesRed(node1.id) + cellResistancesRed(node2.id))
+      }
+    }
+  }
   //Evaluate a given board for a particular colour
-  def evaluate(model: Model, colour: Colour, hme: HSearch, hthem: HSearch): Double = {
+  def evaluate(model : Model, colour: Colour, hme: HSearch_, hthem: HSearch_): Double = {
+    //mod = mod.copy()
+    val blueCircuit = blueCircuit_.clone()
+    val redCircuit = redCircuit_.clone()
 
+    var hSearchBlue = hme
+    var hSearchRed = hthem
+    if (colour.equals(R)) {
+      hSearchRed = hme
+      hSearchBlue = hthem
+    }
     if (model.solution(colour)) {
       //Player has won
       return Double.PositiveInfinity
@@ -18,82 +93,12 @@ class ResistanceHeuristic extends Const {
       return Double.NegativeInfinity
     }
 
-    //Configure orientation of board depending on if pie rule played or not
-    var blueInitial = B
-    var redInitial = R
-
-    if (model.pie) {
-      //Change orientation
-      blueInitial = R; redInitial = B
-    }
-
-      //Circuits for each direction
-    val blueCircuit: HexCircuit = new HexCircuit(model.N, blueInitial)
-    val redCircuit: HexCircuit = new HexCircuit(model.N, redInitial)
-    var hSearchBlue = hme
-    var hSearchRed = hthem
-    if (colour.equals(R)) {
-      hSearchRed = hme
-      hSearchBlue = hthem
-    }
-
-    //Array to store resistances of each cell
-    val cellResistancesBlue: Array[Double] = Array.ofDim(model.N * model.N + 2)
-    val cellResistancesRed: Array[Double] = Array.ofDim(model.N * model.N + 2)
-
-    //Boundaries have negligible resistance
-    cellResistancesBlue(0) = ResistanceHeuristic.epsilon
-    cellResistancesBlue(model.N * model.N + 1) = ResistanceHeuristic.epsilon
-    cellResistancesRed(0) = ResistanceHeuristic.epsilon
-    cellResistancesRed(model.N * model.N + 1) = ResistanceHeuristic.epsilon
-
-    /*
-    Cells of player's colour have neglibible resistance
-    Empty cells have resistance of 1 unit
-     */
-    for (cell <- model.myCells(B)) {
-      val i = cell.i * model.N + cell.j + 1
-      cellResistancesBlue(i) = ResistanceHeuristic.epsilon
-      cellResistancesRed(i) = Double.PositiveInfinity
-    }
-    for (cell <- model.myCells(R)) {
-      val i = cell.i * model.N + cell.j + 1
-      cellResistancesRed(i) = ResistanceHeuristic.epsilon
-      cellResistancesBlue(i) = Double.PositiveInfinity
-    }
-
-    for (cell <- model.myCells(O)) {
-      val i = cell.i * model.N + cell.j + 1
-      cellResistancesBlue(i) = 1d
-      cellResistancesRed(i) = 1d
-    }
-
-    //Set resistances for wires between neighbouring cells by adding resistances of the end cells
-    for (node1 <- blueCircuit.getNodes) {
-      for (node2 <- blueCircuit.getNodes) {
-        val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
-        if (hSearchBlue.areNearestNeighbours(cell1, cell2)) {
-          blueCircuit.setResistance(node1, node2, cellResistancesBlue(node1.id) + cellResistancesBlue(node2.id))
-        }
-      }
-    }
-
-
-    for (node1 <- redCircuit.getNodes) {
-      for (node2 <- redCircuit.getNodes) {
-        val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
-        if (hSearchRed.areNearestNeighbours(cell1, cell2)) {
-          redCircuit.setResistance(node1, node2, cellResistancesRed(node1.id) + cellResistancesRed(node2.id))
-        }
-      }
-    }
-
 
     //Set resistance of wires between non neighbouring cells based on results of H-Search
     for (node1 <- blueCircuit.getNodes) {
       for (node2 <- blueCircuit.getNodes) {
 
-        val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
+        val cell1 = getCell(node1.id, B, model); val cell2 = getCell(node2.id, B, model)
         if(!(cell1.colour.equals(R) || cell2.colour.equals(R))) {
 
           val repId1 = getNodeId(hSearchBlue.G.find(cell1).get, hSearchBlue.model.N)
@@ -111,7 +116,7 @@ class ResistanceHeuristic extends Const {
 
     for (node1 <- redCircuit.getNodes) {
       for (node2 <- redCircuit.getNodes) {
-        val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
+        val cell1 = getCell(node1.id, R, model); val cell2 = getCell(node2.id, R, model)
         if(!(cell1.colour.equals(B) || cell2.colour.equals(B))) {
           val repId1 = getNodeId(hSearchRed.G.find(cell1).get, hSearchRed.model.N)
           val repId2 = getNodeId(hSearchRed.G.find(cell2).get, hSearchRed.model.N)
@@ -135,7 +140,7 @@ class ResistanceHeuristic extends Const {
       //Blues go next
       for (node1 <- blueCircuit.getNodes) {
         for (node2 <- blueCircuit.getNodes) {
-          val cell1 = getCell(node1.id, B, hSearchBlue); val cell2 = getCell(node2.id, B, hSearchBlue)
+          val cell1 = getCell(node1.id, B, model); val cell2 = getCell(node2.id, B, model)
           if(!(cell1.colour.equals(R) || cell2.colour.equals(R))) {
             val repId1 = getNodeId(hSearchBlue.G.find(cell1).get, hSearchBlue.model.N)
             val repId2 = getNodeId(hSearchBlue.G.find(cell2).get, hSearchBlue.model.N)
@@ -153,7 +158,7 @@ class ResistanceHeuristic extends Const {
       //Reds go next
       for (node1 <- redCircuit.getNodes) {
         for (node2 <- redCircuit.getNodes) {
-          val cell1 = getCell(node1.id, R, hSearchRed); val cell2 = getCell(node2.id, R, hSearchRed)
+          val cell1 = getCell(node1.id, R, model); val cell2 = getCell(node2.id, R, model)
           if(!(cell1.colour.equals(B) || cell2.colour.equals(B))) {
             val repId1 = getNodeId(hSearchRed.G.find(cell1).get, hSearchRed.model.N)
             val repId2 = getNodeId(hSearchRed.G.find(cell2).get, hSearchRed.model.N)
@@ -187,33 +192,34 @@ class ResistanceHeuristic extends Const {
     else {
       result = Math.log(blueResistance / redResistance)
     }
+
     return result
   }
 
 
-  def getCell(nodeId: Int, c: Colour, hsearch: HSearch): Cell = {
+  def getCell(nodeId: Int, c: Colour, model : Model): Cell = {
     //nodeID -> Cell
     var cell = new Cell(-1, -1)
     if (c.equals(R)) {
       if (nodeId == 0) {
         cell = HSearch.boundaryRed1
       }
-      else if (nodeId == hsearch.model.N * hsearch.model.N + 1) {
+      else if (nodeId == model.N * model.N + 1) {
         cell = HSearch.boundaryRed2
       }
       else {
-        cell = hsearch.model.board((nodeId - 1) / hsearch.model.N)((nodeId - 1) % hsearch.model.N)
+        cell = model.board((nodeId - 1) / model.N)((nodeId - 1) % model.N)
       }
     }
     else {
       if (nodeId == 0) {
         cell = HSearch.boundaryBlue1
       }
-      else if (nodeId == hsearch.model.N * hsearch.model.N + 1) {
+      else if (nodeId == model.N * model.N + 1) {
         cell = HSearch.boundaryBlue2
       }
       else {
-        cell = hsearch.model.board((nodeId - 1) / hsearch.model.N)((nodeId - 1) % hsearch.model.N)
+        cell = model.board((nodeId - 1) / model.N)((nodeId - 1) % model.N)
       }
     }
 
@@ -233,8 +239,18 @@ class ResistanceHeuristic extends Const {
 
   }
 
+
+  def areNearestNeighbours(g1: Cell, g2: Cell, model : Model): Boolean = {
+    val x1 = g1.i
+    val x2 = g2.i
+    val y1 = g1.j
+    val y2 = g2.j
+
+    var h = (x1 == x2 && y1 == y2 + 1) || (x1 == x2 && y1 == y2 - 1) || (y1 == y2 && x1 == x2 + 1) || (y1 == y2 && x1 == x2 - 1) || (x1 == x2 + 1 && y1 == y2 + 1) || (x1 == x2 - 1 && y1 == y2 - 1)
+    h = h || (x1 == 0 && x2 == -1) || (x1 == model.N - 1 && x2 == -3) || (y1 == 0 && y2 == -1) || (y1 == model.N - 1 && y2 == -3)
+    h = h || (x2 == 0 && x1 == -1) || (x2 == model.N - 1 && x1 == -3) || (y2 == 0 && y1 == -1) || (y2 == model.N - 1 && y1 == -3)
+    return h
+  }
+
 }
 
-object ResistanceHeuristic {
-  val epsilon = 0.00001d
-}

@@ -1,9 +1,10 @@
 package hsearch
 
+import experiments.RobotAlphaBetaResistance
 import hexagony._
 
-class HSearch(var model: Model, var colour: Colour) extends Const {
-
+class HSearch_(var model: Model, var colour: Colour, startingC : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]], startingSC : collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]]) extends Const {
+  def this(mod: Model, col: Colour) = this(mod, col, collection.mutable.HashMap[(Cell, Cell), Set[Set[Cell]]](), collection.mutable.HashMap[(Cell, Cell), Set[Set[Cell]]]())
   //a set to store all cells that belong to a strong connection's carrier
   var strong: Set[Cell] = Set()
 
@@ -27,9 +28,9 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
   var G: DisjointSets[Cell] = new DisjointSets[Cell]()
 
   //C stores strong carriers (maps pairs of cells to a set of carriers)
-  var C: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
+  var C: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = startingC
   //SC stores weak carriers (maps pairs of cells to a set of carriers)
-  var SC: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
+  var SC: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = startingSC
   //oldC stores last rounds C
   var oldC: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
 
@@ -107,7 +108,30 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
     }
 
   }
+  def cloneWithMove(moves : List[(Cell, Colour)] ) : HSearch_ = {
+    var mod2 = model.copy()
+    for((cell, c) <- moves) mod2 = result(mod2, cell, c)
+    //Initialise new H-Search object
+    val hsearch = new HSearch_(mod2, colour, C.clone(), SC.clone())
+    //Clone disjoint sets (to maintain structure of neighbouring cells)
+    val newG = G.clone()
+    hsearch.G = newG.asInstanceOf[DisjointSets[Cell]]
 
+    //Update colour
+    for((cell,c) <- moves) {
+      if (colour.equals(c)){
+        hsearch.G.add(mod2.board(cell.i)(cell.j))
+        for(neighbour <- mod2.neighbours(mod2.board(cell)) ++ boundarySet){
+          if(neighbour.colour.equals(colour) && areNearestNeighbours(cell, neighbour)) hsearch.G.union(neighbour, cell)
+        }
+      }
+      else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+
+    }
+    hsearch.search(RobotAlphaBetaResistance.TIME)
+    hsearch
+
+  }
 
   def makeMove(moves : List[(Cell, Colour)]): HSearch = {
     //println("MAKE MOVE START")
@@ -333,7 +357,7 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
       }
       oldC = tempC
     }
-    println("HSEARCH FINISHED")
+    //println("HSEARCH FINISHED")
   }
 
 
@@ -500,36 +524,3 @@ class HSearch(var model: Model, var colour: Colour) extends Const {
 
 }
 
-object HSearch extends Const {
-  var p = false
-  var boundaryRed1: Cell = new Cell(0, -1)
-  var boundaryRed2: Cell = new Cell(0, -3)
-  var boundaryBlue1: Cell = new Cell(-1, 0)
-  var boundaryBlue2: Cell = new Cell(-3, 0)
-  boundaryRed1.colour = R
-  boundaryRed2.colour = R
-  boundaryBlue1.colour = B
-  boundaryBlue2.colour = B
-
-  def pie = {
-    p = !p
-    var temp = boundaryRed1
-    boundaryRed1 = boundaryBlue1
-    boundaryBlue1 = temp
-    temp = boundaryRed2
-    boundaryRed2 = boundaryBlue2
-    boundaryBlue2 = temp
-    boundaryRed1.colour = R
-    boundaryRed2.colour = R
-    boundaryBlue1.colour = B
-    boundaryBlue2.colour = B
-  }
-
-
-  //Hyper-Parameters:
-  /* M: maximum number of carriers for a pair of cells
-     X: maximumn number of virtual connections as an input to the dedection rule
-  */
-  var M = 14
-  var _K : Int = 4
-}

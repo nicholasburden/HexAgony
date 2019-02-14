@@ -2,7 +2,7 @@ package circuits
 
 abstract class Circuit {
   //Represents an electircal circuit, with nodes and wires connecting nodes
-  private val resistance : collection.mutable.Map[(Node, Node), Double] = collection.mutable.Map()
+  var resistance : collection.mutable.Map[(Node, Node), Double] = collection.mutable.Map()
   def setResistance(node1 : Node, node2 : Node, res : Double) = {
     resistance((node1, node2)) = res
     resistance((node2, node1)) = res
@@ -38,5 +38,6 @@ abstract class Circuit {
     nodes(id1).addAdjacency(nodes(id2))
     nodes(id2).addAdjacency(nodes(id1))
   }
+
 
 }
