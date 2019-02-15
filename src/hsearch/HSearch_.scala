@@ -19,7 +19,10 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     case B => Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
     case _ => Set()
   }
-
+  var minC : collection.mutable.Map[(Cell, Cell), Int] = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(Int.MaxValue)
+  var minSC : collection.mutable.Map[(Cell, Cell), Int] = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(Int.MaxValue)
+  var numC : collection.mutable.Map[(Cell, Cell), Int] = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(0)
+  var numSC : collection.mutable.Map[(Cell, Cell), Int] = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(0)
 
   //initialise set to store all cells (apart from opponents colour)
   var Gtemp: Set[Cell] = Set()
@@ -95,6 +98,10 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
         else if(areNearestNeighbours(g1, g2)){
           C((rep1, rep2)) = Set(Set())
           C((rep2, rep1)) = Set(Set())
+          minC((rep1, rep2)) = 0
+          minC((rep2, rep1)) = 0
+          numC((rep1, rep2)) = 1
+          numC((rep2, rep1)) = 1
           defined((rep1, rep2)) = true
           defined((rep2, rep1)) = true
         }
@@ -112,13 +119,20 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     var mod2 = model.copy()
     for((cell, c) <- moves) mod2 = result(mod2, cell, c)
     //Initialise new H-Search object
-    val hsearch = new HSearch_(mod2, colour, C.clone(), SC.clone())
+    val hsearch = new HSearch_(mod2, colour, C.clone(), SC.clone())//, C.clone(), SC.clone())
+
+    hsearch.minC = collection.mutable.Map[(Cell, Cell), Int]() ++= minC
+    hsearch.minSC = collection.mutable.Map[(Cell, Cell), Int]() ++= minSC
+    hsearch.numC = collection.mutable.Map[(Cell, Cell), Int]() ++= numC
+    hsearch.numSC = collection.mutable.Map[(Cell, Cell), Int]() ++= numSC
+
     //Clone disjoint sets (to maintain structure of neighbouring cells)
     val newG = G.clone()
     hsearch.G = newG.asInstanceOf[DisjointSets[Cell]]
 
     //Update colour
-    for((cell,c) <- moves) {
+    for((cell_,c) <- moves) {
+      val cell = hsearch.model.board(cell_)
       if (colour.equals(c)){
         hsearch.G.add(mod2.board(cell.i)(cell.j))
         for(neighbour <- mod2.neighbours(mod2.board(cell)) ++ boundarySet){
@@ -126,7 +140,16 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
         }
       }
       else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+      for((c1, c2) <- strongParents(hsearch.model.board(cell))){
 
+        hsearch.C((c1, c2)) = Set()
+        hsearch.C((c2, c1)) = Set()
+      }
+      for((c1, c2) <- weakParents(hsearch.model.board(cell))){
+        hsearch.SC((c1, c2)) = Set()
+        hsearch.SC((c2, c1)) = Set()
+
+      }
     }
     hsearch.search(RobotAlphaBetaResistance.TIME)
     hsearch
@@ -286,13 +309,15 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
 
   //main search method
   def search(timelimit : Long): Unit = {
+
+
     var currentNewVC = false
     var previousNewVC = true
     val start = System.currentTimeMillis()
     val end : Long = start + timelimit
     while ((currentNewVC || previousNewVC) && System.currentTimeMillis() < end) {
 
-      val tempC = C
+      val tempC = C.clone()
       previousNewVC = currentNewVC
       currentNewVC = false
       for (g <- Gtemp) {
@@ -303,30 +328,87 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                 for (c1 <- C((G.find(g1).get, G.find(g).get)); c2 <- C((G.find(g2).get, G.find(g).get))) {
                   if (System.currentTimeMillis() < end && (!oldC((G.find(g1).get, G.find(g).get)).contains(c1) || !oldC((G.find(g2).get, G.find(g).get)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
                     currentNewVC = true
-                    if (g.colour == colour && (c1.size + c2.size) <= HSearch.M) {
+                    if (g.colour == colour) {
                       val cTemp = c1 ++ c2
                       /**/
-                      if(C((G.find(g1).get, G.find(g2).get)).isEmpty || C((G.find(g1).get, G.find(g2).get)).head.size > cTemp.size) C((G.find(g1).get, G.find(g2).get)) = Set(cTemp)
-                      //C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
-                      if(cTemp.size > 0) {
+                      if(minC((G.find(g1).get, G.find(g2).get)) > cTemp.size){
+                        C((G.find(g1).get, G.find(g2).get)) = Set(cTemp)
+                        C((G.find(g2).get, G.find(g1).get)) = Set(cTemp)
+                        minC((G.find(g1).get, G.find(g2).get)) = cTemp.size
+                        minC((G.find(g2).get, G.find(g1).get)) = cTemp.size
+                        numC((G.find(g1).get, G.find(g2).get)) = 1
+                        numC((G.find(g2).get, G.find(g1).get)) = 1
+
                         strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
                         strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
                         for(cell_ <- cTemp){
                           val tuple = (G.find(g1).get, G.find(g2).get)
                           strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
                         }
+                        if (g1.colour == colour && g2.colour == colour) {
+                          strong = strong.union(cTemp)
+                        }
+
                       }
-                      if (g1.colour == colour && g2.colour == colour) {
-                        strong = strong.union(cTemp)
+                      else if(minC((G.find(g1).get, G.find(g2).get)) == cTemp.size && numC((G.find(g1).get, G.find(g2).get)) < HSearch.M){
+                        C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
+                        C((G.find(g2).get, G.find(g1).get)) = C((G.find(g2).get, G.find(g1).get)) + cTemp
+                        numC((G.find(g1).get, G.find(g2).get)) += 1
+                        numC((G.find(g2).get, G.find(g1).get)) += 1
+                        strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                        strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
+                        for(cell_ <- cTemp){
+                          val tuple = (G.find(g1).get, G.find(g2).get)
+                          strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                        }
+                        if (g1.colour == colour && g2.colour == colour) {
+                          strong = strong.union(cTemp)
+                        }
+
                       }
+                     // else if(minC((G.find(g1).get, G.find(g2).get)) < cTemp.size){
+                      //  C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
+                       // C((G.find(g2).get, G.find(g1).get)) = C((G.find(g2).get, G.find(g1).get)) + cTemp
+                    //  }
+
+
+                      //C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
+                      if(cTemp.size > 0) {
+
+                      }
+
                     }
                     else {
                       val sc = c1 ++ Set(g) ++ c2
 
                       /**/
-                      if(SC((G.find(g1).get, G.find(g2).get)).isEmpty || SC((G.find(g1).get, G.find(g2).get)).head.size > sc.size) SC((G.find(g1).get, G.find(g2).get)) = Set(sc)
+                      var update = false
+                      if(minSC((G.find(g1).get, G.find(g2).get)) > sc.size){
+                        SC((G.find(g1).get, G.find(g2).get)) = Set(sc)
+                        SC((G.find(g2).get, G.find(g1).get)) = Set(sc)
+                        minSC((G.find(g1).get, G.find(g2).get)) = sc.size
+                        minSC((G.find(g2).get, G.find(g1).get)) = sc.size
+                        numSC((G.find(g1).get, G.find(g2).get)) += 1
+                        numSC((G.find(g2).get, G.find(g1).get)) += 1
+                        update = true
+
+                      }
+                      else if(minSC((G.find(g1).get, G.find(g2).get)) == sc.size && numSC((G.find(g1).get, G.find(g2).get)) < HSearch.M){
+                        SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                        SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                        numSC((G.find(g1).get, G.find(g2).get)) += 1
+                        numSC((G.find(g2).get, G.find(g1).get)) += 1
+                        update = true
+                      }
+                      else if(minSC((G.find(g1).get, G.find(g2).get)) < sc.size){
+                        SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                        SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
+                        update = true
+                      }
+
                       //SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
-                      if (sc.size > 0) {
+                      if (sc.size > 0 && update) {
+
                         for(cell_ <- sc){
                           val tuple = (G.find(g1).get, G.find(g2).get)
                           weakParents(G.find(cell_).get) = weakParents(G.find(cell_).get) + tuple
@@ -334,18 +416,23 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                         weakDual(G.find(g1).get) = weakDual(G.find(g1).get) + G.find(g2).get
                         weakDual(G.find(g2).get) = weakDual(G.find(g2).get) + G.find(g1).get
                       }
-                      val temp = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end)
-                      C((G.find(g1).get, G.find(g2).get)) = temp
-                      if(containsNonEmpty(temp)){
-                        for(set <- temp){
-                          for(cell_ <- set){
-                            val tuple = (G.find(g1).get, G.find(g2).get)
-                            strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                      if(update){
+                        val temp = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end, g1, g2)
+                        C((G.find(g1).get, G.find(g2).get)) = temp
+                        C((G.find(g2).get, G.find(g1).get)) = temp
+                        if(containsNonEmpty(temp)){
+                          for(set <- temp){
+                            for(cell_ <- set){
+                              val tuple = (G.find(g1).get, G.find(g2).get)
+                              strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                            }
                           }
+                          strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                          strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
                         }
-                        strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
-                        strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
                       }
+
+
 
                     }
                   }
@@ -355,7 +442,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
           }
         }
       }
-      oldC = tempC
+      oldC = tempC//.clone()
     }
     //println("HSEARCH FINISHED")
   }
@@ -470,19 +557,35 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
 
   //recusrive method used in main search method
   //applies deduction rules between connections
-  def apply(C_set: Set[Set[Cell]], SC_set: Set[Set[Cell]], union: Set[Cell], intersection: Set[Cell], end : Long): Set[Set[Cell]] = {
+  def apply(C_set: Set[Set[Cell]], SC_set: Set[Set[Cell]], union: Set[Cell], intersection: Set[Cell], end : Long, g1 : Cell, g2: Cell): Set[Set[Cell]] = {
     var C_clone = C_set
 
     for (scl <- SC_set) {
       if(System.currentTimeMillis() < end) {
         val ul = scl ++ union
         val il = scl & intersection
-        if (il.isEmpty && C_clone.size <= HSearch.M) {
-          C_clone += ul
+        if (il.isEmpty) {
+          if(minC((G.find(g1).get, G.find(g2).get)) > ul.size){
+            C_clone = Set(ul)
+
+            minC((G.find(g1).get, G.find(g2).get)) = ul.size
+            minC((G.find(g2).get, G.find(g1).get)) = ul.size
+            numC((G.find(g1).get, G.find(g2).get)) = 1
+            numC((G.find(g2).get, G.find(g1).get)) = 1
+          }
+          else if(minC((G.find(g1).get, G.find(g2).get)) == ul.size && C((G.find(g1).get, G.find(g2).get)).size < HSearch.M){
+            C_clone += ul
+            numC((G.find(g1).get, G.find(g2).get)) += 1
+            numC((G.find(g2).get, G.find(g1).get)) += 1
+
+          }
+          //else if(minC((G.find(g1).get, G.find(g2).get)) < ul.size){
+            //C_clone += ul
+          //}
 
         }
         else {
-          if (System.currentTimeMillis() < end) C_clone = apply(C_clone, SC_set - scl, ul, il, end)
+          if (System.currentTimeMillis() < end) C_clone = apply(C_clone, SC_set - scl, ul, il, end, g1, g2)
         }
       }
     }

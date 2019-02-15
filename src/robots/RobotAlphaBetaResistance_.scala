@@ -12,12 +12,14 @@ import pierule._
 
 class RobotAlphaBetaResistance_(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-  val heuristic = new ResistanceHeuristic_(model, colour)
+  var heuristic : ResistanceHeuristic_ = null
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
   private def myMove(): Cell = {
     try{
+      heuristic = new ResistanceHeuristic_(model, colour)
+      //heuristic = new ResistanceHeuristic_(model, colour)
       val mod = model.copy()
       val moveOrdering = new MoveOrdering
 
@@ -137,7 +139,7 @@ class RobotAlphaBetaResistance_(model: Model, timelimit: Long, pierule: Boolean,
 
     else if (depth == 0) {
       //Leaf node, use heuristic
-      //val heuristic = new ResistanceHeuristic_
+      //val heuristic = new ResistanceHeuristic
       //println("i")
       return heuristic.evaluate(model, colour, hme.cloneWithMove(moves), hthem.cloneWithMove(moves))
 
@@ -182,7 +184,7 @@ class RobotAlphaBetaResistance_(model: Model, timelimit: Long, pierule: Boolean,
     }
     else if (depth == 0) {
       //Reached leaf, use heuristic
-      //val heuristic = new ResistanceHeuristic_
+      //val heuristic = new ResistanceHeuristic
       //println("i")
       return heuristic.evaluate(model, colour, hme.cloneWithMove(moves), hthem.cloneWithMove(moves))
 

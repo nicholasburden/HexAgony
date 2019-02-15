@@ -36,6 +36,8 @@ class ResistanceHeuristic_(var mod : Model, colour : Colour) extends Const {
   Cells of player's colour have negligible resistance
   Empty cells have resistance of 1 unit
    */
+  println("BLUE: " + mod.myCells(B))
+  println("RED: " + mod.myCells(R))
   for (cell <- mod.myCells(B)) {
     val i = cell.i * mod.N + cell.j + 1
     cellResistancesBlue(i) = ResistanceHeuristic.epsilon
@@ -74,10 +76,17 @@ class ResistanceHeuristic_(var mod : Model, colour : Colour) extends Const {
   }
   //Evaluate a given board for a particular colour
   def evaluate(model : Model, colour: Colour, hme: HSearch_, hthem: HSearch_): Double = {
+
+
     //mod = mod.copy()
     val blueCircuit = blueCircuit_.clone()
     val redCircuit = redCircuit_.clone()
+    /*println("NEW")
+    for(n1 <- redCircuit.nodes;n2 <- redCircuit.nodes){
+      if(redCircuit.resistance isDefinedAt((n1, n2))) println(n1.id + ", " + n2.id + ": " + redCircuit.resistance((n1,n2)))
 
+    }
+    */
     var hSearchBlue = hme
     var hSearchRed = hthem
     if (colour.equals(R)) {

@@ -30,6 +30,12 @@ class ResistanceHeuristic extends Const {
       //Circuits for each direction
     val blueCircuit: HexCircuit = new HexCircuit(model.N, blueInitial)
     val redCircuit: HexCircuit = new HexCircuit(model.N, redInitial)
+
+    blueCircuit.initial
+    redCircuit.initial
+
+
+
     var hSearchBlue = hme
     var hSearchRed = hthem
     if (colour.equals(R)) {
@@ -48,7 +54,7 @@ class ResistanceHeuristic extends Const {
     cellResistancesRed(model.N * model.N + 1) = ResistanceHeuristic.epsilon
 
     /*
-    Cells of player's colour have neglibible resistance
+    Cells of player's colour have negligible resistance
     Empty cells have resistance of 1 unit
      */
     for (cell <- model.myCells(B)) {
