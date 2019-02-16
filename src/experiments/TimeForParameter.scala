@@ -42,14 +42,14 @@ class TimeForParameter extends Const {
     RobotAlphaBetaResistance.DEPTH = 2
     val hsearch2 = robotFactory1.makeRobot(new Model(size), 999999, true, R).asInstanceOf[RobotAlphaBetaResistance]
     for(time <- 0 to 30000 by 5000){
-      RobotAlphaBetaResistance.TIME = time
+      //RobotAlphaBetaResistance.TIME = time
       val start = System.currentTimeMillis()
       val move = hsearch2.makeMove()
       println("Time recorded for parameter 2")
       val end = System.currentTimeMillis()
       writer2.writeToFile((end-start).toString() + "\n")
     }
-    RobotAlphaBetaResistance.TIME = 5000
+    //RobotAlphaBetaResistance.TIME = 5000
     //-M
     val hsearch3 = robotFactory1.makeRobot(new Model(size), 999999, true, R).asInstanceOf[RobotAlphaBetaResistance]
     for(m <- 0 to 30 by 5){

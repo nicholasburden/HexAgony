@@ -52,7 +52,7 @@ class PerformanceTests extends Const {
       for(j <- 1 to 5) {
         val game1 = new Game(robotFactory1, robotFactorySimple, 999999, false)
         val game2 = new Game(robotFactorySimple, robotFactory1, 999999, false)
-        RobotAlphaBetaResistance.TIME = i
+        //RobotAlphaBetaResistance.TIME = i
         val mod = getRandomBoard(2, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
@@ -61,7 +61,7 @@ class PerformanceTests extends Const {
         writer2.writeToFile(1-res2)
       }
     }
-    RobotAlphaBetaResistance.TIME = 5000
+    //RobotAlphaBetaResistance.TIME = 5000
 
 
     //M

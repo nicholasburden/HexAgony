@@ -76,7 +76,7 @@ class ResistanceHeuristic_(var mod : Model, colour : Colour) extends Const {
   }
   //Evaluate a given board for a particular colour
   def evaluate(model : Model, colour: Colour, hme: HSearch_, hthem: HSearch_): Double = {
-
+    
 
     //mod = mod.copy()
     val blueCircuit = blueCircuit_.clone()
@@ -101,8 +101,34 @@ class ResistanceHeuristic_(var mod : Model, colour : Colour) extends Const {
       //Other player has won
       return Double.NegativeInfinity
     }
+    //Set resistance of wires between non neighbouring cells based on results of H-Search
+    for (node1 <- blueCircuit.getNodes) {
+      //val cell1 =
+      //for (node2 <- blueCircuit.getNodes) {
+      val cell1 = getCell(node1.id, B, model)
+      if(!(cell1.colour.equals(R))) {
+        for(cell2_ <- hSearchBlue.strongDual(hSearchBlue.G.find(cell1).get)){
+          var cell2 = cell2_
+          if(cell2.i >= 0 && cell2.j >= 0) cell2 = hSearchBlue.model.board(cell2_)
+
+        //val cell1 = getCell(node1.id, B, model); val cell2 = getCell(node2.id, B, model)
+          if(!cell2.colour.equals(R)){
+            val repId1 = getNodeId(hSearchBlue.G.find(cell1).get, hSearchBlue.model.N)
+            val repId2 = getNodeId(hSearchBlue.G.find(cell2).get, hSearchBlue.model.N)
+
+            val strongCarriers = hSearchBlue.getStrongCarriers(cell1, cell2, false)
+            if (strongCarriers.nonEmpty) {
+              blueCircuit.addLink(repId1, repId2)
+              //Add wire with negligible resistance between two strongly connected cells
+              blueCircuit.setResistance(blueCircuit.nodes(repId1), blueCircuit.nodes(repId2), ResistanceHeuristic.epsilon)
+            }
+          }
 
 
+        }
+      }
+    }
+    /*
     //Set resistance of wires between non neighbouring cells based on results of H-Search
     for (node1 <- blueCircuit.getNodes) {
       for (node2 <- blueCircuit.getNodes) {
@@ -138,7 +164,32 @@ class ResistanceHeuristic_(var mod : Model, colour : Colour) extends Const {
         }
       }
     }
+    */
 
+    for (node1 <- redCircuit.getNodes) {
+      //val cell1 =
+      //for (node2 <- blueCircuit.getNodes) {
+      val cell1 = getCell(node1.id, R, model)
+      if(!cell1.colour.equals(B)){
+        for(cell2_ <- hSearchRed.strongDual(hSearchRed.G.find(cell1).get)){
+          var cell2 = cell2_
+          if(cell2.i >= 0 && cell2.j >= 0) cell2 = hSearchBlue.model.board(cell2_)
+          //val cell1 = getCell(node1.id, B, model); val cell2 = getCell(node2.id, B, model)
+          if(!cell2.colour.equals(B)) {
+
+            val repId1 = getNodeId(hSearchRed.G.find(cell1).get, hSearchRed.model.N)
+            val repId2 = getNodeId(hSearchRed.G.find(cell2).get, hSearchRed.model.N)
+
+            val strongCarriers = hSearchRed.getStrongCarriers(cell1, cell2, false)
+            if (strongCarriers.nonEmpty) {
+              redCircuit.addLink(repId1, repId2)
+              //Add wire with negligible resistance between two strongly connected cells
+              redCircuit.setResistance(redCircuit.nodes(repId1), redCircuit.nodes(repId2), ResistanceHeuristic.epsilon)
+            }
+          }
+        }
+      }
+    }
 
 
     //We will only consider weak connections for colour c if it is c's turn next. There is no point accounting for a weak connection of a player who has just gone since they will not be able to make the connection

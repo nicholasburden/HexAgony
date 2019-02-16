@@ -42,8 +42,8 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
 
       //Search for strong and weak connections
-      hme.search(RobotAlphaBetaResistance.TIME)
-      hthem.search(RobotAlphaBetaResistance.TIME)
+      hme.search(RobotAlphaBetaResistance.ROOTTIME)
+      hthem.search(RobotAlphaBetaResistance.ROOTTIME)
 
       //Get set of cells that are in a carrier of an opponent semi-connection
       val weakCarrier = hthem.getUnionOfWeakConnections
@@ -290,5 +290,6 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 }
 object RobotAlphaBetaResistance{
   var DEPTH = 2
-  var TIME = 50000
+  var ROOTTIME = 3000
+  var LEAFTIME = 40
 }

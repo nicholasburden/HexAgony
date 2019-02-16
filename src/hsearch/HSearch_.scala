@@ -8,12 +8,12 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
   //a set to store all cells that belong to a strong connection's carrier
   var strong: Set[Cell] = Set()
 
-  val strongDual : collection.mutable.Map[Cell, Set[Cell]] = new collection.mutable.HashMap[Cell, Set[Cell]]().withDefaultValue(Set())
-  val weakDual : collection.mutable.Map[Cell, Set[Cell]] = new collection.mutable.HashMap[Cell, Set[Cell]]().withDefaultValue(Set())
+  var strongDual : collection.mutable.Map[Cell, Set[Cell]] = new collection.mutable.HashMap[Cell, Set[Cell]]().withDefaultValue(Set())
+  var weakDual : collection.mutable.Map[Cell, Set[Cell]] = new collection.mutable.HashMap[Cell, Set[Cell]]().withDefaultValue(Set())
 
 
-  val strongParents : collection.mutable.Map[Cell, Set[(Cell, Cell)]] = new collection.mutable.HashMap[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
-  val weakParents : collection.mutable.Map[Cell, Set[(Cell, Cell)]] = new collection.mutable.HashMap[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
+  var strongParents : collection.mutable.Map[Cell, Set[(Cell, Cell)]] = new collection.mutable.HashMap[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
+  var weakParents : collection.mutable.Map[Cell, Set[(Cell, Cell)]] = new collection.mutable.HashMap[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
   var boundarySet: Set[Cell] = colour match {
     case R => Set(HSearch.boundaryRed1, HSearch.boundaryRed2)
     case B => Set(HSearch.boundaryBlue1, HSearch.boundaryBlue2)
@@ -116,6 +116,10 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
 
   }
   def cloneWithMove(moves : List[(Cell, Colour)] ) : HSearch_ = {
+    val othercolour = colour match{
+      case R => B
+      case B => R
+    }
     var mod2 = model.copy()
     for((cell, c) <- moves) mod2 = result(mod2, cell, c)
     //Initialise new H-Search object
@@ -125,6 +129,12 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     hsearch.minSC = collection.mutable.Map[(Cell, Cell), Int]() ++= minSC
     hsearch.numC = collection.mutable.Map[(Cell, Cell), Int]() ++= numC
     hsearch.numSC = collection.mutable.Map[(Cell, Cell), Int]() ++= numSC
+    hsearch.strongDual = collection.mutable.Map[Cell, Set[Cell]]() ++= strongDual
+    hsearch.weakDual = collection.mutable.Map[Cell, Set[Cell]]() ++= weakDual
+
+    hsearch.strongParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]()
+    hsearch.weakParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]()
+
 
     //Clone disjoint sets (to maintain structure of neighbouring cells)
     val newG = G.clone()
@@ -133,25 +143,73 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     //Update colour
     for((cell_,c) <- moves) {
       val cell = hsearch.model.board(cell_)
-      if (colour.equals(c)){
+      if (colour.equals(c)) {
         hsearch.G.add(mod2.board(cell.i)(cell.j))
-        for(neighbour <- mod2.neighbours(mod2.board(cell)) ++ boundarySet){
-          if(neighbour.colour.equals(colour) && areNearestNeighbours(cell, neighbour)) hsearch.G.union(neighbour, cell)
+        for (neighbour <- mod2.neighbours(mod2.board(cell)) ++ boundarySet) {
+          if (neighbour.colour.equals(colour) && areNearestNeighbours(cell, neighbour)) hsearch.G.union(neighbour, cell)
         }
       }
       else hsearch.G.remove(mod2.board(cell.i)(cell.j))
-      for((c1, c2) <- strongParents(hsearch.model.board(cell))){
-
-        hsearch.C((c1, c2)) = Set()
-        hsearch.C((c2, c1)) = Set()
-      }
-      for((c1, c2) <- weakParents(hsearch.model.board(cell))){
-        hsearch.SC((c1, c2)) = Set()
-        hsearch.SC((c2, c1)) = Set()
-
-      }
     }
-    hsearch.search(RobotAlphaBetaResistance.TIME)
+    for(c1 <- strongParents.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.strongParents(hsearch.G.find(c1).get) = strongParents(c1)
+
+    }
+    for(c1 <- weakParents.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.weakParents(hsearch.G.find(c1).get) = weakParents(c1)
+
+    }
+    for(c1 <- strongDual.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.strongDual(hsearch.G.find(c1).get) = strongDual(c1)
+
+    }
+    for(c1 <- weakDual.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.weakDual(hsearch.G.find(c1).get) = weakDual(c1)
+
+    }
+
+
+
+    for((cell_,c) <- moves){
+
+      val cell = hsearch.model.board(cell_)
+      if(c.equals(colour)){
+        hsearch.strongParents(hsearch.G.find(cell).get) = Set()////////////////////////////////
+        hsearch.weakParents(hsearch.G.find(cell).get) = Set()
+      }
+
+      for((c1_, c2_) <- strongParents(G.find(cell).get)){
+        var c1 = c1_
+        var c2 = c2_
+        if(c1_.i >= 0 && c1_.j >= 0) c1 = hsearch.model.board(c1)
+        if(c2_.i >= 0 && c2_.j >= 0) c2 = hsearch.model.board(c2)
+        if(!c1.colour.equals(othercolour) && !c2.colour.equals(othercolour)) {
+          hsearch.strongDual(hsearch.G.find(c1).get) = hsearch.strongDual(hsearch.G.find(c1).get) - hsearch.G.find(c2).get
+          hsearch.strongDual(hsearch.G.find(c2).get) = hsearch.strongDual(hsearch.G.find(c2).get) - hsearch.G.find(c1).get
+
+
+
+          hsearch.C((c1, c2)) = Set()
+          hsearch.C((c2, c1)) = Set()
+        }
+      }
+      for((c1_, c2_) <- weakParents(G.find(cell).get)){
+        var c1 = c1_
+        var c2 = c2_
+        if(c1_.i >= 0 && c1_.j >= 0) c1 = hsearch.model.board(c1)
+        if(c2_.i >= 0 && c2_.j >= 0) c2 = hsearch.model.board(c2)
+        if(!c1.colour.equals(othercolour) && !c2.colour.equals(othercolour)) {
+          hsearch.weakDual(hsearch.G.find(c1).get) = hsearch.weakDual(hsearch.G.find(c1).get) - hsearch.G.find(c2).get
+          hsearch.weakDual(hsearch.G.find(c2).get) = hsearch.weakDual(hsearch.G.find(c2).get) - hsearch.G.find(c1).get
+          hsearch.SC((c1, c2)) = Set()
+          hsearch.SC((c2, c1)) = Set()
+
+        }
+      }
+
+      }
+
+    hsearch.search(RobotAlphaBetaResistance.LEAFTIME)
     hsearch
 
   }
