@@ -110,6 +110,7 @@ class RobotAlphaBetaResistance_(model: Model, timelimit: Long, pierule: Boolean,
             move = cell
             topScore = score
           }
+          println(cell)
         }
       }
       println(move)

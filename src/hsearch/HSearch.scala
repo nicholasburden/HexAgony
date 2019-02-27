@@ -531,5 +531,5 @@ object HSearch extends Const {
      X: maximumn number of virtual connections as an input to the dedection rule
   */
   var M = 14
-  var _K : Int = 4
+  var _K : Int = 3
 }

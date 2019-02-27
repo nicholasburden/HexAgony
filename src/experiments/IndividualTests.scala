@@ -11,13 +11,14 @@ class IndividualTests {
 
     var robotFactory1 = new RobotFactory("HSEARCH")
     var robotFactory2 = new RobotFactory("RANDOM")
-    for (size <- 5 to 11) {
+    /*
+    for (size <- 5 to 10) {
       val writer1 = new FileWrite("Experiments/HSEARCH_RANDOM_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
-      for (i <- 1 to 30) {
+      for (i <- 1 to 5) {
         val mod = new Model(size)
-        val game1 = new Game(robotFactory1, robotFactory2, 30000, true)
-        val game2 = new Game(robotFactory2, robotFactory1, 30000, true)
+        val game1 = new Game(robotFactory1, robotFactory2, 9990000, true)
+        val game2 = new Game(robotFactory2, robotFactory1, 9990000, true)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
@@ -28,13 +29,13 @@ class IndividualTests {
     }
     robotFactory1 = new RobotFactory("FLOW")
     robotFactory2 = new RobotFactory("RANDOM")
-    for (size <- 5 to 11) {
+    for (size <- 5 to 10) {
       val writer1 = new FileWrite("Experiments/FLOW_RANDOM_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
-      for (i <- 1 to 30) {
+      for (i <- 1 to 5) {
         val mod = new Model(size)
-        val game1 = new Game(robotFactory1, robotFactory2, 30000, true)
-        val game2 = new Game(robotFactory2, robotFactory1, 30000, true)
+        val game1 = new Game(robotFactory1, robotFactory2, 9900000, true)
+        val game2 = new Game(robotFactory2, robotFactory1, 9900000, true)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
@@ -43,15 +44,16 @@ class IndividualTests {
       }
       writer1.close
     }
+    */
     robotFactory1 = new RobotFactory("MONTECARLO")
     robotFactory2 = new RobotFactory("RANDOM")
-    for (size <- 5 to 11) {
+    for (size <- 5 to 10) {
       val writer1 = new FileWrite("Experiments/MONTECARLO_RANDOM_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
-      for (i <- 1 to 30) {
+      for (i <- 1 to 5) {
         val mod = new Model(size)
-        val game1 = new Game(robotFactory1, robotFactory2, 30000, true)
-        val game2 = new Game(robotFactory2, robotFactory1, 30000, true)
+        val game1 = new Game(robotFactory1, robotFactory2, 9900000, true)
+        val game2 = new Game(robotFactory2, robotFactory1, 9900000, true)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)

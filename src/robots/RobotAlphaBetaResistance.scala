@@ -290,6 +290,6 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 }
 object RobotAlphaBetaResistance{
   var DEPTH = 2
-  var ROOTTIME = 3000
-  var LEAFTIME = 40
+  var ROOTTIME = 30000
+  var LEAFTIME = 30000
 }

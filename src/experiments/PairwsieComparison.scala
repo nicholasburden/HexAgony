@@ -11,13 +11,14 @@ class PairwsieComparison {
 
     var robotFactory1 = new RobotFactory("HSEARCH")
     var robotFactory2 = new RobotFactory("FLOW")
-    for (size <- 5 to 11) {
-      val writer1 = new FileWrite("Experiments/HSEARCH_FLOW_30_" + size + ".txt")
+
+    for(size <- 5 to 10) {
+      val writer1 = new FileWrite("Experiments/20HSEARCH_FLOW_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
-      for (i <- 1 to 30) {
-        val mod = getRandomBoard(2, size)
-        val game1 = new Game(robotFactory1, robotFactory2, 30000, false)
-        val game2 = new Game(robotFactory2, robotFactory1, 30000, false)
+      for (i <- 1 to 2) {
+        val mod = getRandomBoard(size/2, size)
+        val game1 = new Game(robotFactory1, robotFactory2, 20000, false)
+        val game2 = new Game(robotFactory2, robotFactory1, 20000, false)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
@@ -26,32 +27,35 @@ class PairwsieComparison {
       }
       writer1.close
     }
+
     robotFactory1 = new RobotFactory("FLOW")
     robotFactory2 = new RobotFactory("MONTECARLO")
-    for (size <- 5 to 11) {
-      val writer1 = new FileWrite("Experiments/FLOW_MONTECARLO_30_" + size + ".txt")
+    for (size <- 5 to 10) {
+      val writer1 = new FileWrite("Experiments/20FLOW_MONTECARLO_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
-      for (i <- 1 to 30) {
+      for (i <- 1 to 2) {
         val mod = getRandomBoard(2, size)
-        val game1 = new Game(robotFactory1, robotFactory2, 30000, false)
-        val game2 = new Game(robotFactory2, robotFactory1, 30000, false)
+        val game1 = new Game(robotFactory1, robotFactory2, 20000, false)
+        val game2 = new Game(robotFactory2, robotFactory1, 20000, false)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
-        writer1.writeToFile(1-res2)
+        writer1.writeToFile(1 - res2)
         println("FLOW V MONTECARLO " + i + " played on board size " + size + ".")
       }
       writer1.close
     }
+
+
     robotFactory1 = new RobotFactory("MONTECARLO")
     robotFactory2 = new RobotFactory("HSEARCH")
-    for (size <- 5 to 11) {
-      val writer1 = new FileWrite("Experiments/MONTECARLO_HSEARCH_30_" + size + ".txt")
+    for (size <- 5 to 10) {
+      val writer1 = new FileWrite("Experiments/20MONTECARLO_HSEARCH_30_" + size + ".txt")
       //val writer2 = new FileWrite("Experiments/TEST2_10_5.txt")
-      for (i <- 1 to 30) {
+      for (i <- 1 to 2) {
         val mod = getRandomBoard(2, size)
-        val game1 = new Game(robotFactory1, robotFactory2, 30000, false)
-        val game2 = new Game(robotFactory2, robotFactory1, 30000, false)
+        val game1 = new Game(robotFactory1, robotFactory2, 20000, false)
+        val game2 = new Game(robotFactory2, robotFactory1, 20000, false)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         writer1.writeToFile(res1)
@@ -63,13 +67,13 @@ class PairwsieComparison {
   }
 
 
-  def getRandomBoard(numOfPiecesEach : Int, N : Int) : Model = {
+  def getRandomBoard(numOfPiecesEach: Int, N: Int): Model = {
     val mod = new Model(N)
     val rnd = new Random()
-    for(i <- 1 to numOfPiecesEach){
+    for (i <- 1 to numOfPiecesEach) {
       var x = rnd.nextInt(N)
       var y = rnd.nextInt(N)
-      while(!mod.board(x)(y).colour.equals(new Colour(0))){
+      while (!mod.board(x)(y).colour.equals(new Colour(0))) {
         x = rnd.nextInt(N)
         y = rnd.nextInt(N)
       }
@@ -78,4 +82,5 @@ class PairwsieComparison {
     }
     mod
   }
+
 }

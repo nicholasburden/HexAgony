@@ -35,7 +35,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
   //SC stores weak carriers (maps pairs of cells to a set of carriers)
   var SC: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = startingSC
   //oldC stores last rounds C
-  var oldC: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map()
+  var oldC: collection.mutable.Map[(Cell, Cell), Set[Set[Cell]]] = collection.mutable.Map().withDefaultValue(Set())
 
 
   def initial = {
@@ -115,6 +115,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     }
 
   }
+  /*
   def cloneWithMove(moves : List[(Cell, Colour)] ) : HSearch_ = {
     val othercolour = colour match{
       case R => B
@@ -129,11 +130,11 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     hsearch.minSC = collection.mutable.Map[(Cell, Cell), Int]() ++= minSC
     hsearch.numC = collection.mutable.Map[(Cell, Cell), Int]() ++= numC
     hsearch.numSC = collection.mutable.Map[(Cell, Cell), Int]() ++= numSC
-    hsearch.strongDual = collection.mutable.Map[Cell, Set[Cell]]() ++= strongDual
-    hsearch.weakDual = collection.mutable.Map[Cell, Set[Cell]]() ++= weakDual
+    hsearch.strongDual = collection.mutable.Map[Cell, Set[Cell]]().withDefaultValue(Set()) ++= strongDual
+    hsearch.weakDual = collection.mutable.Map[Cell, Set[Cell]]().withDefaultValue(Set()) ++= weakDual
 
-    hsearch.strongParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]()
-    hsearch.weakParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]()
+    hsearch.strongParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
+    hsearch.weakParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
 
 
     //Clone disjoint sets (to maintain structure of neighbouring cells)
@@ -151,6 +152,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
       }
       else hsearch.G.remove(mod2.board(cell.i)(cell.j))
     }
+
     for(c1 <- strongParents.keys){
       if(hsearch.G.find(c1).isDefined) hsearch.strongParents(hsearch.G.find(c1).get) = strongParents(c1)
 
@@ -169,12 +171,134 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     }
 
 
+    for(c1 <- hsearch.model.myCells(O) ++ hsearch.model.myCells(colour) ++ hsearch.boundarySet; c2 <- hsearch.model.myCells(O) ++ hsearch.model.myCells(colour) ++ hsearch.boundarySet) {
+      for ((cell_, c) <- moves) {
+
+        val cell = hsearch.model.board(cell_)
+        val strongCarriers = hsearch.C((hsearch.G.find(c1).get, hsearch.G.find(c2).get))
+        val weakCarriers = hsearch.SC((hsearch.G.find(c1).get, hsearch.G.find(c2).get))
+        for(carrier : Set[Cell] <- strongCarriers){
+          if(carrier.contains(cell)){
+            hsearch.C((hsearch.G.find(c1).get, hsearch.G.find(c2).get)) = Set()
+            hsearch.C((hsearch.G.find(c2).get, hsearch.G.find(c1).get)) = Set()
+          }
+        }
+        for(carrier : Set[Cell] <- weakCarriers){
+          if(carrier.contains(cell)){
+            hsearch.SC((hsearch.G.find(c1).get, hsearch.G.find(c2).get)) = Set()
+            hsearch.SC((hsearch.G.find(c2).get, hsearch.G.find(c1).get)) = Set()
+          }
+        }
+        if(areNearestNeighbours(c1, cell) && !c.equals(othercolour)){
+          hsearch.C((hsearch.G.find(c1).get, hsearch.G.find(cell).get)) = Set(Set())
+          hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(c1).get)) = Set(Set())
+        }
+        if(areNearestNeighbours(c2, cell) && !c.equals(othercolour)){
+          hsearch.C((hsearch.G.find(c2).get, hsearch.G.find(cell).get)) = Set(Set())
+          hsearch.C((hsearch.G.find(cell).get, hsearch.G.find(c2).get)) = Set(Set())
+        }
+
+
+      }
+    }
+    hsearch.search(RobotAlphaBetaResistance.LEAFTIME)
+    hsearch
+
+  }
+  */
+  def cloneWithMove(moves : List[(Cell, Colour)] ) : HSearch_ = {
+
+    val othercolour = colour match{
+      case R => B
+      case B => R
+    }
+    var mod2 = model.copy()
+
+
+    for((cell, c) <- moves){
+      mod2 = result(mod2, cell, c)
+
+    }
+    //Initialise new H-Search object
+    val hsearch = new HSearch_(mod2, colour, C.clone(), SC.clone())//, C.clone(), SC.clone())
+
+    hsearch.minC = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(Int.MaxValue) ++= minC
+    hsearch.minSC = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(Int.MaxValue) ++= minSC
+    hsearch.numC = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(0) ++= numC
+    hsearch.numSC = collection.mutable.Map[(Cell, Cell), Int]().withDefaultValue(0) ++= numSC
+    hsearch.strongDual = collection.mutable.Map[Cell, Set[Cell]]().withDefaultValue(Set()) ++= strongDual
+    hsearch.weakDual = collection.mutable.Map[Cell, Set[Cell]]().withDefaultValue(Set()) ++= weakDual
+
+    hsearch.strongParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
+    hsearch.weakParents= collection.mutable.Map[Cell, Set[(Cell, Cell)]]().withDefaultValue(Set())
+
+
+    //Clone disjoint sets (to maintain structure of neighbouring cells)
+    val newG = G.clone()
+    hsearch.G = newG.asInstanceOf[DisjointSets[Cell]]
+
+    //Update colour
+    for((cell_,c) <- moves) {
+      val cell = hsearch.model.board(cell_)
+      if (colour.equals(c)) {
+        hsearch.G.add(mod2.board(cell.i)(cell.j))
+        for (neighbour <- mod2.neighbours(mod2.board(cell)) ++ boundarySet) {
+          if (neighbour.colour.equals(colour) && areNearestNeighbours(cell, neighbour)) {
+
+            hsearch.G.union(neighbour, cell)
+            /*
+            hsearch.strongParents(hsearch.G.find(cell_).get) = hsearch.strongParents(hsearch.G.find(cell_).get) ++ strongParents(G.find(cell_).get)
+            hsearch.weakParents(hsearch.G.find(cell_).get) = hsearch.weakParents(hsearch.G.find(cell_).get) ++ weakParents(G.find(cell_).get)
+            hsearch.strongDual(hsearch.G.find(cell_).get) = hsearch.strongDual(hsearch.G.find(cell_).get) ++ strongDual(G.find(cell_).get)
+            hsearch.weakDual(hsearch.G.find(cell_).get) = hsearch.weakDual(hsearch.G.find(cell_).get) ++ weakDual(G.find(cell_).get)
+            */
+          }
+        }
+
+
+      }
+      else hsearch.G.remove(mod2.board(cell.i)(cell.j))
+    }
+
+    for((cell, c) <- moves){
+      if(c.equals(colour)){
+        for (c1 <- strongDual(G.find(cell).get)) {
+          hsearch.C((c1, hsearch.G.find(cell).get)) = hsearch.C((c1, hsearch.G.find(cell).get)) ++ C((c1, G.find(cell).get))
+          hsearch.C((hsearch.G.find(cell).get, c1)) = hsearch.C((hsearch.G.find(cell).get, c1)) ++ C((G.find(cell).get), c1)
+        }
+        for (c1 <- weakDual(G.find(cell).get)) {
+          hsearch.SC((c1, hsearch.G.find(cell).get)) = hsearch.SC((c1, hsearch.G.find(cell).get)) ++ SC((c1, G.find(cell).get))
+          hsearch.SC((hsearch.G.find(cell).get, c1)) = hsearch.C((hsearch.G.find(cell).get, c1)) ++ C((G.find(cell).get), c1)
+        }
+      }
+
+    }
+
+    /*
+    for(c1 <- strongParents.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.strongParents(hsearch.G.find(c1).get) = strongParents(c1)
+
+    }
+    for(c1 <- weakParents.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.weakParents(hsearch.G.find(c1).get) = weakParents(c1)
+
+    }
+    for(c1 <- strongDual.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.strongDual(hsearch.G.find(c1).get) = strongDual(c1)
+
+    }
+    for(c1 <- weakDual.keys){
+      if(hsearch.G.find(c1).isDefined) hsearch.weakDual(hsearch.G.find(c1).get) = weakDual(c1)
+
+    }
+
+    */
 
     for((cell_,c) <- moves){
 
       val cell = hsearch.model.board(cell_)
       if(c.equals(colour)){
-        hsearch.strongParents(hsearch.G.find(cell).get) = Set()////////////////////////////////
+        hsearch.strongParents(hsearch.G.find(cell).get) = Set()
         hsearch.weakParents(hsearch.G.find(cell).get) = Set()
       }
 
@@ -201,15 +325,17 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
         if(!c1.colour.equals(othercolour) && !c2.colour.equals(othercolour)) {
           hsearch.weakDual(hsearch.G.find(c1).get) = hsearch.weakDual(hsearch.G.find(c1).get) - hsearch.G.find(c2).get
           hsearch.weakDual(hsearch.G.find(c2).get) = hsearch.weakDual(hsearch.G.find(c2).get) - hsearch.G.find(c1).get
-          hsearch.SC((c1, c2)) = Set()
-          hsearch.SC((c2, c1)) = Set()
+          hsearch.SC((hsearch.G.find(c1).get, hsearch.G.find(c2).get)) = Set()
+          hsearch.SC((hsearch.G.find(c2).get, hsearch.G.find(c1).get)) = Set()
 
         }
       }
 
-      }
+    }
 
-    hsearch.search(RobotAlphaBetaResistance.LEAFTIME)
+
+    hsearch.search(RobotAlphaBetaResistance.LEAFTIME, moves, strongParents, weakParents, this)
+
     hsearch
 
   }
@@ -262,57 +388,57 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
 
 
           //for((cell,c) <- moves){
-            val strongCarriers = getStrongCarriers(cell1, cell2, true)
-            val weakCarriers = getWeakCarriers(cell1, cell2, true)
+          val strongCarriers = getStrongCarriers(cell1, cell2, true)
+          val weakCarriers = getWeakCarriers(cell1, cell2, true)
 
-            if (!c.equals(colour) && weakCarriers.contains(cell)) {
-              //Case: opponent moves into a weak carrier of the player
-              //In this case we can no longer trust that the weak connection is still a weak connection, so we remove the connection
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-              //other way
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+          if (!c.equals(colour) && weakCarriers.contains(cell)) {
+            //Case: opponent moves into a weak carrier of the player
+            //In this case we can no longer trust that the weak connection is still a weak connection, so we remove the connection
+            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+            //other way
+            hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
 
-            }
-            else if (c.equals(colour) && weakCarriers.contains(cell)) {
-              //Case: player plays in one of its own weak connections
-              //We make the (not necessarily correct) assumption that the moved was played in correct cell to preserve its connection
-              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
-              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
-
-
-              //Remove weak connection
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+          }
+          else if (c.equals(colour) && weakCarriers.contains(cell)) {
+            //Case: player plays in one of its own weak connections
+            //We make the (not necessarily correct) assumption that the moved was played in correct cell to preserve its connection
+            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(weakCarriers - cell)
+            hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(weakCarriers - cell)
 
 
-            }
-            else if (!c.equals(colour) && strongCarriers.contains(cell)) {
-              //Case: opponent plays in a carrier of one of the player's strong carriers
-              //This connection now becomes weak, so we remove it from C, and add the connection to SC
-              hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
+            //Remove weak connection
+            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+            hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+
+
+          }
+          else if (!c.equals(colour) && strongCarriers.contains(cell)) {
+            //Case: opponent plays in a carrier of one of the player's strong carriers
+            //This connection now becomes weak, so we remove it from C, and add the connection to SC
+            hsearch.SC((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
+            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
+
+            //other way
+            hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
+            hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
+          }
+          else if (c.equals(colour) && strongCarriers.contains(cell)) {
+            //Case: the player plays in a carrier of one its own strong connections
+            //This does not change the strength of the connection, so we just remove the cell from the carrier
+            hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
+            //other way
+            hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
+
+            //We may be left with a full connection, however, so we remove the strong connection if the carrier is of size 1 (implying the cells are now neighbours)
+            if (hsearch.getStrongCarriers(cell1, cell2, true).size == 1) {
               hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-
               //other way
-              hsearch.SC((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
               hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
             }
-            else if (c.equals(colour) && strongCarriers.contains(cell)) {
-              //Case: the player plays in a carrier of one its own strong connections
-              //This does not change the strength of the connection, so we just remove the cell from the carrier
-              hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set(strongCarriers - cell)
-              //other way
-              hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set(strongCarriers - cell)
-
-              //We may be left with a full connection, however, so we remove the strong connection if the carrier is of size 1 (implying the cells are now neighbours)
-              if (hsearch.getStrongCarriers(cell1, cell2, true).size == 1) {
-                hsearch.C((hsearch.G.find(cell1).get, hsearch.G.find(cell2).get)) = Set()
-                //other way
-                hsearch.C((hsearch.G.find(cell2).get, hsearch.G.find(cell1).get)) = Set()
-              }
-            }
           }
-          done((cell1, cell2)) = true;
-          done((cell2, cell1)) = true;
+        }
+        done((cell1, cell2)) = true;
+        done((cell2, cell1)) = true;
         //}
       }
     }
@@ -378,14 +504,16 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
       val tempC = C.clone()
       previousNewVC = currentNewVC
       currentNewVC = false
-      for (g <- Gtemp) {
+      for (g <- G.getReps) {
+
         if(System.currentTimeMillis() < end) {
-          for (g1 <- Gtemp; g2 <- Gtemp) {
+          for (g1 <- G.getReps; g2 <- G.getReps) {
             if(System.currentTimeMillis() < end) {
               if (g1 != g2 && (newCarrier(oldC, g1, g) || newCarrier(oldC, g2, g)) && (!(g.colour == colour) || (g1.colour == O && g2.colour == O))) {
                 for (c1 <- C((G.find(g1).get, G.find(g).get)); c2 <- C((G.find(g2).get, G.find(g).get))) {
                   if (System.currentTimeMillis() < end && (!oldC((G.find(g1).get, G.find(g).get)).contains(c1) || !oldC((G.find(g2).get, G.find(g).get)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
                     currentNewVC = true
+
                     if (g.colour == colour) {
                       val cTemp = c1 ++ c2
                       /**/
@@ -408,14 +536,14 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                         }
 
                       }
-                      else if(minC((G.find(g1).get, G.find(g2).get)) == cTemp.size && numC((G.find(g1).get, G.find(g2).get)) < HSearch.M){
+                      else if(minC((G.find(g1).get, G.find(g2).get)) == cTemp.size && numC((G.find(g1).get, G.find(g2).get)) < HSearch.M) {
                         C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
                         C((G.find(g2).get, G.find(g1).get)) = C((G.find(g2).get, G.find(g1).get)) + cTemp
                         numC((G.find(g1).get, G.find(g2).get)) += 1
                         numC((G.find(g2).get, G.find(g1).get)) += 1
                         strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
                         strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
-                        for(cell_ <- cTemp){
+                        for (cell_ <- cTemp) {
                           val tuple = (G.find(g1).get, G.find(g2).get)
                           strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
                         }
@@ -424,16 +552,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                         }
 
                       }
-                     // else if(minC((G.find(g1).get, G.find(g2).get)) < cTemp.size){
-                      //  C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
-                       // C((G.find(g2).get, G.find(g1).get)) = C((G.find(g2).get, G.find(g1).get)) + cTemp
-                    //  }
 
-
-                      //C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
-                      if(cTemp.size > 0) {
-
-                      }
 
                     }
                     else {
@@ -442,8 +561,8 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                       /**/
                       var update = false
                       if(minSC((G.find(g1).get, G.find(g2).get)) > sc.size){
-                        SC((G.find(g1).get, G.find(g2).get)) = Set(sc)
-                        SC((G.find(g2).get, G.find(g1).get)) = Set(sc)
+                        SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                        SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
                         minSC((G.find(g1).get, G.find(g2).get)) = sc.size
                         minSC((G.find(g2).get, G.find(g1).get)) = sc.size
                         numSC((G.find(g1).get, G.find(g2).get)) += 1
@@ -453,11 +572,12 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                       }
                       else if(minSC((G.find(g1).get, G.find(g2).get)) == sc.size && numSC((G.find(g1).get, G.find(g2).get)) < HSearch.M){
                         SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
-                        SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                        SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
                         numSC((G.find(g1).get, G.find(g2).get)) += 1
                         numSC((G.find(g2).get, G.find(g1).get)) += 1
                         update = true
                       }
+
                       else if(minSC((G.find(g1).get, G.find(g2).get)) < sc.size){
                         SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
                         SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
@@ -474,7 +594,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                         weakDual(G.find(g1).get) = weakDual(G.find(g1).get) + G.find(g2).get
                         weakDual(G.find(g2).get) = weakDual(G.find(g2).get) + G.find(g1).get
                       }
-                      if(update){
+                      if(update && System.currentTimeMillis() < end){
                         val temp = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end, g1, g2)
                         C((G.find(g1).get, G.find(g2).get)) = temp
                         C((G.find(g2).get, G.find(g1).get)) = temp
@@ -489,9 +609,6 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
                           strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
                         }
                       }
-
-
-
                     }
                   }
                 }
@@ -505,7 +622,154 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
     //println("HSEARCH FINISHED")
   }
 
+  def search(timelimit : Long, moves : List[(Cell, Colour)], sp : collection.mutable.Map[Cell, Set[(Cell, Cell)]], wp : collection.mutable.Map[Cell, Set[(Cell, Cell)]], h: HSearch_): Unit = {
 
+    val othercolour = colour match{
+      case R => B
+      case B => R
+    }
+    var currentNewVC = false
+    var previousNewVC = true
+    val start = System.currentTimeMillis()
+    val end : Long = start + timelimit
+    while ((currentNewVC || previousNewVC) && System.currentTimeMillis() < end) {
+
+      val tempC = C.clone()
+      previousNewVC = currentNewVC
+      currentNewVC = false
+
+      for ((m, c) <- moves) {
+
+        for ((g1_, g2_) <- sp(h.G.find(m).get) ++ wp(h.G.find(m).get)) {
+          if((boundarySet.contains(g1_) || !model.board(g1_).colour.equals(othercolour)) && (boundarySet.contains(g2_) || !model.board(g2_).colour.equals(othercolour))){
+
+
+            val g1 = G.find(g1_).get
+            val g2 = G.find(g2_).get
+
+
+            if (System.currentTimeMillis() < end) {
+
+              for(g_ <- getStrongCarriers(g1, g2, true) ++ getWeakCarriers(g1, g2, true)){
+                if((boundarySet.contains(g_) || !model.board(g_).colour.equals(othercolour))){
+                  val g = G.find(g_).get
+
+                  if (System.currentTimeMillis() < end) {
+                    if (g1 != g2 && (newCarrier(oldC, g1, g) || newCarrier(oldC, g2, g)) && (!(g.colour == colour) || (g1.colour == O && g2.colour == O)) && (boundarySet.contains(g1) || !model.board(g1).colour.equals(othercolour)) && (boundarySet.contains(g2) || !model.board(g2).colour.equals(othercolour))) {
+                      for (c1 <- C((G.find(g1).get, G.find(g).get)); c2 <- C((G.find(g2).get, G.find(g).get))) {
+                        if (System.currentTimeMillis() < end && (!oldC((G.find(g1).get, G.find(g).get)).contains(c1) || !oldC((G.find(g2).get, G.find(g).get)).contains(c2)) && (c1 & c2).isEmpty && !c2.contains(g1) && !c1.contains(g2)) {
+                          currentNewVC = true
+
+                          if (g.colour == colour) {
+                            val cTemp = c1 ++ c2
+                            /**/
+                            if (minC((G.find(g1).get, G.find(g2).get)) > cTemp.size) {
+                              C((G.find(g1).get, G.find(g2).get)) = Set(cTemp)
+                              C((G.find(g2).get, G.find(g1).get)) = Set(cTemp)
+                              minC((G.find(g1).get, G.find(g2).get)) = cTemp.size
+                              minC((G.find(g2).get, G.find(g1).get)) = cTemp.size
+                              numC((G.find(g1).get, G.find(g2).get)) = 1
+                              numC((G.find(g2).get, G.find(g1).get)) = 1
+
+                              strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                              strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
+                              for (cell_ <- cTemp) {
+                                val tuple = (G.find(g1).get, G.find(g2).get)
+                                if (!model.board(cell_).colour.equals(othercolour)) strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                              }
+                              if (g1.colour == colour && g2.colour == colour) {
+                                strong = strong.union(cTemp)
+                              }
+
+                            }
+                            else if (minC((G.find(g1).get, G.find(g2).get)) == cTemp.size && numC((G.find(g1).get, G.find(g2).get)) < HSearch.M) {
+                              C((G.find(g1).get, G.find(g2).get)) = C((G.find(g1).get, G.find(g2).get)) + cTemp
+                              C((G.find(g2).get, G.find(g1).get)) = C((G.find(g2).get, G.find(g1).get)) + cTemp
+                              numC((G.find(g1).get, G.find(g2).get)) += 1
+                              numC((G.find(g2).get, G.find(g1).get)) += 1
+                              strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                              strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
+                              for (cell_ <- cTemp) {
+                                val tuple = (G.find(g1).get, G.find(g2).get)
+                                if (!model.board(cell_).colour.equals(othercolour)) strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                              }
+                              if (g1.colour == colour && g2.colour == colour) {
+                                strong = strong.union(cTemp)
+                              }
+
+                            }
+
+
+                          }
+                          else {
+                            val sc = c1 ++ Set(g) ++ c2
+
+                            /**/
+                            var update = false
+                            if (minSC((G.find(g1).get, G.find(g2).get)) > sc.size) {
+                              SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                              SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
+                              minSC((G.find(g1).get, G.find(g2).get)) = sc.size
+                              minSC((G.find(g2).get, G.find(g1).get)) = sc.size
+                              numSC((G.find(g1).get, G.find(g2).get)) += 1
+                              numSC((G.find(g2).get, G.find(g1).get)) += 1
+                              update = true
+
+                            }
+                            else if (minSC((G.find(g1).get, G.find(g2).get)) == sc.size /* && numSC((G.find(g1).get, G.find(g2).get)) < HSearch.M*/ ) {
+                              SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                              SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
+                              numSC((G.find(g1).get, G.find(g2).get)) += 1
+                              numSC((G.find(g2).get, G.find(g1).get)) += 1
+                              update = true
+                            }
+
+                            else if (minSC((G.find(g1).get, G.find(g2).get)) < sc.size) {
+                              SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                              SC((G.find(g2).get, G.find(g1).get)) = SC((G.find(g2).get, G.find(g1).get)) + sc
+                              update = true
+                            }
+
+                            //SC((G.find(g1).get, G.find(g2).get)) = SC((G.find(g1).get, G.find(g2).get)) + sc
+                            if (sc.size > 0 && update) {
+
+                              for (cell_ <- sc) {
+                                val tuple = (G.find(g1).get, G.find(g2).get)
+                                if (!model.board(cell_).colour.equals(othercolour)) weakParents(G.find(cell_).get) = weakParents(G.find(cell_).get) + tuple
+                              }
+                              weakDual(G.find(g1).get) = weakDual(G.find(g1).get) + G.find(g2).get
+                              weakDual(G.find(g2).get) = weakDual(G.find(g2).get) + G.find(g1).get
+                            }
+                            if (update && System.currentTimeMillis() < end) {
+                              val temp = apply(C((G.find(g1).get, G.find(g2).get)), (SC((G.find(g1).get, G.find(g2).get)) - sc).take(HSearch._K), sc, sc, end, g1, g2)
+                              C((G.find(g1).get, G.find(g2).get)) = temp
+                              C((G.find(g2).get, G.find(g1).get)) = temp
+                              if (containsNonEmpty(temp)) {
+                                for (set <- temp) {
+                                  for (cell_ <- set) {
+                                    val tuple = (G.find(g1).get, G.find(g2).get)
+                                    if (!model.board(cell_).colour.equals(othercolour)) strongParents(G.find(cell_).get) = strongParents(G.find(cell_).get) + tuple
+                                  }
+                                }
+                                strongDual(G.find(g1).get) = strongDual(G.find(g1).get) + G.find(g2).get
+                                strongDual(G.find(g2).get) = strongDual(G.find(g2).get) + G.find(g1).get
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      oldC = tempC//.clone()
+    }
+
+  }
   def getStrongCarriers(cell1: Cell, cell2: Cell, getAll: Boolean): Set[Cell] = {
 
     var minSet: Set[Cell] = Set()
@@ -638,7 +902,7 @@ class HSearch_(var model: Model, var colour: Colour, startingC : collection.muta
 
           }
           //else if(minC((G.find(g1).get, G.find(g2).get)) < ul.size){
-            //C_clone += ul
+          //C_clone += ul
           //}
 
         }

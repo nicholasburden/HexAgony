@@ -16,16 +16,18 @@ class PerformanceTests extends Const {
     var robotFactory2 = new RobotFactory("FLOW")
     var robotFactory3 = new RobotFactory("MONTECARLO")
     var robotFactorySimple = new RobotFactory("MONTECARLOSIMPLE")
-    var size = 7
-    val writer1 = new FileWrite("Experiments/HSEARCHDEPTH_PERFORMANCE_INF_" + size + ".txt")
-    val writer2 = new FileWrite("Experiments/HSEARCHTIME_PERFORMANCE_INF_" + size + ".txt")
-    val writer3 = new FileWrite("Experiments/HSEARCHM_PERFORMANCE_INF_" + size + ".txt")
-    val writer4 = new FileWrite("Experiments/HSEARCHK_PERFORMANCE_INF_" + size + ".txt")
-    val writer5 = new FileWrite("Experiments/FLOWDEPTH_PERFORMANCE_INF_" + size + ".txt")
-    val writer6 = new FileWrite("Experiments/MCTIME_PERFORMANCE_INF_" + size + ".txt")
-    val writer7 = new FileWrite("Experiments/MCWIN_PERFORMANCE_INF_" + size + ".txt")
-    val writer8 = new FileWrite("Experiments/MCKNOWLEDGE_PERFORMANCE_INF_" + size + ".txt")
-    val writer9 = new FileWrite("Experiments/MCHSEARCHTIME_PERFORMANCE_INF_" + size + ".txt")
+    var size = 4
+
+    val writer1 = new FileWrite("Experiments/XHSEARCHDEPTH_PERFORMANCE_INF_" + size + ".txt")
+    val writer2 = new FileWrite("Experiments/XHSEARCHTIME_PERFORMANCE_INF_" + size + ".txt")
+    val writer3 = new FileWrite("Experiments/XHSEARCHM_PERFORMANCE_INF_" + size + ".txt")
+
+    val writer4 = new FileWrite("Experiments/XHSEARCHK_PERFORMANCE_INF_" + size + ".txt")
+    val writer5 = new FileWrite("Experiments/XFLOWDEPTH_PERFORMANCE_INF_" + size + ".txt")
+    val writer6 = new FileWrite("Experiments/X2MCTIME_PERFORMANCE_INF_" + size + ".txt")
+    val writer7 = new FileWrite("Experiments/XMCWIN_PERFORMANCE_INF_" + size + ".txt")
+    val writer8 = new FileWrite("Experiments/XMCKNOWLEDGE_PERFORMANCE_INF_" + size + ".txt")
+    val writer9 = new FileWrite("Experiments/XMCHSEARCHTIME_PERFORMANCE_INF_" + size + ".txt")
 
 
     //RobotAlphaBetaResistance - depth
@@ -33,10 +35,10 @@ class PerformanceTests extends Const {
     //val mcSimple = robotFactorySimple.makeRobot(new Model(size), 30000, true, R)
     for(i <- 1 to 3){
       for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory1, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory1, 999999, false)
+        val game1 = new Game(robotFactory1, robotFactorySimple, 20000, false)
+        val game2 = new Game(robotFactorySimple, robotFactory1, 20000, false)
         RobotAlphaBetaResistance.DEPTH = i
-        val mod = getRandomBoard(2, size)
+        val mod = getRandomBoard(3, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         println("PT " + j + " played testing parameter 1")
@@ -44,33 +46,20 @@ class PerformanceTests extends Const {
         writer1.writeToFile(1-res2)
       }
     }
+    writer1.close
     RobotAlphaBetaResistance.DEPTH = 2
 
 
-    //TIME
-    for(i <- 0 to 30000 by 5000){
-      for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory1, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory1, 999999, false)
-        //RobotAlphaBetaResistance.TIME = i
-        val mod = getRandomBoard(2, size)
-        val res1 = game1.playGame(mod)
-        val res2 = game2.playGame(mod)
-        println("PT " + j + " played testing parameter 2")
-        writer2.writeToFile(res1)
-        writer2.writeToFile(1-res2)
-      }
-    }
-    //RobotAlphaBetaResistance.TIME = 5000
+
 
 
     //M
-    for(i <- 0 to 30 by 5){
+    for(i <- 0 to 20 by 10){
       for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory1, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory1, 999999, false)
+        val game1 = new Game(robotFactory1, robotFactorySimple, 20000, false)
+        val game2 = new Game(robotFactorySimple, robotFactory1, 20000, false)
         HSearch.M = i
-        val mod = getRandomBoard(2, size)
+        val mod = getRandomBoard(3, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         println("PT " + j + " played testing parameter 3")
@@ -78,16 +67,17 @@ class PerformanceTests extends Const {
         writer3.writeToFile(1-res2)
       }
     }
-    HSearch.M = 20
+    writer3.close
+    HSearch.M = 14
 
 
     //K
-    for(i <- 0 to 8 by 2){
+    for(i <- 0 to 6 by 2){
       for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory1, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory1, 999999, false)
+        val game1 = new Game(robotFactory1, robotFactorySimple, 20000, false)
+        val game2 = new Game(robotFactorySimple, robotFactory1, 20000, false)
         HSearch._K = i
-        val mod = getRandomBoard(2, size)
+        val mod = getRandomBoard(3, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         println("PT " + j + " played testing parameter 4")
@@ -95,17 +85,18 @@ class PerformanceTests extends Const {
         writer4.writeToFile(1-res2)
       }
     }
+    writer4.close
     HSearch._K = 4
 
 
-
+    size = 6
     //RobotAlphaBetaFlow - DEPTH
     for(i <- 1 to 3){
       for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory2, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory2, 999999, false)
+        val game1 = new Game(robotFactory2, robotFactorySimple, 20000, false)
+        val game2 = new Game(robotFactorySimple, robotFactory2, 20000, false)
         RobotAlphaBetaFlow.DEPTH = i
-        val mod = getRandomBoard(2, size)
+        val mod = getRandomBoard(3, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         println("PT " + j + " played testing parameter 5")
@@ -113,35 +104,22 @@ class PerformanceTests extends Const {
         writer5.writeToFile(1-res2)
       }
     }
+    writer5.close
     RobotAlphaBetaFlow.DEPTH = 2
 
 
 
-    //MonteCarlo - MCTS_TIME
 
-    for(i <- 1 to 3){
-      for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory3, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory3, 999999, false)
-        RobotMonteCarlo.MCTS_TIME = i
-        val mod = getRandomBoard(2, size)
-        val res1 = game1.playGame(mod)
-        val res2 = game2.playGame(mod)
-        println("PT " + j + " played testing parameter 6")
-        writer6.writeToFile(res1)
-        writer6.writeToFile(1-res2)
-      }
-    }
     RobotMonteCarlo.MCTS_TIME = 10000
 
     //WIN_SCORE
-
-    for(i <- 1 to 3){
-      for(j <- 0 to 50 by 10) {
-        val game1 = new Game(robotFactory3, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory3, 999999, false)
+    /*
+    for(i <- 0 to 40 by 10){
+      for(j <- 1 to 5) {
+        val game1 = new Game(robotFactory3, robotFactorySimple, 20000, false)
+        val game2 = new Game(robotFactorySimple, robotFactory3, 20000, false)
         RobotMonteCarlo.WIN_SCORE = i
-        val mod = getRandomBoard(2, size)
+        val mod = getRandomBoard(3, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         println("PT " + j + " played testing parameter 7")
@@ -149,16 +127,17 @@ class PerformanceTests extends Const {
         writer7.writeToFile(1-res2)
       }
     }
+    writer7.close
     RobotMonteCarlo.WIN_SCORE = 10
-
+    */
     //MonteCarlo - KNOWLEDGE_THRESHOLD
 
     for(i <- 0 to 60 by 20){
       for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory3, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory3, 999999, false)
+        val game1 = new Game(robotFactory3, robotFactorySimple, 20000, false)
+        val game2 = new Game(robotFactorySimple, robotFactory3, 20000, false)
         montecarlo.State.KNOWLEDGE_THRESHOLD = i
-        val mod = getRandomBoard(2, size)
+        val mod = getRandomBoard(3, size)
         val res1 = game1.playGame(mod)
         val res2 = game2.playGame(mod)
         println("PT " + j + " played testing parameter 8")
@@ -166,36 +145,13 @@ class PerformanceTests extends Const {
         writer8.writeToFile(1-res2)
       }
     }
+    writer8.close
     montecarlo.State.KNOWLEDGE_THRESHOLD = 15
 
 
     //MonteCarlo - HSEARCH_TIME
 
-    for(i <- 0 to 5000 by 1000){
-      for(j <- 1 to 5) {
-        val game1 = new Game(robotFactory3, robotFactorySimple, 999999, false)
-        val game2 = new Game(robotFactorySimple, robotFactory3, 999999, false)
-        montecarlo.State.HSEARCH_TIME_LIMIT = i
-        val mod = getRandomBoard(2, size)
-        val res1 = game1.playGame(mod)
-        val res2 = game2.playGame(mod)
-        println("PT " + j + " played testing parameter 9")
-        writer9.writeToFile(res1)
-        writer9.writeToFile(1-res2)
-      }
-    }
-    montecarlo.State.HSEARCH_TIME_LIMIT = 2000
-    writer1.close
-    writer2.close
-    writer3.close
-    writer4.close
-    writer5.close
-    writer6.close
-    writer7.close
-    writer8.close
-    writer9.close
   }
-
   def getRandomBoard(numOfPiecesEach : Int, N : Int) : Model = {
     val mod = new Model(N)
     val rnd = new Random()

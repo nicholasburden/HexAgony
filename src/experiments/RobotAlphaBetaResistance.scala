@@ -1,120 +1,128 @@
+//package robots
+
 package experiments
 
-import moveordering.MoveOrdering
-import hexagony._
+
 import heuristic._
+import hexagony._
 import hsearch._
+import moveordering.MoveOrdering
 import pierule._
 
 
 class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, colour: Colour)
   extends Robot(model: Model, timelimit: Long, pierule: Boolean, colour: Colour) {
-
+  var heuristic : ResistanceHeuristic_ = null
   val pieRule = new PieRule(model.N)
   val pieRuleTable = pieRule.getTable
 
   private def myMove(): Cell = {
+    try{
+      heuristic = new ResistanceHeuristic_(model, colour)
+      //heuristic = new ResistanceHeuristic_(model, colour)
+      val mod = model.copy()
+      val moveOrdering = new MoveOrdering
 
-    val mod = model.copy()
-    val moveOrdering = new MoveOrdering
+      moveOrdering.initial(mod)
 
-    moveOrdering.initial(mod)
-
-    //Get a list of open moves in order of strength
-    var open = moveOrdering.getOrdering(mod)
-
-
-    //Swap board if pie rule has been played
-    if (model.pie && !HSearch.p) HSearch.pie
-
-    val alpha = Double.NegativeInfinity
-    val beta = Double.PositiveInfinity
-    var topScore = Double.NegativeInfinity
-
-    //H-Search objects for respective colours
-    val hme = new HSearch(mod, colour)
-    val hthem = new HSearch(mod, othercolour)
-
-    //Perform initialisation
-    hme.initial
-    hthem.initial
+      //Get a list of open moves in order of strength
+      var open = moveOrdering.getOrdering(mod)
 
 
+      //Swap board if pie rule has been played
+      if (model.pie && !HSearch.p) HSearch.pie
 
-    //Search for strong and weak connections
-    hme.search(RobotAlphaBetaResistance.ROOTTIME)
-    hthem.search(RobotAlphaBetaResistance.ROOTTIME)
+      val alpha = Double.NegativeInfinity
+      val beta = Double.PositiveInfinity
+      var topScore = Double.NegativeInfinity
 
-    //Get set of cells that are in a carrier of an opponent semi-connection
-    val weakCarrier = hthem.getUnionOfWeakConnections
+      //H-Search objects for respective colours
+      val hme = new HSearch_(mod, colour)
+      val hthem = new HSearch_(mod, othercolour)
 
-    //Reduce move set to cells in opponent weak carriers
-    if (weakCarrier.nonEmpty) open = weakCarrier.toList
-
-
-    val boundaries = hme.boundarySet.toList
-
-    //Check if there is a strong carrier from one boundary to another, restricting moves to that carrier if so
-    val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
-    if (strongCarrier.nonEmpty) open = strongCarrier.toList
-
-    //Filter out cells in an opponent's strong carrier, since playing one is useless
-    val ordering = open.filter(x => !hthem.strong.contains(x))
-
-    //LOOP INVARIANT: move has the highest minimax value considered so far
-    for (cell <- ordering) {
-      //Play move
-      val mod2 = result(mod, cell, colour)
+      //Perform initialisation
+      hme.initial
+      hthem.initial
 
 
-      if (!stop) {
 
-        var score = 0.0d
+      //Search for strong and weak connections
+      hme.search(RobotAlphaBetaResistance.ROOTTIME)
+      hthem.search(RobotAlphaBetaResistance.ROOTTIME)
 
-        //Update move selection order for recursive calls
-        val mo = moveOrdering.addMovesFor(cell, mod)
-        score = min(mod2, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hme, hthem, mo, List((new Cell(cell.i, cell.j), colour)))
+      //Get set of cells that are in a carrier of an opponent semi-connection
+      val weakCarrier = hthem.getUnionOfWeakConnections
 
-        //check for case where opponent uses pie rule
-        if (othercolour.equals(B) && mod2.count == 1 && pierule) {
+      //Reduce move set to cells in opponent weak carriers
+      if (weakCarrier.nonEmpty) open = weakCarrier.toList
 
 
-          //play pie rule
-          val modPie = result(mod, cell, B)
-          HSearch.pie
-          modPie.pie = true
-          hme.model.pie = true
-          hthem.model.pie = true
-          hthem.colour = R
-          hme.colour = B
+      val boundaries = hme.boundarySet.toList
 
-          //Get value of board after pie rule is played
-          val value = max(modPie, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hthem, hme, mo, List((new Cell(cell.i, cell.j), B)))
+      //Check if there is a strong carrier from one boundary to another, restricting moves to that carrier if so
+      val strongCarrier = hme.getStrongCarriers(boundaries(0), boundaries(1), true)
+      if (strongCarrier.nonEmpty) open = strongCarrier.toList
 
-          //undo pie rule
-          hthem.colour = B
-          hme.colour = R
-          hme.model.pie = false
-          hthem.model.pie = false
-          modPie.pie = false
-          HSearch.pie
-          score = Math.min(score, value)
-        }
+      //Filter out cells in an opponent's strong carrier, since playing one is useless
+      val ordering = open.filter(x => !hthem.strong.contains(x))
 
-        if (score > topScore) {
-          move = cell
-          topScore = score
+      //LOOP INVARIANT: move has the highest minimax value considered so far
+      for (cell <- ordering) {
+        //Play move
+        val mod2 = result(mod, cell, colour)
+
+
+        if (!stop) {
+
+          var score = 0.0d
+
+          //Update move selection order for recursive calls
+          val mo = moveOrdering.addMovesFor(cell, mod)
+          score = min(mod2, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hme, hthem, mo, List((new Cell(cell.i, cell.j), colour)))
+
+          //check for case where opponent uses pie rule
+          if (othercolour.equals(B) && mod2.count == 1 && pierule) {
+
+
+            //play pie rule
+            val modPie = result(mod, cell, B)
+            HSearch.pie
+            modPie.pie = true
+            hme.model.pie = true
+            hthem.model.pie = true
+            hthem.colour = R
+            hme.colour = B
+
+            //Get value of board after pie rule is played
+            val value = max(modPie, RobotAlphaBetaResistance.DEPTH - 1, alpha, beta, hthem, hme, mo, List((new Cell(cell.i, cell.j), B)))
+
+            //undo pie rule
+            hthem.colour = B
+            hme.colour = R
+            hme.model.pie = false
+            hthem.model.pie = false
+            modPie.pie = false
+            HSearch.pie
+            score = Math.min(score, value)
+          }
+
+          if (score > topScore) {
+            move = cell
+            topScore = score
+          }
+          println(cell)
         }
       }
+      println(move)
+      return move
     }
-    println(move)
-    return move
-
-
+    catch{
+      case e : Exception => e.printStackTrace(); null
+    }
 
   }
 
-  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering, moves : List[(Cell, Colour)]): Double = {
+  def min(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch_, hthem: HSearch_, mo: MoveOrdering, moves : List[(Cell, Colour)]): Double = {
 
     val alpha = _alpha
     var beta = _beta
@@ -132,8 +140,9 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 
     else if (depth == 0) {
       //Leaf node, use heuristic
-      val heuristic = new ResistanceHeuristic
-      return heuristic.evaluate(model, colour, hme.makeMove(moves), hthem.makeMove(moves))
+      //val heuristic = new ResistanceHeuristic
+      //println("i")
+      return heuristic.evaluate(model, colour, hme.cloneWithMove(moves), hthem.cloneWithMove(moves))
 
     }
     else {
@@ -161,7 +170,7 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
     }
   }
 
-  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch, hthem: HSearch, mo: MoveOrdering, moves : List[(Cell, Colour)]): Double = {
+  def max(model: Model, depth: Int, _alpha: Double, _beta: Double, hme: HSearch_, hthem: HSearch_, mo: MoveOrdering, moves : List[(Cell, Colour)]): Double = {
 
     var alpha = _alpha
     val beta = _beta
@@ -176,9 +185,9 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
     }
     else if (depth == 0) {
       //Reached leaf, use heuristic
-      val heuristic = new ResistanceHeuristic
-
-      return heuristic.evaluate(model, colour, hme.makeMove(moves), hthem.makeMove(moves))
+      //val heuristic = new ResistanceHeuristic
+      //println("i")
+      return heuristic.evaluate(model, colour, hme.cloneWithMove(moves), hthem.cloneWithMove(moves))
 
     }
     else {
@@ -283,6 +292,6 @@ class RobotAlphaBetaResistance(model: Model, timelimit: Long, pierule: Boolean, 
 }
 object RobotAlphaBetaResistance{
   var DEPTH = 2
-  var ROOTTIME = 3000
-  var LEAFTIME = 40
+  var ROOTTIME = 300000
+  var LEAFTIME = 300000
 }
