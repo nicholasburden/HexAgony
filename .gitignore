@@ -86,3 +86,7 @@ hexlog.txt
 .cache-main
 
 .settings
+
+HexAgony.iml
+
+.idea/
