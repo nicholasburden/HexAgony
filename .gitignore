@@ -90,3 +90,5 @@ hexlog.txt
 HexAgony.iml
 
 .idea/
+
+target/
