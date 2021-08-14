@@ -4,4 +4,4 @@ Third year project implementing an AI for the Hex board game. Project used Scala
 
 The best AI performs well on small to medium sized boards, beating most human players.
 
-![](images/hex.png]
+![](images/hex.png)
